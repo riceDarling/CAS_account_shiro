@@ -1,4 +1,6 @@
-
+<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <div class="col-md-12">
 	<div class="panel panel-cascade">
 		<div class="panel-heading">
@@ -9,7 +11,12 @@
 		<div class="panel-body">
 			<form action class="form-horizontal row-border">
 				<div class="form-group">
-					<label class="col-sm-3 control-label">采购标题：</label> <select name="title" id="purchasenumtitle">
+					<label class="col-sm-3 control-label">申购标题：</label> <select name="purchasenumtitle" id="purchasenumtitle">
+					</select>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">供应商：</label> <select name="supplier" id="supplier">
+						<option value="">请选择</option>
 					</select>
 				</div>
 			</form>
@@ -23,35 +30,17 @@
 		</div>
 	</div>
 </div>
-<h4 style="text-align:center;">
-	<span id="title"></span>采购单列表
-</h4>
 <div class="col-md-12">
 	<div class="panel">
-		<div class="panel-body">
-			<table class="table table-bordered table-condensed table-hover" id="contentTable2">
-				<thead>
-					<tr>
-						<th></th>
-						<th>供应商</th>
-						<th>采购总金额</th>
-						<th hidden="true">供应商编码</th>
-						<th hidden="true">采购标题</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		</div>
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#">合同编辑</a></li>
 		</ul>
 		<div class="panel-body">
-			<form id="inputForm" modelAttribute="accountContract">
-				<div class="control-group" hidden="true">
+			<form>
+				<div class="control-group">
 					<label class="control-label">合同编号：</label>
 					<div class="controls">
-						<input name="contractnum" htmlEscape="false" maxlength="32" id="contractnum" class="form-control" />
+						<input name="contractnum" readonly="true" htmlEscape="false" maxlength="32" id="contractnum" class="form-control" /> <input type="button" value="自动生成" id="automatic" />
 					</div>
 				</div>
 				<div class="control-group" hidden="true">
@@ -70,6 +59,12 @@
 					<label class="control-label">合同名称：</label>
 					<div class="controls">
 						<input name="contracttitle" id="contracttitle" htmlEscape="false" maxlength="255" class="form-control" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">纸质合同编号：</label>
+					<div class="controls">
+						<input name="papercontract" id="papercontract" htmlEscape="false" maxlength="255" class="form-control" />
 					</div>
 				</div>
 				<div class="control-group">
@@ -95,145 +90,170 @@
 					</table>
 				</div>
 				<div class="control-group">
+					<label class="control-label">签订日期：</label>
+					<div class="controls">
+						<input size="16" type="text" readonly="true" class="form_datetime form-control" name="createdate" id="createdate" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">附件上传：</label>
+					<div class="controls">
+						<input name="file" id="file" type="file" htmlEscape="false" maxlength="255" class="form-control" />
+					</div>
+				</div>
+				<div class="control-group">
 					<label class="control-label">备注信息：</label>
 					<div class="controls">
 						<textarea name="remarks" id="remarks" htmlEscape="false" rows="4" maxlength="255" class="form-control" />
 					</div>
 				</div>
 				<div class="form-actions">
-					<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" />
+					<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /><input id="btnCancel" class="btn" type="button" value="返 回" />
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
 <script type="text/javascript">
-		$("[href_1]").click(function() {
-			$("#index_content").load($(this).attr("href_1"));
-		});
-		$(function(){
-			var ordernum = "30-";
-			var date = new Date();
-			var year = date.getFullYear();
-			var month = date.getMonth() + 1;
-			var day = date.getDate();
-			if (month < 10) {
-				month = "0" + month;
-			}
-			if (day < 10) {
-				day = "0" + day;
-			}
-			ordernum = ordernum + year + month + day + "-";
-			var ordernumRandom = "";
-			for (var i = 0; i < 5; ++i) {
-				var num = Math.random();
-				num = parseInt(num * 10);
-				ordernumRandom += num;
-			}
-			ordernum += ordernumRandom;
-			$("#contractnum").val(ordernum);
-			//获取采购订货单标题
-			$.ajax({
-				url : "http://"+IP_config+"/account/accountPurchase/getAccountPurchaseTitle",
-				type : "post",
-				success : function(data) {
-					var html = "<option>请选择</option>";
-					for (i in data.obj) {
-						html += "<option value="+data.obj[i].title+">"+ data.obj[i].title + "</option>";
-
-					}
-					$("#purchasenumtitle").html(html);
-
+	$("[href_1]").click(function() {
+		$("#index_content").load($(this).attr("href_1"));
+	});
+	$(".form_datetime").datetimepicker({
+		language : 'zh-CN',
+		minView : "month", //选择日期后，不会再跳转去选择时分秒 
+		format : 'yyyy-mm-dd',
+		todayBtn : 1,
+		autoclose : 1,
+	});
+	$(function() {
+		//获取采购订货单标题
+		$.ajax({
+			url : "http://" + IP_config + "/account/accountPurchase/getAccountPurchaseTitle",
+			type : "post",
+			success : function(data) {
+				var html = "<option value=''>请选择</option>";
+				for (i in data.obj) {
+					html += "<option value="+data.obj[i].title+">" + data.obj[i].title + "</option>";
 				}
-			});
-		});
+				$("#purchasenumtitle").html(html);
 
-		//根据采购标题查询采购数据
-		 $("#btnSubmit").click(function() {
-			var purchasenumtitle = $("#purchasenumtitle").val();
-			$("#title").html(purchasenumtitle);
-			if (purchasenumtitle != null && purchasenumtitle != "") {
-				//获取采购订货单列表供应商数据列表
-				$.ajax({
-					url : "http://"+IP_config+"/account/accountPurchase/getAccountSupplierByPurchasenumtitle",
-					type : "post",
-					data : {
-						"purchasenumtitle" : purchasenumtitle
-					},
-					async : false,
-					success : function(data) {
-						$("#contentTable2>tbody").empty();
-						for (i in data.obj) {
-							var html = "<tr><td><input onepluschecked type='radio' name='idxk' value='"+data.obj[i].packway+"'></td><td>"+ data.obj[i].suppliercode + "</td><td>"+ data.obj[i].totlemoney +"</td><td hidden>" + data.obj[i].transport + "</td><td hidden>" + data.obj[i].materialcode + "</td></tr>";
-							$("#contentTable2>tbody").append(html);
-						}
-
-					}
-				})
-			} else {
-				layer.alert("请选择采购标题!");
 			}
 		});
-		//选择供应商获取详细数据
-		$(document).on("click","[name='idxk']",function(){
-			$("#caigouname").val($(this).parent("td").siblings("td:eq(0)").text());
-			$("#supplierNum").val($(this).parent("td").siblings("td:eq(2)").text())
-			$("#purchasenum").val($("#contentTable2 input[name='idxk']:checked ").val());
-			var dataline = {};
-			dataline["suppliercode"] = $(this).parent("td").siblings("td:eq(2)").text();
-			dataline["materialcode"] = $(this).parent("td").siblings("td:eq(3)").text();
-			//获取采购具体原料列表
+	});
+	$("#automatic").click(function() {
+		var ordernum = "30-";
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		var day = date.getDate();
+		if (month < 10) {
+			month = "0" + month;
+		}
+		if (day < 10) {
+			day = "0" + day;
+		}
+		ordernum = ordernum + year + month + day + "-";
+		var ordernumRandom = "";
+		for (var i = 0; i < 5; ++i) {
+			var num = Math.random();
+			num = parseInt(num * 10);
+			ordernumRandom += num;
+		}
+		ordernum += ordernumRandom;
+		$("#contractnum").val(ordernum);
+	});
+	function money() {
+		$("#contentTable>tbody>tr td:nth-child(5)").find("input").val($("#contentTable>tbody>tr td:nth-child(3)").find("input").val() * $("#contentTable>tbody>tr td:nth-child(4)").find("input").val());
+	}
+	$("#btnCancel").click(function() {
+		$("#index_content").load("accountContractList.html");
+	});
+	//根据采购标题查询采购数据
+	$("#purchasenumtitle").click(function() {
+		var purchasenumtitle = $("#purchasenumtitle").val();
+		if (purchasenumtitle != null && purchasenumtitle != "") {
+			//获取采购订货单列表供应商数据列表
 			$.ajax({
-				url : "http://"+IP_config+"/account/accountPurchase/getAccountSupplierByPurchasenum",
+				url : "http://" + IP_config + "/account/accountPurchase/getAccountSupplierByPurchasenumtitle",
 				type : "post",
-				data : dataline,
+				data : {
+					"purchasenumtitle" : purchasenumtitle
+				},
 				async : false,
 				success : function(data) {
-					$("#contentTable>tbody").empty();
+					var html = "";
 					for (i in data.obj) {
-						var html = "<tr><td>"+ data.obj[i].materialcode + "</td><td>"+ data.obj[i].suppliercode + "</td><td>"+ data.obj[i].quantity + "</td><td>" + data.obj[i].unitprice + "</td><td>" + data.obj[i].totlemoney +"</td></tr>";
-					$("#contentTable>tbody").html(html);
+						html += "<option value='"+data.obj[i].packway+"' name='"+data.obj[i].transport+"'  class='"+data.obj[i].materialcode+"'>" + data.obj[i].suppliercode + "</option>";
 					}
+					$("#supplier").html(html);
 
 				}
 			})
-		})
-		//提交保存合同
-		$("#submitbtn").click(function(){
-			if ($("[onepluschecked]:checked").length <= 0) {
-				layer.alert("请查询并选中与合同相关的采购单数据!");
-			} else {
-				$("#contentTable2>tbody>tr").each(function() {
-					if ($(this).children("td:first").children(":radio").is(":checked")) {
-						if ($("#contracttitle").val() != null && $("#contracttitle").val() != "") {
-							$("#submitbtn").attr("disabled", true);
-							var dataline = {};
-							dataline["purchasenum"] = $('#purchasenum').val();
-							dataline["supplierNum"] = $('#supplierNum').val();
-							dataline["contractnum"] = $("#contractnum").val();
-							dataline["contracttitle"] = $("#contracttitle").val();
-							dataline["caigouname"] = $("#caigouname").val();
-							dataline["remarks"] = $("#remarks").val();
-							dataline["money"] = $(this).children("td:eq(2)").text();
-							$.ajax({
-								url:"http://"+IP_config+"/account/accountContractController/save",
-								type : "post",
-								data : dataline,
-								async : false
-							})
-							if(dataline!=null&&dataline!=""){
-								layer.alert("保存成功");
-								$("#index_content").load("accountContractList.html");
-							}
-							else{
-								layer.alert("保存失败");
-								$("#index_content").load("accountContracFormhtml");
-							}
-						} else {
-							layer.alert("请添写合同名称!");
-						}
-					}
-				})
+		}
+	});
+	//选择供应商获取详细数据
+	$("#btnSubmit").click(function() {
+		//采购单号
+		$("#purchasenum").val($("#supplier").find("option:selected").val());
+		//供应商编号
+		$("#supplierNum").val($("#supplier").find("option:selected").attr("name"))
+		//乙方
+		$("#caigouname").val($("#supplier").find("option:selected").text());
+		var dataline = {};
+		dataline["suppliercode"] = $("#supplier").find("option:selected").attr("name");
+		dataline["materialcode"] = $("#supplier").find("option:selected").attr("class");
+		//获取采购具体原料列表
+		$.ajax({
+			url : "http://" + IP_config + "/account/accountPurchase/getAccountSupplierByPurchasenum",
+			type : "post",
+			data : dataline,
+			async : false,
+			success : function(data) {
+				$("#contentTable>tbody").empty();
+				for (i in data.obj) {
+					var html = "<tr><td>" + data.obj[i].materialcode + "</td><td>" + data.obj[i].suppliercode + "</td><td><input name='quantity'   onchange='money()' /></td><td><input name='unitprice'   onchange='money()' /></td><td><input name='totlemoney' /></td></tr>";
+					$("#contentTable>tbody").html(html);
+				}
+
 			}
 		})
-	</script>
+	})
+	//提交保存合同
+	$("#submitbtn").click(function() {
+		if ($("#contractnum").val() != null && $("#contractnum").val() != "") {
+			if ($("#contracttitle").val() != null && $("#contracttitle").val() != "") {
+				$("#submitbtn").attr("disabled", true);
+				var dataline = {};
+				dataline["purchasenum"] = $("#purchasenum").val();
+				dataline["supplierNum"] = $("#supplierNum").val();
+				dataline["contractnum"] = $("#contractnum").val();
+				dataline["papercontract"] = $("#papercontract").val();
+				dataline["contracttitle"] = $("#contracttitle").val();
+				dataline["caigouname"] = $("#caigouname").val();
+				dataline["createdate"] = $("#createdate").val();
+				dataline["quantity"] = $("#contentTable>tbody>tr td:nth-child(3)").find("input").val();
+				dataline["unitprice"] = $("#contentTable>tbody>tr td:nth-child(4)").find("input").val();
+				dataline["money"] = $("#contentTable>tbody>tr td:nth-child(5)").find("input").val();
+				dataline["file"] = $("#file").val();
+				dataline["remarks"] = $("#remarks").val();
+				$.ajax({
+					url : "http://" + IP_config + "/account/accountContractController/save",
+					type : "post",
+					data : dataline,
+					async : false
+				})
+				if (dataline != null && dataline != "") {
+					layer.alert("保存成功");
+					$("#index_content").load("accountContractList.html");
+				} else {
+					layer.alert("保存失败");
+					$("#index_content").load("accountContracFormhtml");
+				}
+			} else {
+				layer.alert("请添写合同名称!");
+			}
+		} else {
+			layer.alert("请添写合同编号!");
+		}
+	})
+</script>

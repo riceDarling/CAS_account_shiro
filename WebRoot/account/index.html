@@ -18,7 +18,8 @@
     <!-- Loading Custom Stylesheets -->
     <link href="css/custom.css" rel="stylesheet">
     <link rel="shortcut icon" href="images/favicon.ico">
-    
+    <link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+
    
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>
@@ -46,14 +47,14 @@
 
                     <li><a href="#" class="user dropdown-toggle" data-toggle="dropdown"><span class="username" ><img src="images/profiles/eleven.png" class="user-avatar" alt="">&nbsp;&nbsp;<span id="index_username">admin</span></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#"><i class="fa fa-user"></i> My Profile</a>
+                           <!--  <li><a href="#"><i class="fa fa-user"></i> My Profile</a>
                             </li>
                             <li><a href="#"><i class="fa fa-envelope"></i> Inbox</a>
                             </li>
                             <li><a href="#"><i class="fa fa-cogs"></i> Settings</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li><a id="admin_logout" class="text-danger"><i class="fa fa-lock"></i> Logout</a>
+                            </li> 
+                            <li class="divider"></li>-->
+                            <li><a id="admin_logout" class="text-danger"><i class="fa fa-lock"></i>  注销</a>
                             </li>
                         </ul>
                         <!--<li><a href="#" class="settings dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i></a>
@@ -83,33 +84,8 @@
                             </button>
                         </li>
                          <li class="submenu">
-                            <a class="dropdown" href="#" data-original-title="Forms"><i class="fa fa-desktop"></i><span class="hidden-minibar"> 在线办公  </a>
+                            <a class="dropdown" href="#" data-original-title="Forms"><i class="fa fa-desktop"></i><span class="hidden-minibar"> 数据维护  </a>
                             <ul>
-                                <li><a href="#" data-original-title="actTaskTodoList" class="menu"><i class="fa fa fa-bell"></i><span> 我的任务</span></a>
-                                </li>
-                                <li><a href="#" data-original-title="actTaskHistoricList" class="menu" ><i class="fa fa-suitcase"></i><span>已办任务</span></a>
-                                </li>
-                                <li><a href="#" data-original-title="actTaskProcessList" class="menu"><i class="fa fa-pencil"></i><span>新建任务</span></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a class="dropdown" href="#" data-original-title="Forms"><i class="fa fa-list-alt"></i><span class="hidden-minibar"> 采购管理  </a>
-                            <ul>
-                            	<!--  <li><a href="#"  data-original-title="accountInquiryList" class="menu"><i class="fa fa-leaf"></i><span> 询价</span></a>
-                                </li> -->
-                                <li><a href="#"  data-original-title="accountContractList" class="menu"><i class="fa fa-clipboard"></i><span> 合同</span></a>
-                                </li>
-                                <li><a href="#" data-original-title="accountArrivalList" class="menu"><i class="fa fa-pencil-square"></i><span> 到货</span></a>
-                                </li>
-                                <li><a href="#" data-original-title="accountInspectionList" class="menu"><i class="fa fa-warning"></i><span> 送检</span></a>
-                                </li>
-                                <li><a href="#" data-original-title="accountInputList" class="menu"><i class="fa fa-indent"></i><span>  入库</span></a>
-                                </li>
-                                <li><a href="#" data-original-title="accountPaymentList" class="menu"><i class="fa fa-group"></i><span> 付款单</span></a>
-                                </li>
-                                <li><a href="#" data-original-title="accountReceiptList" class="menu"><i class="fa fa-indent"></i><span>  发票</span></a>
-                                </li>
                                 <li><a href="#" data-original-title="accountMaterialList" class="menu"><i class="fa fa-cloud-upload"></i><span>  物资</span></a>
                                 </li>
                                 <li><a href="#" data-original-title="accountSupplierList" class="menu"><i class="fa fa-eye"></i><span>  供应商</span></a>
@@ -122,8 +98,34 @@
                                 </li>
                             </ul>
                         </li>
-
                         <li class="submenu">
+                            <a class="dropdown" href="#" data-original-title="Forms"><i class="fa fa-list-alt"></i><span class="hidden-minibar"> 采购管理  </a>
+                            <ul>
+                           		 <li><a href="#"  data-original-title="requisitionList" class="menu"><i class="fa fa-leaf"></i><span>申购</span></a>
+                                </li>
+                            	<li><a href="#"  data-original-title="accountInquiryList" class="menu"><i class="fa fa-leaf"></i><span> 询价</span></a>
+                                </li>
+                                <li><a href="#"  data-original-title="accountContractList" class="menu"><i class="fa fa-clipboard"></i><span> 合同</span></a>
+                                </li>
+                                <li><a href="#"  data-original-title="accountPurchaseList" class="menu"><i class="fa fa-leaf"></i><span>订货</span></a>
+                                </li>
+                                <li><a href="#" data-original-title="accountArrivalList" class="menu"><i class="fa fa-pencil-square"></i><span> 到货</span></a>
+                                </li>
+                                <li><a href="#" data-original-title="accountInspectionList" class="menu"><i class="fa fa-warning"></i><span> 送检</span></a>
+                                </li>
+                              <!--   <li><a href="#" data-original-title="accountInputList" class="menu"><i class="fa fa-indent"></i><span>  入库</span></a>
+                                </li>
+                                <li><a href="#" data-original-title="accountPaymentList" class="menu"><i class="fa fa-group"></i><span> 付款单</span></a>
+                                </li> -->
+                                 <li><a href="#" data-original-title="" class="menu"><i class="fa fa-indent"></i><span>  退货</span></a>
+                                </li>
+                                <li><a href="#" data-original-title="accountReceiptList" class="menu"><i class="fa fa-indent"></i><span>  发票</span></a>
+                                </li>
+                               
+                            </ul>
+                        </li>
+
+                      <!--   <li class="submenu">
                             <a class="dropdown" href="#" data-original-title="Charts"><i class="fa fa-bar-chart-o"></i><span class="hidden-minibar"> 统计  </a>
                             <ul>
                                 <li><a href="#" data-original-title="Basic Charts"><i class="fa fa-bar-chart-o"></i><span>  Basic Charts</span></a>
@@ -139,7 +141,7 @@
                                 <li><a href="#" data-original-title="NVD3"><i class="fa fa-bar-chart-o"></i><span>  NVD3</span></a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> -->
 
                     </ul>
                 </div>
@@ -361,12 +363,19 @@
     <script src="js/jquery.noty.js"></script>
     <script src="js/jquery.accordion.js"></script>
     <script src="js/skylo.js"></script>
-
     <script src="js/theme-options.js"></script>
-
+	
+	<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+	
+	
     <!-- Core Jquery File  =============================-->
     <script src="js/core.js"></script>
-
+ 	<script>
+	/* $(function(){
+		$( '.site-holder' ).css( {'height' : $( window ).height(),'overflow': 'scroll',}) 
+	}) */
+	</script>
 </body>
 
 </html>

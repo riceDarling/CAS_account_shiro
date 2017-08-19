@@ -10,11 +10,13 @@ public interface AccountContractService {
 
 	void delete(String id);
 
+	void update(AccountContract accountContract);
+
 	void updateContractStatus(String id);
 
 	void updateContractStatustwo(String id);
 
-	List<AccountContract> findList(Map<String,Object> map);
+	List<AccountContract> findList(Map<String, Object> map);
 
 	AccountContract getById(String id);
 

@@ -60,10 +60,13 @@ public class AccountRequisitionActServiceImpl implements AccountRequisitionActSe
 		if(now_RequisitionName.equals(loginAdmin.getId().toString())){
 			//如果申请人是当前登录人，可以执行撤销操作(当前节点申请人是自己，办理人也改为自己)
 			now_act.setCheckerName(loginAdmin.getId().toString());
-			//如果是询价流程，则要改变询价主表状态，方便添加询价记录
+			/*//如果是询价流程，则要改变询价主表状态，方便添加询价记录
 			if(now_act.getActindex()==1){
 				accountInquiryDao.setInquiryStatusById(now_act.getRequisitionId(), "0");
-			}
+			}*/
+			//步数-1
+			int step=now_act.getStep();
+			now_act.setStep(step-1);
 			dao.revoke(now_act);
 			return "撤销成功";
 		}else{

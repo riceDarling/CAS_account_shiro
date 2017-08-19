@@ -30,4 +30,9 @@ public interface AccountRequisitionActDao {
 	AccountRequisitionAct getbyRequisitionIdAndState(String requisitionId);
 	
 	void revoke(AccountRequisitionAct entity);
+	
+	/**
+	 * 根据requisitionId和步数查询一条记录
+	 */
+	AccountRequisitionAct getbyRequisitionIdAndStep(Map<String,Object> map);
 }

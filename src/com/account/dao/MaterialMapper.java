@@ -3,6 +3,7 @@ package com.account.dao;
 import java.util.List;
 
 import com.account.entity.Material;
+import com.account.entity.MaterialSupplier;
 import com.account.utils.pagebean.MaterialPage;
 
 public interface MaterialMapper {
@@ -52,4 +53,6 @@ public interface MaterialMapper {
      * @return
      */
     List<Material> findAllList();
+    
+  
 }

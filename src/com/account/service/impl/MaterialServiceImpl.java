@@ -7,20 +7,29 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.account.dao.MaterialMapper;
+import com.account.dao.MaterialSupplierMapper;
 import com.account.entity.Material;
+import com.account.entity.MaterialSupplier;
 import com.account.service.MaterialService;
+import com.account.utils.FormatDateUtils;
 import com.account.utils.GetUUID;
+import com.account.utils.RandomUtils;
 import com.account.utils.pagebean.MaterialPage;
 
 @Service
+@Transactional
 public class MaterialServiceImpl implements MaterialService{
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
 	private MaterialMapper mDao;
+	
+	@Autowired
+	MaterialSupplierMapper msDao;
 
 	@Override
 	public int deleteByPrimaryKey(String id) {
@@ -28,21 +37,39 @@ public class MaterialServiceImpl implements MaterialService{
 	}
 
 	@Override
-	public int insertSelective(Material record) {
+	public void insertSelective(Material record) {
+		
 		if (record.getId() != null && !record.getId().equals("")) {
 			record.setDelFlag("0");
-			return mDao.updateByPrimaryKeySelective(record);
+			mDao.updateByPrimaryKeySelective(record);
+			msDao.deleteByMaterialId(record.getId());
+			for (MaterialSupplier element : record.getMaterialSupplier()) {
+				element.setMaterial(record.getMaterialNum());
+				msDao.insertSelective(element);
+			}
 		} else {
-			record.setId(GetUUID.getOneUUID());
+			String UUID=GetUUID.getOneUUID();
+			record.setId(UUID);
+			// 生成17位单据编号 04-20170203-00001
+			String ordernum = "25-" + FormatDateUtils.dateToString(new Date()) + "-" + RandomUtils.random();
+			record.setMaterialNum(ordernum);
 			record.setCreateDate(new Date());
 			record.setDelFlag("0");
-			return mDao.insertSelective(record);
-		}
+			mDao.insertSelective(record);
+			for (MaterialSupplier element : record.getMaterialSupplier()) {
+				element.setMaterial(ordernum);
+				msDao.insertSelective(element);
+			}
+		}	
+		
+	
 	}
 
 	@Override
 	public Material selectByPrimaryKey(String id) {
-		return mDao.selectByPrimaryKey(id);
+		Material material= mDao.selectByPrimaryKey(id);
+		material.setMaterialSupplier(msDao.selectMaterialSupplierByMaterialNum(material.getMaterialNum()));
+		return material;
 	}
 
 	@Override

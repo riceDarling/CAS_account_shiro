@@ -19,7 +19,7 @@ public interface MaterialService {
      * @param record
      * @return
      */
-    int insertSelective(Material record);
+    void insertSelective(Material record);
 
     /**
      * 根据主键查询物资

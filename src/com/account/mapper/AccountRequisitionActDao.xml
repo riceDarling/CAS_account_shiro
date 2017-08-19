@@ -120,7 +120,14 @@
 	
 		<update id="revoke" parameterType="com.account.entity.AccountRequisitionAct">
 		UPDATE account_requisition_act SET 	
-		  	checker_name=#{checkerName}
+		  	checker_name=#{checkerName},
+		  	step=#{step},
+		  	remarks=#{remarks}
 		WHERE id = #{id}
 	</update>
+	
+		<select id="getbyRequisitionIdAndStep" resultType="com.account.entity.AccountRequisitionAct" parameterType="map">
+			SELECT a.id,a.requisition_id AS requisitionId,a.requisition_name AS requisitionName,a.checker_name AS checkerName,a.step,a.actindex
+		    FROM account_requisition_act a WHERE a.requisition_id=#{requisitionId} AND a.step=#{step} LIMIT 1 
+		</select>
 </mapper>

@@ -1,10 +1,4 @@
- <link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-
- 
- <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
- <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
- 
-	<div class="col-md-12">
+<div class="col-lg-12 col-md-12">
 		<div class="panel panel-cascade">
 			<div class="panel-heading">
 				<h3 class="panel-title">
@@ -14,26 +8,26 @@
 			</div>
 			<div class="panel-body">
 				<div class="form-group" >
-					<label class="col-md-1 control-label" style="width:9%; !important">仓库名称：</label>
-					<div class="col-lg-3 col-md-2">
+					<label class="col-lg-1 col-md-1 control-label">仓库名称：</label>
+					<div class="col-lg-2 col-md-2">
 						<input class="form-control" name="whName" id="whName" />
 					</div>
-					<label class="col-md-1 control-label" style="width:9%; !important">开始日期：</label>
-					<div class="col-md-3" style="width:15%; !important">
-						<input class="form-control form_datetime" name="sTime" id="sTime" />	
+					<label class="col-lg-1 col-md-1 control-label">开始日期：</label>
+					<div class="col-lg-2 col-md-3" >
+						<input class="form-control form_datetime"readonly name="sTime" id="sTime" />	
 					</div>
-					<label class="col-md-1 control-label" style="width:9%; !important">结束日期：</label>
-					<div class="col-md-3" style="width:15%; !important">
-						<input class="form-control form_datetime" name="eTime" id="eTime"/>
+					<label class="col-lg-1 col-md-1 control-label" >结束日期：</label>
+					<div class="col-lg-2 col-md-3" >
+						<input class="form-control form_datetime" readonly name="eTime" id="eTime"/>
 					</div>
-					<div class="col-md-2">
-						<input class="btn btn-info btn-animate-demo" id="sub_search" type="submit" value="查询"/>
+					<div class="col-lg-1 col-md-2">
+						<input class="btn btn-info " id="sub_search" type="submit" value="查询"/>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-12">
+	<div class="col-lg-12 col-md-12">
 		<div class="panel">
 			<div class="panel-body">
 				<table class="table table-bordered table-condensed table-hover" id="example">
@@ -77,7 +71,7 @@ $(".form_datetime").datetimepicker({
 			sTime:$("#sTime").val(),
 			eTime:$("#eTime").val()
 		};
-		$('#example').dataTable({
+	/* 	$('#example').dataTable({
 			 ajax:{
 				 url:"http://"+IP_config+"/account/warehouse/findList",
 					type:"post",
@@ -99,7 +93,7 @@ $(".form_datetime").datetimepicker({
 					}
 			    },
 		    "bPaginate": true, //翻页功能
-		    "bLengthChange": true, //改变每页显示数据数量
+		    "bLengthChange": false, //改变每页显示数据数量
 		    "bFilter": true, //过滤功能
 		    "bSort": false, //排序功能
 		    "bInfo": true,//页脚信息
@@ -119,7 +113,27 @@ $(".form_datetime").datetimepicker({
 					"sLast": " 最后一页 "
 				},		
 			}
-		});
+		}); */
+		 $.ajax({
+			 url:"http://"+IP_config+"/account/warehouse/findList",
+				type:"post",
+				async:false,
+				data:wPage,
+				success:function(data){
+					data = data.obj;
+					 for (var index in data.list) {
+				            var content = "<tr>";
+				            content += "<td>" + data.list[index].housename + "</td>";
+				            content += "<td>" + data.list[index].size + "</td>";
+				            content += "<td>" + data.list[index].address + "</td>";
+				            content += "<td>" + data.list[index].createTime + "</td>";
+				            content += "<td>" + data.list[index].remarks + "</td>";
+				            content += "<td><a href_2='accountWarehouseForm.html' name='"+data.list[index].id+"' class='btn btn-warning' ><i class='fa fa-edit'></i></a><a del_id="+data.list[index].id+" name='del_material' class='btn btn-success'><i class='fa fa-trash-o'></i></a></td>";
+				            content += "</tr>";
+				            $("#secondPageTbody").append(content);
+				        }
+				}
+		    });
 	}
 	$("[href_2]").click(function(){
 		 $.cookie("warehouse_edit",$(this).attr("name"));

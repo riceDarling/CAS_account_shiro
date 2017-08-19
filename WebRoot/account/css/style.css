@@ -117,6 +117,7 @@
     display: none;
   }
 }
+
 /******************* Color variables *********************/
 /*	 Global Color variables @requested not to change these values if you are not sure of what you are doing
 ----------------------------------------------------------------------------------------------------------- */
@@ -138,6 +139,15 @@ body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+}
+.btn-warning{
+	margin-right: 5px;
+}
+td{
+	vertical-align: middle !important;
+}
+.panel-heading h3{
+	cursor: pointer;
 }
 .site-holder {
   overflow: hidden;

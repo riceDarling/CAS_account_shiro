@@ -6,14 +6,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.account.entity.AccountRequisition;
 import com.account.entity.Material;
 import com.account.service.MaterialService;
 import com.account.utils.PageBean;
 import com.account.utils.ResponseModel;
 import com.account.utils.pagebean.MaterialPage;
+import com.alibaba.fastjson.JSON;
 
 /**
  * 物资Controller
@@ -55,14 +58,16 @@ public class MaterialController  {
 	 */
 	@ResponseBody
 	@RequestMapping(value ="insert")
-	public ResponseModel<String> insert(Material material) {
+	public ResponseModel<String> insert(@RequestBody String data) {	
 		ResponseModel<String> rm = new ResponseModel<String>();
-		
-		if (mService.insertSelective(material) > 0) {
-			rm.setSuccessMessage("操作成功", null);
-		} else {
-			rm.setErrorMessage("操作失败", null);
+		try { 
+			Material material=JSON.parseObject(data, Material.class);
+			mService.insertSelective(material);
+			rm.isSuccessMsg("","提交成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");	
 		}
+		
 		return rm;
 	}
 	

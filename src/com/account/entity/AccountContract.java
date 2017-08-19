@@ -10,16 +10,20 @@ public class AccountContract {
 	
 	private String id;
 	private String contractnum;		// 合同编号
-	private String title;		// 采购标题
+	private String papercontract;//纸质合同编号
+	private String title;		// 申购标题
 	private String supplier;		// 供应商名称
 	private String contracttitle;		// 合同名称
 	private String purchasenum;		// 采购单号
 	private String supplierNum;	//供应商编号
 	private String caigouname;		// 乙方
-	private Double money;		// 应付金额
+	private int quantity;		// 数量
+	private Double unitprice;		// 单价
+	private Double money;		// 采购金额
+	private String file;//附件
 	private String status="0";		// 合同状态(0:未完成  1:完成)
 	private String remarks;//备注信息
-	private String createdate;//创建时间
+	private String createdate;//签订日期
 	private String beginDate;//开始日期
 	private String endDate;//结束日期
 	private String delFlag="0";//是否删除
@@ -78,7 +82,34 @@ public class AccountContract {
 		this.caigouname = caigouname;
 	}
 	
-	
+	/**
+	 * @return the quantity
+	 */
+	public int getQuantity() {
+		return quantity;
+	}
+
+	/**
+	 * @param quantity the quantity to set
+	 */
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	/**
+	 * @return the unitprice
+	 */
+	public Double getUnitprice() {
+		return unitprice;
+	}
+
+	/**
+	 * @param unitprice the unitprice to set
+	 */
+	public void setUnitprice(Double unitprice) {
+		this.unitprice = unitprice;
+	}
+
 	public Double getMoney() {
 		return money;
 	}
@@ -181,6 +212,34 @@ public class AccountContract {
 	 */
 	public void setCreatedate(String createdate) {
 		this.createdate = createdate;
+	}
+
+	/**
+	 * @return the papercontract
+	 */
+	public String getPapercontract() {
+		return papercontract;
+	}
+
+	/**
+	 * @param papercontract the papercontract to set
+	 */
+	public void setPapercontract(String papercontract) {
+		this.papercontract = papercontract;
+	}
+
+	/**
+	 * @return the file
+	 */
+	public String getFile() {
+		return file;
+	}
+
+	/**
+	 * @param file the file to set
+	 */
+	public void setFile(String file) {
+		this.file = file;
 	}
 	
 }

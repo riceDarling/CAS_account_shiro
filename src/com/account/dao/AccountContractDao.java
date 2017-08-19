@@ -18,7 +18,7 @@ public interface AccountContractDao {
 	void save(AccountContract accountContract);
 
 	void delete(String id);
-
+    void update(AccountContract accountContract);
 	void updateContractStatus(String id);
 
 	void updateContractStatustwo(String id);

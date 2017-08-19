@@ -1,7 +1,4 @@
-<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
-<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
-	<div class="col-md-12">
+<div class="col-md-12">
 		<div class="panel panel-cascade">
 			<div class="panel-heading">
 				<h3 class="panel-title">
@@ -11,7 +8,7 @@
 			<div class="panel-body">
 						<form class="form-horizontal cascade-forms" method="post" action="#" name="signup_form" id="signup_form" novalidate="novalidate">
 							<div class="form-group">
-								<label class="col-lg-3 col-md-3 control-label">采购标题：</label> 
+								<label class="col-lg-3 col-md-3 control-label">申购标题：</label> 
 								<div class="col-lg-9 col-md-9">
 								<select  name="purchasenumtitle" id="purchasenumtitle">
 								</select>
@@ -62,12 +59,14 @@
 				<table class="table table-bordered table-condensed table-hover" >
 					<thead>
 						<tr>
-							<th class="visible-lg">采购标题</th>
+							<th class="visible-lg">申购标题</th>
 							<th class="visible-lg">供应商</th>
 							<th class="visible-lg">合同名称</th>
 							<th class="visible-lg">合同编号</th>
+							<th class="visible-lg">纸质合同编号</th>
 							<th class="visible-lg">合同金额</th>
 							<th class="visible-lg">签订时间</th>
+							<th class="visible-lg">附件</th>
 							<th class="visible-lg">合同状态</th>
 							<th class="visible-lg">操作</th>
 						</tr>
@@ -90,30 +89,7 @@
 		autoclose : 1,
 	});
 	 $(function(){
-		 $.ajax({
-				url : "http://" + IP_config + "/account/accountContractController/findList",
-				type : "post",
-				success : function(data) {
-					for ( var index in data.obj) {
-						var content = "<tr>"
-						content += "<td>" + data.obj[index].title + "</td>"
-						content += "<td>" + data.obj[index].supplier + "</td>"
-						content += "<td>" + data.obj[index].contracttitle + "</td>"
-						content += "<td>" + data.obj[index].contractnum + "</td>"
-						content += "<td>" + data.obj[index].money + "</td>"
-						content += "<td>" + data.obj[index].createdate + "</td>"
-						if (data.obj[index].status == 0) {
-							content += "<td>未完成</td>"
-						} else {
-							content += "<td>已完成</td>"
-						}
-						  content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
-				           content += "</tr>"
-						$("#secondPageTbody").append(content)
-					}
-				}
-		 })
-			//获取采购订货单标题
+		//获取采购订货单标题
 			$.ajax({
 				url : "http://"+IP_config+"/account/accountPurchase/getAccountPurchaseTitle",
 				type : "post",
@@ -126,6 +102,31 @@
 
 				}
 			});
+		 $.ajax({
+				url : "http://" + IP_config + "/account/accountContractController/findList",
+				type : "post",
+				success : function(data) {
+					for ( var index in data.obj) {
+						var content = "<tr>"
+						content += "<td>" + data.obj[index].title + "</td>"
+						content += "<td>" + data.obj[index].supplier + "</td>"
+						content += "<td>" + data.obj[index].contracttitle + "</td>"
+						content += "<td>" + data.obj[index].contractnum + "</td>"
+						content += "<td>" + data.obj[index].papercontract + "</td>"
+						content += "<td>" + data.obj[index].money + "</td>"
+						content += "<td>" + data.obj[index].createdate + "</td>"
+						content += "<td type='file' value='"+ data.obj[index].file +"'>"+ data.obj[index].file +"</td>"
+						if (data.obj[index].status == 0) {
+							content += "<td>未完成</td>"
+						} else {
+							content += "<td>已完成</td>"
+						}
+						  content += "<td><button name='"+data.obj[index].id+"'  value='"+data.obj[index].title+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+						 content += "</tr>"
+						$("#secondPageTbody").html(content)
+					}
+				}
+		 })
 	 });
 
 	$("#btnCancel").click(function() {
@@ -154,16 +155,18 @@
 						content += "<td>" + data.obj[index].supplier + "</td>"
 						content += "<td>" + data.obj[index].contracttitle + "</td>"
 						content += "<td>" + data.obj[index].contractnum + "</td>"
+						content += "<td>" + data.obj[index].papercontract + "</td>"
 						content += "<td>" + data.obj[index].money + "</td>"
 						content += "<td>" + data.obj[index].createdate + "</td>"
+						content += "<td type='file' value='"+ data.obj[index].file +"'>"+ data.obj[index].file +"</td>"
 						if (data.obj[index].status == 0) {
 							content += "<td>未完成</td>"
 						} else {
 							content += "<td>已完成</td>"
 						}
-						  content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
-				           content += "</tr>"
-						$("#secondPageTbody").append(content)
+						  content += "<td><button name='"+data.obj[index].id+"' value='"+data.obj[index].title+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+						  content += "</tr>"
+						$("#secondPageTbody").html(content)
 					}
 				}
 			}
@@ -174,6 +177,8 @@
 	 $("#secondPageTbody").on("click", ".selectCon", function() {
 			var id = $(this).attr("name");
 			$.cookie("accountContract_id", id);
+			var title = $(this).val();
+			$.cookie("accountContract_title", title);
 			$("#index_content").load("accountContractForm2.html");
 		});
 	 $("#secondPageTbody").on("click", ".selectCon2", function() {

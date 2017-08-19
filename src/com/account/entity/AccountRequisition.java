@@ -1,10 +1,16 @@
 package com.account.entity;
 
 import org.hibernate.validator.constraints.Length;
+
 import java.util.Date;
+
+import com.account.utils.PageUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.validation.constraints.NotNull;
+
 import java.util.List;
+
 import com.google.common.collect.Lists;
 
 /**
@@ -26,6 +32,26 @@ public class AccountRequisition extends BaseModel {
 	private List<AccountRequisitionDetail> accountRequisitionDetailList; // 子表列表
 
 	private String inquiry;// 询价人
+
+	PageUtil<AccountRequisition> page;
+
+	private String act_checker;// 当前节点办理人
+
+	public String getAct_checker() {
+		return act_checker;
+	}
+
+	public void setAct_checker(String act_checker) {
+		this.act_checker = act_checker;
+	}
+
+	public PageUtil<AccountRequisition> getPage() {
+		return page;
+	}
+
+	public void setPage(PageUtil<AccountRequisition> page) {
+		this.page = page;
+	}
 
 	public String getInquiry() {
 		return inquiry;

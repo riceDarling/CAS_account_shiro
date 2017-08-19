@@ -56,7 +56,19 @@ public class AccountContractController {
 		}
 		return rm;
 	}
-
+	@ResponseBody
+	@RequestMapping(value = "getById")
+	public ResponseModel<AccountContract> getById(HttpServletRequest req) {
+		ResponseModel<AccountContract> rm = new ResponseModel<AccountContract>();
+		try {
+			String id = req.getParameter("id");
+			AccountContract accountContract = accountContractService.getById(id);
+			rm.isSuccessMsg(accountContract, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
 	@ResponseBody
 	@RequestMapping(value = "delete")
 	public ResponseModel<String> delete(HttpServletRequest req) {
@@ -70,24 +82,5 @@ public class AccountContractController {
 		}
 		return rm;
 	}
-	/*
-	 * @RequestMapping(value = "form") public String form(AccountContract accountContract, Model model) { model.addAttribute("accountContract", accountContract); return "modules/erp/accountContractForm"; }
-	 * 
-	 * @RequestMapping(value = "form2") public String form2(AccountContract accountContract, Model model) { model.addAttribute("accountContract", accountContract); return "modules/erp/accountContractForm2"; }
-	 */
-
-	/*
-	 * @ResponseBody
-	 * 
-	 * @RequiresPermissions("erp:accountContract:view")
-	 * 
-	 * @RequestMapping(value = "getCompanyById/{id}") public String getCompanyById(@PathVariable("id") String id) { return accountContractService.get(id).getCompany(); }
-	 * 
-	 * @ResponseBody
-	 * 
-	 * @RequiresPermissions("erp:accountContract:view")
-	 * 
-	 * @RequestMapping(value = "getMoneyById/{id}") public Double getMoneyById(@PathVariable("id") String id) { return accountContractService.get(id).getMoney(); }
-	 */
-
+	
 }

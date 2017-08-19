@@ -18,4 +18,6 @@ public interface AccountRequisitionService {
 	public void saveAudit(AccountRequisition accountRequisition);
 	
 	void delete(String requisitionid);
+	
+	void findPage(AccountRequisition entity);
 }

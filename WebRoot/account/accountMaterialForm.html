@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title></title>
-<meta name="keywords" content="keyword1,keyword2,keyword3">
-<meta name="description" content="this is my page">
-<meta name="content-type" content="text/html; charset=UTF-8">
-</head>
-<body>
-	<div class="col-md-12">
+<div class="col-lg-12 col-md-12">
 		<div class="panel panel-cascade">
 			<div class="panel-heading">
 				<h3 class="panel-title">
@@ -17,48 +8,63 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-md-12">
+	<div class="col-lg-12 col-md-12">
 		<div class="panel">
-		<ul class="nav nav-tabs">
-		<li class="active"><a href="">物资添加</a></li></ul>
 			<div class="panel-body">
 				<form id="material_form" class="form-horizontal row-border">
 					<div class="form-group" >
-						<label class="col-sm-3 control-label">物资名称：</label>
-						<div class="col-sm-6">
+						<label class="col-lg-1 col-sm-3 control-label">物资名称：</label>
+						<div class="col-lg-3 col-sm-6">
 							<input type="hidden" name="id" id="id"/>
 							<input type="hidden" name="materialNum" id="materialNum"/>
 							<input name="materialName" class="form-control" id="materialName"/>
 						</div>
 					</div>
 					<div class="form-group" >
-						<label class="col-sm-3 control-label">规格型号：</label>
-						<div class="col-sm-6">
+						<label class="col-lg-1 col-sm-3 control-label">规格型号：</label>
+						<div class="col-lg-3 col-sm-6">
 							<input name="size" class="form-control" id="size" />
 						</div>
 					</div>
 					<div class="form-group" >
-						<label class="col-sm-3 control-label">成分含量：</label>
-						<div class="col-sm-6">
+						<label class="col-lg-1 col-sm-3 control-label">成分含量：</label>
+						<div class="col-lg-3 col-sm-6">
 							<input name="ingredient" class="form-control" id="ingredient" />
 						</div>
 					</div>
 					<div class="form-group" >
-						<label class="col-sm-3 control-label">计量单位：</label>
-						<div class="col-sm-6">
+						<label class="col-lg-1 col-sm-3 control-label">计量单位：</label>
+						<div class="col-lg-3 col-sm-6">
 							<input name="unit" class="form-control" id="unit" />
 						</div>
 					</div>
 					<div class="form-group" >
-						<label class="col-sm-3 control-label">备注信息：</label>
-						<div class="col-sm-6">
+						<label class="col-lg-1 col-sm-3 control-label">备注信息：</label>
+						<div class="col-lg-3 col-sm-6">
 							<textarea name="remarks" class="form-control" id="remarks" rows="2" class="input-xxlarge required"></textarea>
 						</div>
 					</div>
+					<div class="form-group" >
+						<label class="col-lg-1 col-sm-3 control-label">选择供应商：</label>
+						<div class="col-lg-3 col-sm-2">
+							<select name="" class="form-control" id="supplier">
+							</select>
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-lg-1 col-sm-3 control-label">供应商列表：</label>
+						<div class="col-lg-3 col-sm-2">
+							<table class="table table-striped" id="materialSupplier">
+								
+							</table>
+						</div>
+						<div class="col-lg-3 col-sm-3"></div>
+					</div>
+					
 				</form>
 				<div class="panel-footer">
 					<div class="row">
-						<div class="col-sm-6 col-sm-offset-3">
+						<div class="col-lg-12 col-sm-6 col-lg-offset-10 col-sm-offset-10">
 							<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /> 
 							<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)" />
 						</div>
@@ -72,6 +78,32 @@
 		$("[href_1]").click(function() {
 			$("#index_content").load($(this).attr("href_1"));
 		});
+		
+		//获取供应商
+		$.ajax({
+			url : "http://" + IP_config + "/account/supplier/findList",
+			type : "post",
+			dataType : "json",
+			xhrFields : {
+				withCredentials : true
+			},
+			success : function(data) {
+				var html = "<option>请选择</option>";
+				for (i in data.obj.list) {
+					html += "<option value="+data.obj.list[i].supplier+" supplierNum="+data.obj.list[i].supplierNum+" >" + data.obj.list[i].supplier + "</option>";
+				}
+				$("#supplier").html(html);
+
+			}
+		});
+		
+		$("#supplier").change(function(){
+			var supplier=$(this).val();
+			var supplierNum=$("#supplier").find("option:selected").attr("supplierNum");
+			var html='<tr><td supplierNum="'+supplierNum+'">'+supplier+'</td><td></td></tr>';
+			$("#materialSupplier").append(html);
+		});
+		
 		$(function(){
 			var ordernum = "25-";
 			var date = new Date();
@@ -97,16 +129,37 @@
 		
 		//提交
 		$("#submitbtn").click(function() {
-			var data = $("#material_form").serialize();
+			var materialSupplier=new Array();
+			$("#materialSupplier tr").each(function(){
+				var json={};
+				json["supplierid"]=$(this).children("td").eq(0).attr("supplierNum");
+				materialSupplier.push(json);
+			});
+			var data = {
+				"id":$("#id").val(),
+				"materialNum":$("#materialNum").val(),
+				"materialName":$("#materialName").val(),
+				"size":$("#size").val(),
+				"ingredient":$("#ingredient").val(),
+				"unit":$("#unit").val(),
+				"remarks":$("#remarks").val(),
+				"materialSupplier":materialSupplier
+			};	
 			//alert(data.id);
 			$.ajax({
 				url : "../material/insert",
 				type : "post",
-				data : data,
+				contentType:"application/json;charset=UTF-8",
+				data:JSON.stringify(data),
 				dataType : "json",
-				success : function (){
-					layer.alert("操作成功");
-					$("#index_content").load("accountMaterialList.html");
+				success : function (data){
+					if(data.success){
+						layer.alert(data.msg);
+						$("#index_content").load("accountMaterialList.html");
+					}else{
+						layer.alert(data.msg);
+					}
+					
 				}
 			});
 							
@@ -114,7 +167,7 @@
 		
 		$(document).ready(function(){
 			//alert(material_editId);
-			if(material_editId != null) {
+			if(material_editId != null&&material_editId !="null") {
 				$.ajax({
 					url : "../material/selectById",
 					type : "post",
@@ -130,10 +183,16 @@
 						$("#ingredient").val(data.obj.ingredient);
 						$("#unit").val(data.obj.unit);
 						$("#remarks").val(data.obj.remarks);
+						if(data.obj.materialSupplier.length>0){
+							for(i in data.obj.materialSupplier){
+								supplierid=data.obj.materialSupplier[i].supplierid;
+								supplier=data.obj.materialSupplier[i].supplier;
+								var html='<tr><td supplierNum="'+supplierid+'">'+supplier+'</td><td></td></tr>';
+								$("#materialSupplier").append(html);
+							}
+						}
 					}
 				});
 			}
 		});
 	</script>
-</body>
-</html>

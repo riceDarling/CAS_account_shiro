@@ -14,11 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.account.dao.AccountInputDetailDao;
 import com.account.dao.AccountInquiryDao;
+import com.account.dao.AccountInquiryDetailDao;
 import com.account.dao.AccountRequisitionActDao;
 import com.account.dao.AccountRequisitionDao;
 import com.account.dao.AccountRequisitionDetailDao;
+import com.account.dao.MaterialSupplierMapper;
+import com.account.entity.AccountInputDetail;
 import com.account.entity.AccountInquiry;
+import com.account.entity.AccountInquiryDetail;
 import com.account.entity.AccountRequisition;
 import com.account.entity.AccountRequisitionAct;
 import com.account.entity.AccountRequisitionDetail;
@@ -48,6 +53,12 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 
 	@Autowired
 	private AccountInquiryDao accountInquiryDao;
+	
+	@Autowired
+	private AccountInquiryDetailDao accountInquiryDetailDao;
+	
+	@Autowired
+	private MaterialSupplierMapper materialSupplierMapper;
 
 	public AccountRequisition get(String id) {
 		AccountRequisition accountRequisition = accountRequisitionDao.get(id);
@@ -191,9 +202,37 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 			entity.setCreateBy(accountRequisition.getChecker());
 			entity.setId(UUID.randomUUID().toString().replaceAll("-", ""));
 			accountInquiryDao.insert(entity);
-			
+			//询价子表(申购单中的所有物资，系统中提供物资的供应商)
+			//根据物资查询所有提供的企业，存进询价单子表
+			List<Map<String, Object>> list=accountRequisitionDetailDao.getDetailMapByparentid(accountRequisition.getId());
+			for (Map<String, Object> map : list) {
+				String materialNum=(String) map.get("materialNum");
+				List<Map<String, Object>> materialSupplier=materialSupplierMapper.selectMapByMaterialNum(materialNum);
+				for (Map<String, Object> material : materialSupplier) {
+					String ai_supplierNum=(String) material.get("supplierNum");//供应商编号
+					String ai_supplier=(String) material.get("supplier");//供应商名称
+					String ai_materialNum=(String) material.get("materialNum");//物资编号
+					String ai_materialName=(String) material.get("materialName");//物资名称
+					String ai_size=(String) material.get("size");//物资型号
+					AccountInquiryDetail accountInquiryDetail=new AccountInquiryDetail();
+					accountInquiryDetail.setSuppliercode(ai_supplierNum);
+					accountInquiryDetail.setSupplier(ai_supplier);
+					accountInquiryDetail.setMaterialcode(ai_materialNum);
+					accountInquiryDetail.setMaterialname(ai_materialName);
+					accountInquiryDetail.setSize(ai_size);
+					
+					accountInquiryDetail.setMaker(loginAdmin.getId().toString());
+					accountInquiryDetail.setCreateBy(loginAdmin.getId().toString());
+					accountInquiryDetail.setCreateDate(new Date());
+					accountInquiryDetail.setOrdernum(entity.getOrdernum());
+					accountInquiryDetail.setInquirydetailnum(entity.getId());
+					accountInquiryDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+					accountInquiryDetailDao.insert(accountInquiryDetail);
+					
+				}
+			}
 			//询价办理
-			AccountRequisitionAct next_act = new AccountRequisitionAct();
+			/*AccountRequisitionAct next_act = new AccountRequisitionAct();
 			next_act.setActindex(1);
 			next_act.setRequisitionId(entity.getId());
 			next_act.setRequisitionName(loginAdmin.getId().toString());
@@ -201,7 +240,7 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 			next_act.setStep(0);
 			next_act.setState(0);
 			next_act.setCheckerName(accountRequisition.getChecker());
-			accountRequisitionActDao.insert(next_act);
+			accountRequisitionActDao.insert(next_act);*/
 		} else {
 			// 返回上一个节点驳回目标人为上一节点（逐级驳回）
 			AccountRequisitionAct next_act = new AccountRequisitionAct();
@@ -221,6 +260,12 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 	public void delete(String requisitionid) {
 		accountRequisitionDao.delete(requisitionid);
 		accountRequisitionActDao.deleteByRequisitionId(requisitionid);
+	}
+
+	@Override
+	public void findPage(AccountRequisition entity) {
+		List<AccountRequisition> list=accountRequisitionDao.findList(entity);
+		entity.getPage().setList(list);
 	}
 
 }

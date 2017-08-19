@@ -1,7 +1,5 @@
 package com.account.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,9 +18,14 @@ public class AccountContractServiceImpl implements AccountContractService {
 
 	@Override
 	public void save(AccountContract accountContract) {
-		accountContract.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-		accountContract.setCreatedate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-		accountContractDao.save(accountContract);
+		if (accountContract.getId() != null&&accountContract.getId().trim().length()>0) {
+			accountContractDao.update(accountContract);
+		} else {
+			accountContract.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+			accountContractDao.save(accountContract);
+		}
+		
+		
 	}
 
 	@Override
@@ -53,6 +56,10 @@ public class AccountContractServiceImpl implements AccountContractService {
 	@Override
 	public AccountContract getById(String id) {
 		return accountContractDao.getById(id);
+	}
+	@Override
+	public void update(AccountContract accountContract) {
+		accountContractDao.update(accountContract);
 	}
 
 }

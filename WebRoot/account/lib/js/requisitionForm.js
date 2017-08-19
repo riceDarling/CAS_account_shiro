@@ -86,7 +86,7 @@ $("#signup_form").on("click","#requisitionFormSubmit",function(){
 			if(data.success){
 				//提交成功
 				layer.alert(data.msg);
-				$("#index_content").load("actTaskHistoricList.html");
+				$("#index_content").load("requisitionList.html");
 			}else{
 				//提交失败提示
 				layer.alert(data.msg);

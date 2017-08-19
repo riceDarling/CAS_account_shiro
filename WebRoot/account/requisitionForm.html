@@ -1,25 +1,17 @@
-<!-- Page Script File  =============================-->
-<script src="js/validate.js"></script>
-<script src="js/validation-custom.js"></script>
-  <link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-
- 
- <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
- <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
-
  <script src="lib/js/requisitionForm.js"></script>
- 
-<!-- Form elements -->
 <div class="row">
 	<div class="col-md-12">
+	<div class="panel panel-cascade">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="fa fa-pencil-square"></i><a href_1="requisitionList.html">申购单列表</a>
+			<i class="fa fa-pencil-square"></i> 申购单添加
+		</h3>
+	</div>
 		<div class="panel panel-cascade">
 			<div class="panel-heading">
 				<h3 class="panel-title">
 					创建申请单
-					<!-- <span class="pull-right">
-						<a  href="#" class="panel-minimize"><i class="fa fa-chevron-up"></i></a>
-						<a  href="#"  class="panel-close"><i class="fa fa-times"></i></a>
-					</span> -->
 				</h3>
 			</div>
 			<div class="panel-body ">
@@ -107,7 +99,7 @@
 									</div>
 							</div>
 							<div class="form-actions">
-								<input type="button" value="提交" class="btn bg-primary text-white btn-lg" id="requisitionFormSubmit">
+								<input type="button" value="提交" style="float:right;margin-right:15px;" class="btn bg-primary text-white btn-lg" id="requisitionFormSubmit">
 							</div>
 						</form>
 					</div>
@@ -118,6 +110,9 @@
 	</div>
 </div>
 <script>
+$("[href_1]").click(function(){
+	$("#index_content").load($(this).attr("href_1"));
+});	
 $(".form_datetime").datetimepicker({
 	language:  'zh-CN', 
 	minView: "month", //选择日期后，不会再跳转去选择时分秒 
