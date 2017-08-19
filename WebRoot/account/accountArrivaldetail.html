@@ -1,0 +1,71 @@
+
+<div class="col-md-12">
+	<div class="panel panel-cascade">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="fa fa-pencil-square"></i><a href_1="accountArrivalList.html"> 到货列表</a>
+			</h3>
+		</div>
+	</div>
+	<h4 style="text-align:center;">
+		<span id="title"></span>到货详细信息
+	</h4>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<table class="table table-bordered table-condensed table-hover" id="contentTable2">
+					<thead>
+						<tr>
+							<th>合同名称</th>
+							<th>物资名称</th>
+							<th>到货日期</th>
+							<th>规格型号</th>
+							<th>应到数量</th>
+							<th>实到数量</th>
+						</tr>
+					</thead>
+					<tbody id="secondPageTbodydetail">
+					</tbody>
+				</table>
+			</div>
+			<div class="form-actions">
+				<input id="btnCancel" class="btn" type="button" value="返回" />
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$("[href_1]").click(function() {
+		$("#index_content").load($(this).attr("href_1"));
+	});
+	$.ajax({
+		url : "http://" + IP_config + "/account/accountArrivalController/lastForm",
+		type : 'post',
+		dataType : 'json',
+		data : {
+			"id" : $.cookie("accountArrivalList_id")
+		},
+		success : function(data) {
+			$.cookie("accountArrivalList_id", null);
+			if (data.success) {
+				for ( var index in data.obj) {
+					var content = "<tr>"
+					content += "<td>" + data.obj[index].contractTitle + "</td>"
+					content += "<td>" + data.obj[index].materialName + "</td>"
+					content += "<td>" + data.obj[index].arrivalDate + "</td>"
+					content += "<td>" + data.obj[index].size + "</td>"
+					content += "<td>" + data.obj[index].tobeNum + "</td>"
+					content += "<td>" + data.obj[index].arrivalNum + "</td>"
+					content += "</tr>"
+					$("#secondPageTbodydetail").append(content)
+				}
+			} else {
+				layer.alert(data.msg);
+			}
+		}
+	});
+	$("#btnCancel").click(function() {
+		$("#index_content").load("accountArrivalList.html");
+
+	});
+</script>

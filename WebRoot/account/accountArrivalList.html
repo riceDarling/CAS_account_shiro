@@ -1,0 +1,139 @@
+
+<div class="col-md-12">
+	<div class="panel panel-cascade">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="fa fa-pencil-square"></i>到货列表 <i class="fa fa-pencil-square"></i> <a href_1="accountArrivalForm.html">到货添加</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+				<label class="col-lg-2 col-md-2 control-label">合同名称：</label>
+				<div class="col-lg-2 col-md-2">
+					<input name="contracttitle" type="text" htmlEscape="false" class="form-control form-cascade-control" />
+				</div>
+				<label class="col-lg-2 col-md-2 control-label">供应商：</label>
+				<div class="col-lg-2 col-md-2">
+					<input name="supplier" type="text" htmlEscape="false" class="form-control form-cascade-control" />
+				</div>
+				<label class="col-lg-2 col-md-2 control-label">合同状态：</label>
+				<div class="col-lg-2 col-md-2">
+					<select name="status" class="form-control form-cascade-control">
+						<option value="">请选择</option>
+						<option value="0">未完成</option>
+						<option value="1">已完成</option>
+					</select>
+				</div>
+		</div>
+		<div class="panel-footer">
+			<div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+					<input id="btnCancel" class="btn btn-primary" type="button" value="查询" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-md-12">
+	<div class="panel">
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="visible-lg">合同名称</th>
+						<th class="visible-lg">供应商</th>
+						<th class="visible-lg">合同状态</th>
+						<th class="visible-lg">操作</th>
+					</tr>
+				</thead>
+				<tbody id="secondPageTbody">
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+	$("[href_1]").click(function() {
+		$("#index_content").load($(this).attr("href_1"));
+	});
+	$("#btnCancel").click(function() {
+		var contracttitle = $("[name='contracttitle']").val();
+		var supplier = $("[name='supplier']").val();
+		var status = $("[name='status']").val();
+		$.ajax({
+			url : "http://" + IP_config + "/account/accountArrivalController/findList",
+			type : "post",
+			async : false,
+			data : {
+				"contracttitle" : contracttitle,
+				"supplier" : supplier,
+				"status" : status
+			},
+			success : function(data) {
+				if (data.success) {
+					$("#secondPageTbody").empty();
+					for ( var index in data.obj) {
+						var content = "<tr>"
+						content += "<td>" + data.obj[index].contractTitle + "</td>"
+						content += "<td>" + data.obj[index].supplier + "</td>"
+						if (data.obj[index].status == 0) {
+							content += "<td>未完成</td>"
+						} else {
+							content += "<td>已完成</td>"
+						}
+						content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+						content += "</tr>"
+						$("#secondPageTbody").html(content)
+					}
+				}
+			}
+		})
+	});
+	$(function() {
+		$.ajax({
+			url : "http://" + IP_config + "/account/accountArrivalController/findList",
+			type : "post",
+			async : false,
+			success : function(data) {
+				if (data.success) {
+					for ( var index in data.obj) {
+						var content = "<tr>"
+						content += "<td>" + data.obj[index].contractTitle + "</td>"
+						content += "<td>" + data.obj[index].supplier + "</td>"
+						if (data.obj[index].status == 0) {
+							content += "<td>未完成</td>"
+						} else {
+							content += "<td>已完成</td>"
+						}
+						content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+						content += "</tr>"
+						$("#secondPageTbody").html(content)
+					}
+				}
+			}
+		})
+	});
+	$("#secondPageTbody").on("click", ".selectCon", function() {
+		var id = $(this).attr("name");
+		$.cookie("accountArrivalList_id", id);
+		$("#index_content").load("accountArrivaldetail.html");
+	});
+	$("#secondPageTbody").on("click", ".selectCon2", function() {
+		var id = $(this).attr("name");
+		$.ajax({
+			url : "http://" + IP_config + "/account/accountArrivalController/delete",
+			type : "post",
+			dataType : "json",
+			data : {
+				"id" : id
+			},
+			success : function(data) {
+				if (data.success) {
+					layer.alert(data.msg);
+					$("#index_content").load("accountArrivalList.html");
+				} else {
+					layer.alert(data.msg);
+				}
+			}
+		});
+	});
+</script>

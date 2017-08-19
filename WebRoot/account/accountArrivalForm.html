@@ -1,0 +1,162 @@
+<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-pencil-square"></i><a href_1="accountArrivalList.html"> 到货列表</a> <i class="fa fa-pencil-square"></i>到货添加
+				</h3>
+			</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">合同编号：</label> 
+					<select name="title" id="contractNumtitle">
+					</select>
+				</div>
+			</div>
+			<div class="panel-footer">
+				<div class="row">
+					<div class="col-sm-6 col-sm-offset-3">
+						<input id="selectCon" class="btn btn-primary" type="button" value="查询" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<span><b>供应商名称:</b><input type="text" id="supplier" class="form-control" disabled="disabled" /></span> <span><input type="hidden" id="contractId" /></span>
+				<table class="table table-bordered table-condensed table-hover" id="contentTable5">
+					<thead>
+						<tr>
+							<th>物资名称</th>
+							<th>规格型号</th>
+							<th>合同数量</th>
+							<th>应到数量</th>
+							<th>实到数量</th>
+						</tr>
+					</thead>
+					<tbody id="tb_data">
+					</tbody>
+				</table>
+			</div>
+			<div class="panel-body">
+				<form class="form-horizontal row-border">
+					<div class="control-group">
+					<label class="col-lg-2 col-md-3 control-label">到货日期：</label>
+								<div class="col-lg-4 col-md-3">
+									<input size="16" type="text" value="" readonly class="form_datetime form-control"  name="arrivalDate" id="arrivalDate">
+								</div>
+					</div>
+					<div class="control-group">
+						<input id="btnSubmit" class="btn btn-primary" type="button" value="保 存" /> 
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$("[href_1]").click(function() {
+			$("#index_content").load($(this).attr("href_1"));
+		});
+		$(".form_datetime").datetimepicker({
+			language : 'zh-CN',
+			minView : "month", //选择日期后，不会再跳转去选择时分秒 
+			format : 'yyyy-mm-dd',
+			todayBtn : 1,
+			autoclose : 1,
+		});
+		$(function() {
+			//获取合同编号 
+			$.ajax({
+				url : "http://" + IP_config + "/account/accountContractController/findList",
+				type : "post",
+				success : function(data) {
+					var html = "<option value=''></option>";
+					for (i in data.obj) {
+						html += "<option value="+data.obj[i].contractnum+">" + data.obj[i].contractnum + "</option>";
+
+					}
+					$("#contractNumtitle").html(html);
+
+				}
+			});
+			
+			});
+		$("#selectCon").click(function() {
+			var contractNum = $("#contractNumtitle").val();
+			$.ajax({
+				url : "http://" + IP_config + "/account/accountArrivalController/addform",
+				type : "post",
+				dataType : "json",
+				data : {
+					"contractNum" : contractNum
+				},
+				success : function(data) {
+					$("#supplier").val(data.obj[0].supplier);
+					$("#contractId").val(data.obj[0].id);
+
+					var html = '';
+					for (var i = 0; i < data.obj.length; i++) {
+						if (data.obj[i].materialName != undefined) {
+							html += "<tr>";
+							html += "<td value="+data.obj[i].contractId+">" + data.obj[i].materialName + "</td>";
+							html += "<td>" + data.obj[i].size + "</td>";
+							html += "<td>" + data.obj[i].quantity + "</td>";
+							html += "<td>"+(data.obj[i].quantity-data.obj[i].arrivalNum)+"</td>";
+							if ((data.obj[i].quantity - data.obj[i].arrivalNum) == 0) {
+								html += "<td><input type='text'  class='form-control form-cascade-control input-small required' required /></td>";
+							} else {
+								html += "<td><input type='text' class='form-control form-cascade-control input-small required' required /></td>";
+							}
+							html += "</tr>";
+						}
+					}
+					$("#tb_data").html(html);
+				}
+			});
+			/* 
+				保存
+			 */
+			 $("#btnSubmit").click(function() {
+				 $("#btnSubmit").attr("disabled", true); 
+				var arrival = {}; //传参对象
+				var trLen = $("#tb_data tr").length; //列表高度
+				var contractId = $("#contractId").val(); //合同ID
+				var arrivalDate = $("#arrivalDate").val(); //到货时间
+				var arrivalArr = new Array(); //参数数组
+				arrival.contractId = contractId;
+				arrival.arrivalDate = arrivalDate;
+				var a = 0;
+				for (var i = 0; i < trLen; i++) {
+					var materialId = $("#tb_data tr:eq(" + i + ") td:eq(0)").attr("value");
+					var tobeNum = $("#tb_data tr:eq(" + i + ") td:eq(3)").text();
+					var arrivalNum = $("#tb_data tr:eq(" + i + ") td:eq(4) input").val();
+					if (arrivalNum != null && arrivalNum != "") {
+						a++;
+					}
+					arrival.materialId = materialId;
+					arrival.tobeNum = tobeNum;
+					arrival.arrivalNum = arrivalNum;
+						$.ajax({
+							url :"http://" + IP_config + "/account/accountArrivalController/save",
+							dataType: "json",
+							data : arrival,
+							xhrFields: {
+								withCredentials: true
+							},
+							type: "POST"
+						});
+				}
+				if (a > 0) {
+					//提交成功
+					layer.alert("保存成功！");
+					$("#index_content").load("accountArrivalList.html");
+				} else {
+					alert("请将信息填写完整");
+				}
+			});
+		});
+	</script>

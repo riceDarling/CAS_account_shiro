@@ -1,0 +1,180 @@
+<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-pencil-square"></i><a href_1="accountInputList.html"> 入库单列表</a>
+					 <i class="fa fa-pencil-square"></i>待入库添加
+				</h3>
+			</div>
+		</div>
+	</div>
+	<h4 style="text-align:center;">
+		<span id="title"></span>待入库列表
+	</h4>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<table class="table table-bordered table-condensed table-hover" id="contentTable2">
+					<thead>
+						<tr>
+							<th hidden="true"></th>
+							<th hidden="true"></th>
+							<th>物资名称</th>
+							<th>规格型号</th>
+							<th>到货数量</th>
+							<th>入库数量</th>
+							<th>仓库</th>
+							<th>货位编码</th>
+							<th>备注信息</th>
+						</tr>
+					</thead>
+					<tbody id="secondPageTbody">
+					</tbody>
+				</table>
+			</div>
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="">入库编辑</a></li>
+			</ul>
+			<div class="panel-body">
+				<form>
+					<div class="control-group" hidden="true">
+						<label class="col-lg-2 col-md-3 control-label">入库单号：</label>
+						<div class="col-lg-4 col-md-3">
+							<input name="inputnum" htmlEscape="false" maxlength="37" class="input-xlarge required form-control" id="inputnum" />
+						</div>
+					</div>
+					<div class="control-group">
+					<label class="col-lg-3 col-md-3 control-label">入库日期：</label>
+								<div class="col-lg-9 col-md-9">
+									<input size="16" type="text" class="form_datetime form-control" name="inputdate" id="inputdate" >
+								</div>
+					</div>
+					<div class="control-group" hidden="true">
+						<label class="col-lg-3 col-md-3 control-label">入库类别：</label>
+						<div class="col-lg-9 col-md-9">
+							<input name="category" htmlEscape="false" maxlength="255" class="input-xlarge form-control" />
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="col-lg-3 col-md-3 control-label">备注信息：</label>
+						<div class="col-lg-9 col-md-9">
+							<textarea name="remarks" htmlEscape="false" rows="4" maxlength="255" class="form-control"  id="remarks" />
+						</div>
+					</div>
+					<div class="form-actions">
+						<input id="submitbtn" class="btn btn-primary" type="button" value="保存" /> 
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	$("[href_1]").click(function() {
+		$("#index_content").load($(this).attr("href_1"));
+	});
+	$(".form_datetime").datetimepicker({
+		language : 'zh-CN',
+		minView : "month", //选择日期后，不会再跳转去选择时分秒 
+		format : 'yyyy-mm-dd',
+		todayBtn : 1,
+		autoclose : 1,
+	});	
+	var warehouse_housename="<option>请选择</option>";
+	//获取仓库列表
+	$.ajax({
+		url : "http://" + IP_config + "/account/warehouse/findList",
+		type : "post",
+		success : function(data) {
+			for (i in data.obj.list) {
+				warehouse_housename += "<option  value='"+data.obj.list[i].housename+"'>" + data.obj.list[i].housename + "</option>";
+			}
+		}
+	}); 
+		$(function() {
+			var ordernum = "30-";
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			var day = date.getDate();
+			if (month < 10) {
+				month = "0" + month;
+			}
+			if (day < 10) {
+				day = "0" + day;
+			}
+			ordernum = ordernum + year + month + day + "-";
+			var ordernumRandom = "";
+			for (var i = 0; i < 5; ++i) {
+				var num = Math.random();
+				num = parseInt(num * 10);
+				ordernumRandom += num;
+			}
+			ordernum += ordernumRandom;
+			$("#inputnum").val(ordernum);
+			$.ajax({
+				url : "http://" + IP_config + "/account/accountInputController/form",
+				type : "post",
+				success : function(data) {
+					for ( var index in data.obj) {
+						var content = "<tr>"
+						content += "<td hidden='true'><input onepluschecked type='checkbox' checked='checked' name='idxk' value='"+data.obj[index].inputnum+"' ></td> "
+						content += "<td hidden='true'>" + data.obj[index].inspectionnum + "</td>"
+						content += "<td>" + data.obj[index].materialname + "</td>"
+						content += "<td>" + data.obj[index].size + "</td>"
+						content += "<td>" + data.obj[index].receivedquantity + "</td>"
+						content += "<td>" + data.obj[index].receivedquantity + "</td>"
+						content += "<td> <select  class='warehouse'>"+warehouse_housename+"</select></td> "
+						content += "<td><select  name='location'><option value='请选择'></option><option value='货位1'>货位1</option><option value='货位2'>货位2</option><option value='货位3'>货位3</option></select></td>"
+						content += "<td>" + data.obj[index].inputremarks + "</td>"
+						content += "</tr>"
+						$("#secondPageTbody").html(content)
+					}
+				}
+			})
+			
+		});
+		
+		//提交保存
+		$("#submitbtn").click(function(){
+			
+				$("#submitbtn").attr("disabled", true);
+				var accountInput = {};
+				accountInput.inputnum= $("#inputnum").val();
+				accountInput.inputdate = $("#inputdate").val();
+				accountInput.remarks = $("#remarks").val();
+				var len = $("#secondPageTbody tr").length;
+				var aiArr = new Array();
+				for(var i = 0;i < len;i++){
+					var accountInputDetail = {};
+					accountInput.inspectionnum = $("#secondPageTbody tr:eq("+i+") td:eq(1)").text();
+					accountInputDetail.materialname = $("#secondPageTbody tr:eq("+i+") td:eq(2)").text();
+					accountInputDetail.size = $("#secondPageTbody tr:eq("+i+") td:eq(3)").text();
+					accountInputDetail.quantity=  $("#secondPageTbody tr:eq("+i+") td:eq(5)").text();
+					accountInputDetail.warehouse =  $("#secondPageTbody tr:eq("+i+") td:eq(6)").children("select").val();
+					accountInputDetail.location =  $("#secondPageTbody tr:eq("+i+") td:eq(7)").children("select").val();
+					accountInputDetail.remarks =  $("#secondPageTbody tr:eq("+i+") td:eq(8)").text();
+					aiArr.push(accountInputDetail);
+				}
+				accountInput.accountInputDetail = aiArr;
+				
+				$.ajax({
+					url:"http://" + IP_config + "/account/accountInputController/save",
+					type:"post",
+					contentType:"application/json;charset=UTF-8",
+					data:JSON.stringify(accountInput), 
+					async:false
+				}); 
+				if(aiArr!=null&&aiArr!=""){
+					layer.alert("入库成功");
+					$("#index_content").load("accountInputList.html");
+				}
+				else{
+					layer.alert("入库失败");
+					$("#index_content").load("accountInputForm.html");
+				}
+			
+		});
+	</script>

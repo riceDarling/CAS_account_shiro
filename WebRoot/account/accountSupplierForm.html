@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-pencil-square"></i><a href_1="accountSupplierList.html"> 供应商列表</a> 
+					<i class="fa fa-pencil-square"></i>供应商添加
+				</h3>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="panel">
+		<ul class="nav nav-tabs">
+		<li class="active"><a href="">供应商添加</a></li></ul>
+			<div class="panel-body">
+				<form id="supplier_form" class="form-horizontal row-border">
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">供应商名称：</label>
+						<div class="col-sm-6">
+							<input type="hidden" name="id" id="id"/>
+							<input type="hidden" name="supplierNum" id="supplierNum"/>
+							<input name="supplier" class="form-control" id="supplier"/>
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">地址：</label>
+						<div class="col-sm-6">
+							<input name="address" class="form-control" id="address" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">联系人：</label>
+						<div class="col-sm-6">
+							<input name="linkMan" class="form-control" id="linkMan" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">电话：</label>
+						<div class="col-sm-6">
+							<input name="phone" class="form-control" id="phone" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">微信：</label>
+						<div class="col-sm-6">
+							<input name="weixin" class="form-control" id="weixin" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">QQ：</label>
+						<div class="col-sm-6">
+							<input name="qq" class="form-control" id="qq" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">信用额度：</label>
+						<div class="col-sm-6">
+							<input name="credit" class="form-control" id="credit" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">营业执照：</label>
+						<div class="col-sm-6">
+							<input name="license" class="form-control" id="license" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">资质证书：</label>
+						<div class="col-sm-6">
+							<input name="certificate" class="form-control" id="certificate" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">开票信息：</label>
+						<div class="col-sm-6">
+							<input name="information" class="form-control" id="information" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">开户银行：</label>
+						<div class="col-sm-6">
+							<input name="bank" class="form-control" id="bank" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">银行账号：</label>
+						<div class="col-sm-6">
+							<input name="bankNum" class="form-control" id="bankNum" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">主要供货种类：</label>
+						<div class="col-sm-6">
+							<input name="supplyCategory" class="form-control" id="supplyCategory" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">备注信息：</label>
+						<div class="col-sm-6">
+							<textarea name="remarks" class="form-control" id="remarks" rows="2" class="input-xxlarge required"></textarea>
+						</div>
+					</div>
+				</form>
+				<div class="panel-footer">
+					<div class="row">
+						<div class="col-sm-6 col-sm-offset-3">
+							<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /> 
+							<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	var supplier_editId = $.cookie("supplier_edit");
+		$("[href_1]").click(function() {
+			$("#index_content").load($(this).attr("href_1"));
+		});
+		$(function(){
+			var ordernum = "gy-";
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			var day = date.getDate();
+			if (month < 10) {
+				month = "0" + month;
+			}
+			if (day < 10) {
+				day = "0" + day;
+			}
+			ordernum = ordernum + year + month + day + "-";
+			var ordernumRandom = "";
+			for (var i = 0; i < 5; ++i) {
+				var num = Math.random();
+				num = parseInt(num * 10);
+				ordernumRandom += num;
+			}
+			ordernum += ordernumRandom;
+			$("#supplierNum").val(ordernum);
+		});
+		
+		//提交
+		$("#submitbtn").click(function() {
+			var data = $("#supplier_form").serialize();
+			$.ajax({
+				url : "../supplier/insert",
+				type : "post",
+				data : data,
+				dataType : "json",
+				success : function (){
+					layer.alert("操作成功");
+					$("#index_content").load("accountSupplierList.html");
+				}
+			});
+							
+		});
+		
+		$(document).ready(function(){
+			//alert(supplier_editId);
+			if(supplier_editId != null) {
+				$.ajax({
+					url : "../supplier/selectById",
+					type : "post",
+					data : {
+						"id" : supplier_editId,
+					},
+					dataType : "json",
+					success : function (data){
+						$("#id").val(data.obj.id);
+						$("#supplierNum").val(data.obj.supplierNum);
+						$("#supplier").val(data.obj.supplier);
+						$("#address").val(data.obj.address);
+						$("#linkMan").val(data.obj.linkMan);
+						$("#phone").val(data.obj.phone);
+						$("#weixin").val(data.obj.weixin);
+						$("#qq").val(data.obj.qq);
+						$("#license").val(data.obj.license);
+						$("#certificate").val(data.obj.certificate);
+						$("#credit").val(data.obj.credit);
+						$("#information").val(data.obj.information);
+						$("#bank").val(data.obj.bank);
+						$("#bankNum").val(data.obj.bankNum);
+						$("#supplyCategory").val(data.obj.supplyCategory);
+						$("#remarks").val(data.obj.remarks);
+						$("#remarks").val(data.obj.remarks);
+					}
+				});
+			}
+		});
+	</script>
+</body>
+</html>

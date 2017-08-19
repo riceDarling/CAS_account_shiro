@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.account.dao.AccountRequisitionDetailDao">
+    
+	<sql id="accountRequisitionDetailColumns">
+		a.id AS "id",
+		a.parent_id AS "parent.id",
+		a.materialcode AS "materialcode",
+		a.quantitiy AS "quantitiy",
+		a.create_by AS "createBy",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.units AS "units",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="accountRequisitionDetailJoins">
+		LEFT JOIN account_requisition b ON b.id = a.parent_id
+	</sql>
+    
+	<select id="get" parameterType="string" resultType="com.account.entity.AccountRequisitionDetail">
+		SELECT 
+			<include refid="accountRequisitionDetailColumns"/>
+		FROM account_requisition_detail a
+		<include refid="accountRequisitionDetailJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="com.account.entity.AccountRequisitionDetail">
+		SELECT 
+			a.*,c.name AS 'unit'
+		FROM account_requisition_detail a
+		LEFT JOIN account_para_info c ON a.units=c.id  
+		<include refid="accountRequisitionDetailJoins"/>
+		<where>
+			a.del_flag = 0
+			<if test="parent != null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null">
+				
+			</when>
+			<otherwise>
+			
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.account.entity.AccountRequisitionDetail">
+		SELECT 
+			<include refid="accountRequisitionDetailColumns"/>
+		FROM account_requisition_detail a
+		<include refid="accountRequisitionDetailJoins"/>
+		<where>
+			a.del_flag = 0
+		</where>		
+		<choose>
+			<when test="page !=null">
+				
+			</when>
+			<otherwise>
+				
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" parameterType="com.account.entity.AccountRequisitionDetail">
+		INSERT INTO account_requisition_detail(
+			id,
+			parent_id,
+			materialcode,
+			quantitiy,
+			remarks,
+			units,
+			del_flag
+		) VALUES (
+			#{id},
+			#{parent.id},
+			#{materialcode},
+			#{quantitiy},
+			#{remarks},
+			#{units},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.account.entity.AccountRequisitionDetail">
+		UPDATE account_requisition_detail SET 	
+			parent_id = #{parent.id},
+			materialcode = #{materialcode},
+			quantitiy = #{quantitiy},
+			units=#{units},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete" parameterType="string">
+		UPDATE account_requisition_detail SET 
+			del_flag = 1
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getAccountRequisitionDetailsByid" parameterType="String" resultType="com.account.entity.AccountRequisitionDetail">
+		SELECT * FROM account_requisition_detail WHERE parent_Id=#{parentid}
+	</select>
+	
+	<update id="deleteByparentId" parameterType="string">
+		UPDATE account_requisition_detail SET 
+			del_flag = 1
+		WHERE parent_id = #{parentId}
+	</update>
+	
+	<select id="getDetailMapByparentid" parameterType="String" resultType="map">
+		SELECT b.materialNum,b.materialName,b.size,a.quantitiy,c.`name`,a.remarks
+			FROM account_requisition_detail a 
+			LEFT JOIN account_material b ON a.materialCode=b.materialNum
+			LEFT JOIN account_para_info c ON a.units=c.id
+		WHERE a.parent_Id=#{parentid}
+		AND a.del_flag = 0
+	</select>
+
+	
+</mapper>

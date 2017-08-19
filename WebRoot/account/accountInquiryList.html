@@ -1,0 +1,370 @@
+
+<div class="col-md-12">
+	<div class="panel">
+		<div class="panel-heading">
+				<h3 class="panel-title">
+					询价单
+				</h3>
+		</div>
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover">
+				<thead>
+					<tr>
+						<th>标题</th>
+						<th>申请人</th>
+						<th>状态</th>
+						<th>发起时间</th>
+					</tr>
+				</thead>
+				<tbody id="accountInquiryList_example">
+					
+				</tbody>
+			</table>
+		</div>
+		
+	</div>
+	
+	<div class="panel">
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover"
+				id="accountInquiryRequisition_example">
+				<thead>
+					<tr>
+						<th colspan="5" class="warning"><center>申请物资列表</center></th>
+					</tr>
+					<tr>
+						<th>序号</th>
+						<th>物资名称</th>
+						<th>申请数量</th>
+						<th>规格型号</th>
+						<th>计量单位</th>
+					</tr>
+				</thead>
+				<tbody id="accountInquiryRequisition_tbody">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="panel">
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover"
+				id="accountInquirydetail_example">
+				<thead>
+					<tr>
+						<th colspan="7" class="success"><center>询价记录</center></th>
+					</tr>
+					<tr>
+						<th>序号</th>
+						<th>询价时间</th>
+						<th>物资名称</th>
+						<th>供应商名称</th>
+						<th>规格型号</th>
+						<th>单价</th>
+						<th>备注</th>
+					</tr>
+				</thead>
+				<tbody id="accountInquirydetail_tbody">
+					
+				</tbody>
+			</table>
+		</div>
+		
+	</div>
+	
+	<div class="form-actions">
+		<input type="button" value="添加询价" class="btn bg-primary text-white btn-sm" id="accountInquirydetail_addbtn">
+		<input type="button" value="提交申请" class="btn bg-primary text-white btn-sm" id="accountInquirydetail_save">
+		<input type="button" value="审核提交" class="btn bg-primary text-white btn-sm" id="accountInquirydetail_audit" style="display:none">
+	</div>
+	
+	<div class="panel-body ">
+		<table class="table table-striped" id="accountInquiry_act_table">
+			<thead>
+				<tr>
+					<th>申请人</th>
+					<th>审核人</th>
+					<th>开始时间</th>
+					<th>结束时间</th>
+					<th>结论</th>
+					<th>意见</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	
+</div>
+
+
+<script>
+var accountInquiryList_id=$.cookie("accountInquiryList_id");
+	$(function() {
+		//获取询价单列表
+		$.ajax("http://"+IP_config+"/account/accountInquiry/get", {
+			dataType: "json",
+			xhrFields: {
+				withCredentials: true
+			},
+			data : {
+				"accountInquiryid" : accountInquiryList_id
+			},
+			type: "GET",
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					var html="";
+							var obj=data.obj;
+							html+='<tr>'
+							+'<td>'+obj.title+'</td>'
+							+'<td>'+obj.maker+'</td>';
+							if(obj.status==0){
+								html+='<td>进行中</td>';
+							}else if(obj.status==1){
+								html+='<td>已提交</td>';
+							}else if(obj.status==2){
+								html+='<td>已完成</td>';
+							}
+							if(obj.createDate!=null){
+								html+='<td>'+formatDateTime(obj.createDate)+'</td>';
+							}
+							html+='</tr>';
+					$("#accountInquiryList_example").html(html);
+					if(obj.status==0){
+						//未开始
+						
+					}else if(obj.status==1){
+						//1表示为已经提交（处理中）
+						//如果创建人是当前登录用户，则把，添加的按钮展示出来
+						var userid = $.cookie("login_userid");
+						if(obj.inquiry==userid){
+							
+						}else{
+							$("#accountInquirydetail_addbtn").hide();
+							$("#accountInquirydetail_save").hide();
+							$("#accountInquirydetail_audit").show();
+						}
+					}else{
+						//全部隐藏
+						$("#accountInquirydetail_addbtn").hide();
+						$("#accountInquirydetail_save").hide();
+					}
+				}
+			},
+		})
+	});
+	
+	$.ajax("http://" + IP_config + "/account/accountInquiry/requisition", {
+		dataType : "json",
+		data : {
+			"accountInquiryid" : accountInquiryList_id
+		},
+		xhrFields : {
+			withCredentials : true
+		},
+		type : "POST",
+		success : function(data) {
+			//console.log(data);
+			if (data.success) {
+				//获取成功
+				//layer.alert(data.msg);
+				if(data.obj.length>0){
+					var html="";
+					for(i in data.obj){
+						var obj=data.obj[i];
+						html+='<tr><td>'+i+'</td>'
+						+'<td>'+obj.materialName+'</td>'
+						+'<td>'+obj.quantitiy+'</td>'
+						+'<td>'+obj.size+'</td>'
+						+'<td>'+obj.name+'</td><tr>';
+					}
+					$("#accountInquiryRequisition_tbody").html(html);
+				}
+			
+			} else {
+				//获取信息提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	
+	$.ajax("http://" + IP_config + "/account/accountInquiry/detail", {
+		dataType : "json",
+		data : {
+			"accountInquiryid" : accountInquiryList_id
+		},
+		xhrFields : {
+			withCredentials : true
+		},
+		type : "POST",
+		success : function(data) {
+			//console.log(data);
+			if (data.success) {
+				//获取成功
+				//layer.alert(data.msg);
+				if(data.obj.length>0){
+					var html="";
+					for(i in data.obj){
+						var obj=data.obj[i];
+						html+='<tr><td>'
+						+i+'</td><td>';
+						if(obj.createDate!=null){
+							html+=formatDateTime(obj.createDate)+'</td><td>'
+						}else{
+							html+='</td><td>'
+						}	
+						html+=obj.materialname+'</td><td>'
+						+obj.supplier+'</td><td>'
+						+obj.size+'</td><td>'
+						+obj.unitprice+'</td><td>';
+						if(obj.remarks!=null){
+							html+=obj.remarks;
+						}else{
+						}	
+						html+='</td></tr>';
+					}
+					$("#accountInquirydetail_tbody").html(html);
+				}
+			
+			} else {
+				//获取信息提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	//获取act
+	$.ajax("http://" + IP_config + "/account/accountInquiry/getAct", {
+		dataType : "json",
+		data : {
+			"accountInquiryid" : accountInquiryList_id
+		},
+		xhrFields : {
+			withCredentials : true
+		},
+		type : "POST",
+		success : function(data) {
+			//console.log(data);
+			if (data.success) {
+				//获取成功
+				//layer.alert(data.msg);
+				if(data.obj.length>0){
+					var html = "";
+					for (i in data.obj) {
+						var act = data.obj[i];
+						html += '<tr><td>'
+								+ act.requisitionName + '</td>' + '<td>'
+								+ act.checkerName + '</td>' + '<td>'
+								+ formatDateTime(act.start_time) + '</td>' + '<td>';
+								if(act.end_time!=null){
+									html+= formatDateTime(act.end_time) + '</td>' + '<td>';
+								}else{
+									html+='</td>' + '<td>';
+								}
+							
+								if(act.conclusion==1){
+									html+='同意</td>' + '<td>';
+								}else if(act.conclusion==0){
+									html+='不同意</td>' + '<td>';
+								}else {
+									html+='</td>' + '<td>';
+								}
+								
+								html+= act.remarks + '</td>' + '</tr>';
+					}
+					$("#accountInquiry_act_table tbody").html(html);
+				}
+			
+			} else {
+				//获取信息提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	//添加询价
+	$("#accountInquirydetail_addbtn").click(function(){
+		//alert(accountInquiryRequisition_id);
+		$.cookie("accountInquiryDetailForm_id",accountInquiryList_id);
+		$("#index_content").load("accountInquiryDetailForm.html");
+	});
+	//提交
+	$("#accountInquirydetail_save").click(function(){
+		//alert(accountInquiryRequisition_id);
+		layer.open({
+			  type: 2,
+			  title: '选择询价记录提交审核',
+			  closeBtn: 1, //显示关闭按钮
+		      maxmin: true, //开启最大化最小化按钮
+			  shade: [0],
+			  area: ['1040px', '450px'],
+			  offset: '50px', //只定义top坐标，水平保持居中
+			  anim: 2,
+			  content: ['accountInquiryWindow.html?accountInquiryList_id='+accountInquiryList_id, 'yes'], //iframe的url，no代表不显示滚动条
+			  end: function(){ //此处用于演示
+			  }
+			});
+	});
+	//审核提交
+	$("#accountInquirydetail_audit").click(function(){
+		//alert(accountInquiryRequisition_id);
+		layer.open({
+			  type: 2,
+			  title: '询价单审核',
+			  closeBtn: 1, //显示关闭按钮
+		      maxmin: true, //开启最大化最小化按钮
+			  shade: [0],
+			  area: ['1040px', '450px'],
+			  offset: '50px', //只定义top坐标，水平保持居中
+			  anim: 2,
+			  content: ['accountInquiryWindowAudit.html?accountInquiryList_id='+accountInquiryList_id, 'yes'], //iframe的url，no代表不显示滚动条
+			  end: function(){ //此处用于演示
+			  }
+			});
+	});
+	
+	
+	//提交
+	/* function commit1(accountInquiryid){
+		//alert(accountInquiryid);
+		$.ajax("http://" + IP_config + "/account/accountInquiry/commit1", {
+			dataType : "json",
+			data : {
+				"accountInquiryid" : accountInquiryid
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			type : "POST",
+			success : function(data) {
+				//console.log(data);
+				if (data.success) {
+					//获取成功
+					layer.alert(data.msg);
+				} else {
+					//获取信息提示
+					layer.alert(data.msg);
+				}
+			}
+		});
+	}; */
+	/* 
+		$('#example').dataTable({
+		"oLanguage": {
+		"sLengthMenu": "每页显示 _MENU_ 条记录",
+		"sZeroRecords": "对不起，查询不到任何相关数据",
+		"sInfo": "当前显示 _START_ 到 _END_ 条，共 _TOTAL_条记录",
+		"sInfoEmtpy": "找不到相关数据",
+		"sInfoFiltered": "数据表中共为 _MAX_ 条记录)",
+		"sProcessing": "正在加载中...",
+		"sSearch": "搜索",
+		"oPaginate": {
+		"sFirst": "第一页",
+		"sPrevious":" 上一页 ",
+		"sNext": " 下一页 ",
+		"sLast": " 最后一页 "
+		},		
+		}
+		}); */
+</script>
+

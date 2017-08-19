@@ -1,0 +1,150 @@
+<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<div class="col-md-12">
+	<div class="panel panel-cascade">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="fa fa-pencil-square"></i>付款单列表 <i class="fa fa-pencil-square"></i> <a href_1="accountPaymentForm.html">付款单添加</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<form  class="form-horizontal row-border">
+				<label class="col-lg-2 col-md-2 control-label">供应商名称：</label>
+				<div class="col-lg-2 col-md-2">
+					<input name="supplier" type="text" htmlEscape="false" class="form-control form-cascade-control" />
+				</div>
+				<label class="col-lg-2 col-md-3 control-label">开始日期：</label>
+				<div class="col-lg-4 col-md-3">
+					<input size="16" type="text" readonly class="form_datetime form-control" name="beginDate">
+				</div>
+				<label class="col-sm-3 control-label">结束日期：</label>
+				<div class="col-lg-4 col-md-3">
+					<input size="16" type="text" readonly class="form_datetime form-control" name="endDate">
+				</div>
+			</form>
+		</div>
+		<div class="panel-footer">
+			<div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+					<input id="btnCancel" class="btn btn-primary" type="button" value="查询" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-md-12">
+	<div class="panel">
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover" id="example">
+				<thead>
+					<tr>
+						<th>供应商名称</th>
+						<th>合同名称</th>
+						<th>付款金额</th>
+						<th>付款方式</th>
+						<th>付款银行</th>
+						<th>付款期限</th>
+						<th>付款类别</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="secondPageTbody">
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+	$("[href_1]").click(function() {
+		$("#index_content").load($(this).attr("href_1"));
+	});
+	$(".form_datetime").datetimepicker({
+		language : 'zh-CN',
+		minView : "month", //选择日期后，不会再跳转去选择时分秒 
+		format : 'yyyy-mm-dd',
+		todayBtn : 1,
+		autoclose : 1,
+	});
+	$("#btnCancel").click(function() {
+		var supplier = $("[name='supplier']").val();
+		var beginDate = $("[name='beginDate']").val();
+		var endDate = $("[name='endDate']").val();
+		$.ajax({
+			url : "http://" + IP_config + "/account/accountPaymentController/findList",
+			type : "post",
+			async : false,
+			data : {
+				"supplier" : supplier,
+				"beginDate":beginDate,
+				"endDate":endDate
+			},
+			success : function(data) {
+				if (data.success) {
+					$("#secondPageTbody").empty();
+					for ( var index in data.obj) {
+						var content = "<tr>"
+							content += "<td>" + data.obj[index].supplier + "</td>"
+							content += "<td>" + data.obj[index].contracttitle + "</td>"
+							content += "<td>" + data.obj[index].payamount + "</td>"
+							content += "<td>" + data.obj[index].payway + "</td>"
+							content += "<td>" + data.obj[index].paybank + "</td>"
+							content += "<td>" + data.obj[index].paycategory + "</td>"
+							content += "<td>" + data.obj[index].paydate + "</td>"
+							content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' value='"+data.obj[index].contractnum+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+							content += "</tr>"
+						$("#secondPageTbody").append(content)
+					}
+				}
+			}
+		})
+	});
+	$(function() {
+		$.ajax({
+			url : "http://" + IP_config + "/account/accountPaymentController/findList",
+			type : "post",
+			success : function(data) {
+				if (data.success) {
+					for ( var index in data.obj) {
+						var content = "<tr>"
+							content += "<td>" + data.obj[index].supplier + "</td>"
+							content += "<td>" + data.obj[index].contracttitle + "</td>"
+							content += "<td>" + data.obj[index].payamount + "</td>"
+							content += "<td>" + data.obj[index].payway + "</td>"
+							content += "<td>" + data.obj[index].paybank + "</td>"
+							content += "<td>" + data.obj[index].paycategory + "</td>"
+							content += "<td>" + data.obj[index].paydate + "</td>"
+							content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' value='"+data.obj[index].contractnum+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+							content += "</tr>"
+						$("#secondPageTbody").append(content)
+					}
+				}
+			}
+		})
+	});
+	$("#secondPageTbody").on("click", ".selectCon", function() {
+		var id = $(this).attr("name");
+		$.cookie("accountPayment_id", id);
+		$("#index_content").load("accountPaymentForm.html");
+	});
+	$("#secondPageTbody").on("click", ".selectCon2", function() {
+		var id = $(this).attr("name");
+		var contractnum = $(this).val();
+		$.ajax({
+			url : "http://" + IP_config + "/account/accountPaymentController/delete",
+			type : "post",
+			dataType : "json",
+			data : {
+				"id" : id,
+				"contractId":contractnum
+			},
+			success : function(data) {
+				if (data.success) {
+					$("#index_content").load("accountPaymentList.html");
+				} else {
+					layer.alert(data.msg);
+				}
+			}
+		});
+	});
+</script>

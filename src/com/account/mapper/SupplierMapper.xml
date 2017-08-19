@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.account.dao.SupplierMapper">
+  <resultMap id="BaseResultMap" type="com.account.entity.AccountSupplier">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="supplierNum" jdbcType="VARCHAR" property="supplierNum" />
+    <result column="supplier" jdbcType="VARCHAR" property="supplier" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="link_man" jdbcType="VARCHAR" property="linkMan" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="weixin" jdbcType="VARCHAR" property="weixin" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+    <result column="license" jdbcType="VARCHAR" property="license" />
+    <result column="certificate" jdbcType="VARCHAR" property="certificate" />
+    <result column="credit" jdbcType="DECIMAL" property="credit" />
+    <result column="deadLine" jdbcType="INTEGER" property="deadline" />
+    <result column="information" jdbcType="VARCHAR" property="information" />
+    <result column="bank" jdbcType="VARCHAR" property="bank" />
+    <result column="supply_category" jdbcType="VARCHAR" property="supplyCategory" />
+    <result column="bank_num" jdbcType="VARCHAR" property="bankNum" />
+    <result column="maker" jdbcType="VARCHAR" property="maker" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, supplierNum, supplier, address, category, link_man, phone, weixin, qq, license, 
+    certificate, credit, deadLine, information, bank, supply_category, bank_num, maker, 
+    create_date, remarks, del_flag
+  </sql>
+    <sql id="Supplier_List">
+	a.id AS "id",
+	a.supplierNum AS "supplierNum",
+	a.supplier AS "supplier",
+	a.address AS "address",
+	a.category AS "category",
+	a.link_man AS "linkMan",
+	DATE_FORMAT(a.create_date,'%Y-%m-%d %H:%m:%s') AS "createDate",
+	a.phone AS "phone",
+	a.weixin AS "weixin",
+	a.qq AS "qq",
+	a.license AS "license",
+	a.certificate AS "certificate",
+	a.credit AS "credit",
+	a.deadLine AS "deadLine",
+	a.information AS "information",
+	a.bank AS "bank",
+	a.supply_category AS "supplyCategory",
+	a.bank_num AS "bankNum",
+	a.maker AS "maker",
+	a.create_date AS "createDate",
+	a.remarks AS "remarks",
+	a.del_flag AS "delFlag"
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from account_supplier
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from account_supplier
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="com.account.entity.AccountSupplier">
+    insert into account_supplier
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="supplierNum != null">
+        supplierNum,
+      </if>
+      <if test="supplier != null">
+        supplier,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="category != null">
+        category,
+      </if>
+      <if test="linkMan != null">
+        link_man,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="weixin != null">
+        weixin,
+      </if>
+      <if test="qq != null">
+        qq,
+      </if>
+      <if test="license != null">
+        license,
+      </if>
+      <if test="certificate != null">
+        certificate,
+      </if>
+      <if test="credit != null">
+        credit,
+      </if>
+      <if test="deadline != null">
+        deadLine,
+      </if>
+      <if test="information != null">
+        information,
+      </if>
+      <if test="bank != null">
+        bank,
+      </if>
+      <if test="supplyCategory != null">
+        supply_category,
+      </if>
+      <if test="bankNum != null">
+        bank_num,
+      </if>
+      <if test="maker != null">
+        maker,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNum != null">
+        #{supplierNum,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null">
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null">
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="linkMan != null">
+        #{linkMan,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="weixin != null">
+        #{weixin,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null">
+        #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="license != null">
+        #{license,jdbcType=VARCHAR},
+      </if>
+      <if test="certificate != null">
+        #{certificate,jdbcType=VARCHAR},
+      </if>
+      <if test="credit != null">
+        #{credit,jdbcType=DECIMAL},
+      </if>
+      <if test="deadline != null">
+        #{deadline,jdbcType=INTEGER},
+      </if>
+      <if test="information != null">
+        #{information,jdbcType=VARCHAR},
+      </if>
+      <if test="bank != null">
+        #{bank,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyCategory != null">
+        #{supplyCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="bankNum != null">
+        #{bankNum,jdbcType=VARCHAR},
+      </if>
+      <if test="maker != null">
+        #{maker,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.account.entity.AccountSupplier">
+    update account_supplier
+    <set>
+      <if test="supplierNum != null">
+        supplierNum = #{supplierNum,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null">
+        supplier = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null">
+        category = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="linkMan != null">
+        link_man = #{linkMan,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="weixin != null">
+        weixin = #{weixin,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null">
+        qq = #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="license != null">
+        license = #{license,jdbcType=VARCHAR},
+      </if>
+      <if test="certificate != null">
+        certificate = #{certificate,jdbcType=VARCHAR},
+      </if>
+      <if test="credit != null">
+        credit = #{credit,jdbcType=DECIMAL},
+      </if>
+      <if test="deadline != null">
+        deadLine = #{deadline,jdbcType=INTEGER},
+      </if>
+      <if test="information != null">
+        information = #{information,jdbcType=VARCHAR},
+      </if>
+      <if test="bank != null">
+        bank = #{bank,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyCategory != null">
+        supply_category = #{supplyCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="bankNum != null">
+        bank_num = #{bankNum,jdbcType=VARCHAR},
+      </if>
+      <if test="maker != null">
+        maker = #{maker,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="findList" parameterType="com.account.utils.pagebean.SupplierPage" resultType="com.account.entity.AccountSupplier">
+    SELECT 
+      <include refid="Supplier_List" />
+	FROM
+	  account_supplier a 
+	WHERE 1 = 1 
+	  AND a.`del_flag` = 0 
+	<if test="sName != null and sName != ''">
+      AND a.supplier like CONCAT(CONCAT('%',#{sName}),'%') 
+    </if>
+	<if test="sTime != null and sTime != ''">
+      AND DATE_FORMAT(a.create_date, '%Y-%m-%d') &gt;= #{sTime} 
+    </if>
+	<if test="eTime != null and eTime != ''">
+      AND DATE_FORMAT(a.create_date, '%Y-%m-%d') &lt;= #{eTime} 
+    </if>
+    LIMIT
+		#{begin},#{end}
+  </select>
+  
+  <select id="findListCount" parameterType="com.account.utils.pagebean.SupplierPage" resultType="int">
+    SELECT 
+      count(*) AS count
+	FROM
+	  account_supplier a 
+	WHERE 1 = 1 
+	  AND a.`del_flag` = 0 
+	<if test="sName != null and sName != ''">
+      AND a.supplier like CONCAT(CONCAT('%',#{sName}),'%') 
+    </if>
+	<if test="sTime != null and sTime != ''">
+      AND DATE_FORMAT(a.create_date, '%Y-%m-%d') &gt;= #{sTime} 
+    </if>
+	<if test="eTime != null and eTime != ''">
+      AND DATE_FORMAT(a.create_date, '%Y-%m-%d') &lt;= #{eTime} 
+    </if>
+  </select>
+  
+  <select id="findAllList" resultType="com.account.entity.AccountSupplier">
+    SELECT 
+      <include refid="Supplier_List" />
+	FROM
+	  account_supplier a 
+	WHERE 1 = 1 
+	  AND a.`del_flag` = 0 
+  </select>
+</mapper>
