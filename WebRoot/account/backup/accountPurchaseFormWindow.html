@@ -1,0 +1,206 @@
+
+<script type="text/javascript" src="../js/jquery-2.1.1.min.js"></script>
+ 
+<script src="lib/js/config.js"></script>
+
+	<table id="contentTable" class="table table-striped table-bordered table-condensed" style="width: 75%;" >
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>供应商名称</th>
+				<th>物资名称</th>
+				<th>规格型号</th>
+				<th>计量单位</th>
+				<th>单价</th>
+				<th>备注</th>
+			</tr>
+		</thead>
+		<tbody id="abcd_xk">
+			
+		</tbody>
+	
+	</table>
+	
+	<div class="form-actions" id="form-actions">
+			<input  class="btn btn-primary" type="button" id="submitbtn" value="添加到订货单"/>&nbsp;
+	</div>
+	
+	
+<script type="text/javascript">
+function GetQueryString(name)
+{
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null)return  unescape(r[2]); return null;
+};
+var purchaseFormWindow_id=GetQueryString("purchaseFormWindow_id");
+
+$.ajax("http://" + IP_config + "/account/accountInquiry/detail", {
+	dataType : "json",
+	data : {
+		"accountInquiryid" : purchaseFormWindow_id
+	},
+	xhrFields : {
+		withCredentials : true
+	},
+	type : "POST",
+	success : function(data) {
+		//console.log(data);
+		if (data.success) {
+			//获取成功
+			//layer.alert(data.msg);
+			if(data.obj.length>0){
+				var html="";
+				for(i in data.obj){
+					var obj=data.obj[i];
+					html+='<tr><td>'
+					+'<input type="checkbox"  name="idxk" value="'+obj.id+'"></td></td>';
+				/* 	if(obj.createDate!=null){
+						html+=formatDateTime(obj.createDate)+'</td><td>';
+					}else{
+						html+='</td><td>';
+					}	 */
+					html+='<td suppliercode="'+obj.suppliercode+'">'+obj.supplier+'</td>'
+					+'<td materialcode="'+obj.materialcode+'">'+obj.materialname+'</td><td>'
+					+obj.size+'</td><td>'
+					+obj.unitprice+'</td><td>';
+					if(obj.remarks!=null){
+						html+=obj.remarks;
+					}else{
+					}	
+					html+='</td></tr>';
+				}
+				$("#contentTable tbody").html(html);
+			}
+		
+		} else {
+			//获取信息提示
+			layer.alert(data.msg);
+		}
+	}
+});
+
+var packway='';//包装方式
+var transport='';//运输方式
+var payway='';//支付方式
+
+$.ajax({
+	url:"http://"+IP_config+"/account/paraInfo/getPurchaseParaInfoList",
+	type:"post",
+	async:false,
+	success:function(data){
+		
+		if(data.success){
+			//获取成功
+			//layer.alert(data.msg);
+			for (i in data.obj.packway) {
+				var obj = data.obj.packway[i];
+				packway+='<option value="'+obj.id+'">'+obj.name+'</option>';
+			}
+			for (i in data.obj.transport) {
+				var obj = data.obj.transport[i];
+				transport+='<option value="'+obj.id+'">'+obj.name+'</option>';
+			}
+			for (i in data.obj.payway) {
+				var obj = data.obj.payway[i];
+				payway+='<option value="'+obj.id+'">'+obj.name+'</option>';
+			}
+		}else{
+			//获取失败提示
+			layer.alert(data.msg);
+		}
+	}
+}); 
+
+$("#form-actions").on("click","#submitbtn",function(){
+	var supplierList=new Array();
+	
+	$("#accountPurchaseDetailList",window.parent.document).html("");
+	$("#supplierList",window.parent.document).html("");
+	var html="";
+	var supplierListhtml="";
+	var i=0;
+	var y=0;
+	$("#contentTable>tbody>tr").each(function(){
+		
+		if($(this).children("td:first").children(":checkbox").is(":checked")){
+			var supplier=$(this).children("td:eq(1)").text().trim();
+			var suppliercode=$(this).children("td:eq(1)").attr("suppliercode").trim();
+			
+			var materialname=$(this).children("td:eq(2)").text().trim();
+			var materialcode=$(this).children("td:eq(2)").attr("materialcode").trim();
+			
+			var unitprice=$(this).children("td:eq(4)").text().trim();//单价
+			
+			//alert(supplier);
+			//alert(materialname+unitprice);
+			html+='<tr>'
+						+'<td>'
+						+'	<input readonly type="text" maxlength="35" suppliercode="'+suppliercode+'" value="'+supplier+'" class="form-control required">'
+						+'</td>'
+						+'<td>'
+						+'	<input  readonly type="text" maxlength="35" materialcode="'+materialcode+'" value="'+materialname+'" class="form-control required">'			
+						+'</td>'
+						+'<td>'
+						+'	<select name="packway" data-value="" class="form-control required">'
+						+'		<option value=""></option>'
+						+packway
+						+'	</select>'
+						+'</td>'
+						+'<td>'
+						+'	<select name="transport" data-value="" class="form-control required">'
+						+'		<option value=""></option>'
+						+transport
+						+'	</select>'
+						+'</td>'
+						+'<td>'
+						+'	<input  name="freightfee" type="text" value="" class="form-control number required">'
+						+'</td>'
+						+'<td>'
+						+'	<input readonly name="unitprice" value="'+unitprice+'" type="text" value="" class="form-control number">'
+						+'</td>'
+						+'<td>'
+						+'	<input  name="quantity" type="text" value="" maxlength="11" class="form-control required number">'
+						+'</td>'
+						+'<td>'
+						+'	<input  name="receivedates" type="text" maxlength="20" class="form-control Wdate required form_datetime" value="" >'
+						+'</td>'
+						+'<td>'
+						+'	<input  name="totlemoney" maxlength="10" type="text" value="" class="form-control number required" >'
+						+'</td>'
+						+'<td>'
+						+'	<textarea  name="remarks" rows="4" maxlength="255" class="form-control "></textarea>'
+						+'</td>'
+						+'</tr>';
+			
+						if( $.inArray(supplier,supplierList)<0){
+							supplierListhtml+='<tr>'
+							+'<td>'
+							+'<input  name="supplier"  readonly type="text" value="'+supplier+'" maxlength="35" class="form-control required"/>'
+							+'</td>'
+							+'<td>'
+							+'	<input  name="deadlines" type="text"  maxlength="20" class="form-control Wdate required form_datetime" value=""  >'
+							+'</td>'
+							+'<td>'
+							+'	<select name="payway" data-value="" class="form-control required">'
+							+'		<option value=""></option>'
+							+payway	
+							+'	</select>'
+							+'</td>'
+							+'	</tr>';
+						supplierList.push(supplier);
+						y++;
+						}
+						i++;			
+		}
+		
+	});
+	//console.log(html);
+	 $("#accountPurchaseDetailList",window.parent.document).append(html);
+	 $("#supplierList",window.parent.document).append(supplierListhtml);
+	 
+	//关闭页面
+	$(".layui-layer-shade",window.parent.document).remove();
+	$(".layui-layer-iframe",window.parent.document).remove();
+});
+</script>

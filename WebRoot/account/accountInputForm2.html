@@ -1,0 +1,121 @@
+<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-pencil-square"></i><a href_1="accountInputList.html"> 入库单列表</a>
+				</h3>
+			</div>
+		</div>
+	</div>
+	<h4 style="text-align:center;">
+		<span id="title"></span>待入库列表
+	</h4>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<table class="table table-bordered table-condensed table-hover" id="contentTable2">
+					<thead>
+						<tr>
+							<th>物资名称</th>
+				<th>规格型号</th>
+				<th>入库数量</th>
+				 <th>仓库</th>
+				<th>货位编码</th>
+				<th>备注信息</th>
+						</tr>
+					</thead>
+					<tbody id="secondPageTbody">
+					</tbody>
+				</table>
+			</div>
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="">入库编辑</a></li>
+			</ul>
+			<div class="panel-body">
+				<form>
+					<div class="control-group" hidden="true">
+						<label class="col-lg-2 col-md-3 control-label">入库单号：</label>
+						<div class="col-lg-4 col-md-3">
+							<input name="inputnum" htmlEscape="false" maxlength="37" class="input-xlarge required form-control" id="inputnum" />
+						</div>
+					</div>
+					<div class="control-group">
+					<label class="col-lg-3 col-md-3 control-label">入库日期：</label>
+								<div class="col-lg-9 col-md-9">
+									<input size="16" type="text" readonly="readonly"  class="form_datetime form-control" name="inputdate" id="inputdate" >
+								</div>
+					</div>
+					<div class="control-group" hidden="true">
+						<label class="col-lg-3 col-md-3 control-label">入库类别：</label>
+						<div class="col-lg-9 col-md-9">
+							<input name="category" htmlEscape="false" readonly="readonly" maxlength="255" class="input-xlarge form-control" />
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="col-lg-3 col-md-3 control-label">备注信息：</label>
+						<div class="col-lg-9 col-md-9">
+							<textarea name="remarks" htmlEscape="false"  readonly="readonly" rows="4" maxlength="255" class="input-xxlarge " id="remarks" />
+						</div>
+					</div>
+					<div class="form-actions">
+						<input id="btnCancel" class="btn btn-primary" type="button" value="返回" /> 
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	$("[href_1]").click(function() {
+		$("#index_content").load($(this).attr("href_1"));
+	});
+	$.ajax({
+		url : "http://" + IP_config + "/account/accountInputController/getAccountInputListInfoBy",
+		type : 'post',
+		dataType : 'json',
+		data : {
+			"id" : $.cookie("accountInput_id")
+		},
+		success : function(data) {
+			$.cookie("accountInput_id", null);
+			if (data.success) {
+				 $("#inputnum").val(data.obj[0].inputdate);
+				 $("#inputdate").val(data.obj[0].inputdate);
+				$("#remarks").val(data.obj[0].remarks);
+				for ( var index in data.obj) {
+					var content = "<tr>"
+					content += "<td>" + data.obj[index].materialname + "</td>"
+					content += "<td>" + data.obj[index].size + "</td>"
+					content += "<td>" + data.obj[index].quantity + "</td>"
+					content += "<td>"+data.obj[index].warehouse+"</td> "
+					content += "<td>"+data.obj[index].location+"</td>"
+					content += "<td>" + data.obj[index].inputremarks + "</td>"
+					content += "</tr>"
+					$("#secondPageTbody").append(content)
+				}
+			} else {
+				layer.alert(data.msg);
+			}
+		}
+	});
+	/* $(function() {
+	//获取仓库列表
+	$.ajax({
+		url : "http://" + IP_config + "/account/warehouse/findList",
+		type : "post",
+		success : function(data) {
+			var html = "";
+			for (i in data.obj) {
+				html += "<option  value='"+data.obj[i].housename+"'>" + data.obj[i].housename + "</option>";
+			}
+			$("select[name='warehouse']").html(html);
+		}
+	}); 
+	}); */
+	$("#btnCancel").click(function() {
+		$("#index_content").load("accountInputList.html");
+
+	});
+		</script>

@@ -1,0 +1,84 @@
+<div class="col-md-12">
+	<div class="panel">
+		<div class="panel-heading">
+				<h3 class="panel-title">
+					询价记录
+				</h3>
+		</div>
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover"
+				id="accountInquirydetail_example">
+				<thead>
+					<tr>
+						<th>序号</th>
+						<th>询价时间</th>
+						<th>物资名称</th>
+						<th>供应商名称</th>
+						<th>规格型号</th>
+						<th>单价</th>
+						<th>备注</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+				</tbody>
+			</table>
+		</div>
+		<div class="form-actions">
+			<input type="button" value="添加询价" class="btn bg-primary text-white btn-sm" id="accountInquirydetail_addbtn">
+		</div>
+	</div>
+</div>
+
+<script>
+	var accountInquirydetail_id = $.cookie("accountInquirydetail_id");
+	$.ajax("http://" + IP_config + "/account/accountInquiry/detail", {
+		dataType : "json",
+		data : {
+			"accountInquiryid" : accountInquirydetail_id
+		},
+		xhrFields : {
+			withCredentials : true
+		},
+		type : "POST",
+		success : function(data) {
+			//console.log(data);
+			if (data.success) {
+				//获取成功
+				//layer.alert(data.msg);
+				if(data.obj.length>0){
+					var html="";
+					for(i in data.obj){
+						var obj=data.obj[i];
+						html+='<tr><td>'
+						+i+'</td><td>';
+						if(obj.createDate!=null){
+							html+=formatDateTime(obj.createDate)+'</td><td>'
+						}else{
+							html+='</td><td>'
+						}	
+						html+=obj.materialname+'</td><td>'
+						+obj.supplier+'</td><td>'
+						+obj.size+'</td><td>'
+						+obj.unitprice+'</td><td>';
+						if(obj.remarks!=null){
+							html+=obj.remarks;
+						}else{
+						}	
+						html+='</td></tr>'
+					}
+					$("#accountInquirydetail_example tbody").html(html);
+				}
+			
+			} else {
+				//获取信息提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	$("#accountInquirydetail_addbtn").click(function(){
+		//alert(accountInquiryRequisition_id);
+		$.cookie("accountInquiryDetailForm_id",accountInquirydetail_id);
+		$("#index_content").load("accountInquiryDetailForm.html");
+	});
+</script>

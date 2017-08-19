@@ -1,0 +1,292 @@
+
+ <link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+
+ <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+ <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+ <script src="lib/js/purchaseForm.js"></script>
+
+<div class="col-md-12">
+	<div class="panel">
+		<div class="panel-heading">
+				<h3 class="panel-title">
+					创建订货申请单
+				</h3>
+		</div>
+		<div class="panel-body">
+		<form class="form-horizontal cascade-forms" method="post" action="#" name="" id="signup_form" novalidate="novalidate">
+				<div class="form-group" style="display:none">
+					<label class="col-lg-1 col-md-1 control-label">id</label>
+					<div class="col-lg-4 col-md-3">
+						<input type="text" class="form-control form-cascade-control input-small" name="id" id="id" readonly="readonly">
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-lg-1 col-md-1 control-label">标题：</label>
+					<div class="col-lg-4 col-md-3">
+						<input type="text" class="form-control form-cascade-control input-small" name="title" id="title" readonly="readonly">
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-lg-1 col-md-1 control-label">询价单号：</label>
+					<div class="col-lg-4 col-md-3">
+						<input type="text" class="form-control form-cascade-control input-small" name="inquirynum" id="inquirynum" readonly="readonly">
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-lg-1 col-md-1 control-label">审核人：</label>
+					<div class="col-lg-4 col-md-3">
+						<select  tabindex="1" name="checker" id="accountPurchaseForm_checker" class="form-control required">
+							<option value=""></option>
+                   						
+						</select>	
+					</div>
+				</div> 
+				
+				<div class="form-group">
+					<label class="col-lg-6 col-md-6 control-label"><h3>订货单详细</h3></label>
+					<div class="col-lg-12 col-md-12">
+						<table class="table table-striped" id="">
+							<thead>
+								<tr>
+									<th>供应商名称</th>
+									<th>物资名称</th>
+									<th>包装方式</th>
+									<th>运输方式</th>
+									<th>运费金额</th>
+									<th>单价</th>
+									<th>数量</th>
+									<th>预计到货日期</th>
+									<th>总价</th>
+									<th>备注信息</th>
+								</tr>
+								</thead>
+								<tbody id="accountPurchaseDetailList">
+								
+								</tbody>
+						</table>
+												
+					</div>	
+				</div> 
+				
+				<div class="form-group">
+					<label class="col-lg-6 col-md-6 control-label"><h3>供应商明细</h3></label>
+					<div class="col-lg-12 col-md-12">
+						<table class="table table-striped" id="">
+							<thead>
+								<tr>
+									<th>供应商名称</th>
+									<th>付款期限</th>
+									<th>付款方式</th>
+								</tr>
+								</thead>
+								<tbody id="supplierList">
+								
+								</tbody>
+						</table>
+												
+					</div>	
+				</div> 
+				
+				
+				<div class="form-actions">
+					<input type="button" value="提交" class="btn bg-primary text-white btn-sm" id="accountPurchaseSubmit">
+				</div>
+			</form>
+		</div>
+		
+			<div class="panel-body ">
+			<table class="table table-striped" id="accountPurchaseForm_act_table">
+				<thead>
+					<tr>
+						<th>申请人</th>
+						<th>审核人</th>
+						<th>开始时间</th>
+						<th>结束时间</th>
+						<th>结论</th>
+						<th>意见</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		
+	</div>
+</div>
+
+<script>
+	var accountPurchaseForm_id=$.cookie("accountPurchaseForm_id");
+	
+	var packway='';//包装方式
+	var transport='';//运输方式
+	var payway='';//支付方式
+
+	$.ajax({
+		url:"http://"+IP_config+"/account/paraInfo/getPurchaseParaInfoList",
+		type:"post",
+		async:false,
+		success:function(data){
+			
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				for (i in data.obj.packway) {
+					var obj = data.obj.packway[i];
+					packway+='<option value="'+obj.id+'">'+obj.name+'</option>';
+				}
+				for (i in data.obj.transport) {
+					var obj = data.obj.transport[i];
+					transport+='<option value="'+obj.id+'">'+obj.name+'</option>';
+				}
+				for (i in data.obj.payway) {
+					var obj = data.obj.payway[i];
+					payway+='<option value="'+obj.id+'">'+obj.name+'</option>';
+				}
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+	}); 
+	//审核人    
+	$.ajax("http://"+IP_config+"/account/admin/getAdminList", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "POST",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				var html="<option value=''></option>";
+				for (i in data.obj) {
+					var admin = data.obj[i];
+					html+='<option value="'+admin.id+'">'+admin.username+'</option>';
+				}
+				$("#accountPurchaseForm_checker").html(html);
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	//根据订货单id获取询价单字表列表
+	$.ajax("http://"+IP_config+"/account/accountPurchase/detailEnd", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "GET",
+		data:{
+			"accountPurchaseid":accountPurchaseForm_id
+		},
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				if(data.obj!=null){
+					$("#id").val(data.obj.purchase.id);
+					$("#title").val(data.obj.purchase.title);
+					$("#inquirynum").val(data.obj.purchase.inquirynum);
+					if(data.obj.detail.length>0){
+						var html="";
+						var supplierListhtml="";
+						var supplierList=new Array();//存放供应商名字集合
+						for (i in data.obj.detail) {
+							html+='<tr><td>';
+								var detail = data.obj.detail[i];
+							html+='<input readonly type="text" maxlength="35" suppliercode="'+detail.suppliercode+'" value="'+detail.supplier+'" class="form-control required"></td><td>';	
+							html+='<input  readonly type="text" maxlength="35" materialcode="'+detail.materialcode+'" value="'+detail.materialname+'" class="form-control required"></td>';
+							html+='<td><select name="packway" data-value="" class="form-control required">'
+								+'		<option value=""></option>'
+								+packway
+								+'	</select></td>';
+							html+='<td><select name="transport" data-value="" class="form-control required">'
+								+'		<option value=""></option>'
+								+transport
+								+'</select></td>';
+							html+='<td>'
+								+'	<input  name="freightfee" type="text" value="" class="money form-control number required">'
+								+'</td>'
+								+'<td>'
+								+'	<input readonly name="unitprice" value="'+detail.unitprice+'" type="text" value="" class="form-control number">'
+								+'</td>'
+								+'<td>'
+								+'	<input  name="quantity" type="text" value="" maxlength="11" class="money form-control required number">'
+								+'</td>'
+								+'<td>'
+								+'	<input readonly name="receivedates" type="text" maxlength="20" class="form-control Wdate required form_datetime" value="" >'
+								+'</td>'
+								+'<td>'
+								+'	<input readonly name="totlemoney" maxlength="10" type="text" value="" class="form-control number required" >'
+								+'</td>'
+								+'<td>'
+								+'	<textarea  name="remarks" rows="4" maxlength="255" class="form-control "></textarea>'
+								+'</td>';
+								
+							html+='</tr>';
+							if( $.inArray(detail.supplier,supplierList)<0){
+								supplierListhtml+='<tr>'
+								+'<td>'
+								+'<input  name="supplier"  readonly type="text" value="'+detail.supplier+'" maxlength="35" class="form-control required"/>'
+								+'</td>'
+								+'<td>'
+								+'	<input  readonly name="deadlines" type="text"  maxlength="20" class="form-control Wdate required form_datetime" value=""  >'
+								+'</td>'
+								+'<td>'
+								+'	<select name="payway" data-value="" class="form-control required">'
+								+'		<option value=""></option>'
+								+payway	
+								+'	</select>'
+								+'</td>'
+								+'	</tr>';
+							supplierList.push(detail.supplier);
+						}
+
+							$("#accountPurchaseDetailList").html(html); 
+							$("#supplierList").html(supplierListhtml); 
+							
+							$(".form_datetime").datetimepicker({
+								language:  'zh-CN', 
+								minView: "month", //选择日期后，不会再跳转去选择时分秒 
+							    format: 'yyyy-mm-dd',
+							    todayBtn:  1,
+							    autoclose: 1,});
+						
+					}
+						//当前登录用户为创建人的话，获取订货表信息，反填
+						var userid = $.cookie("login_userid");
+						if(userid==data.obj.purchase.createBy){
+							getPurchase(accountPurchaseForm_id);
+						}
+				}
+				
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+	}
+	});
+	
+	$("#accountPurchaseDetailList").on("change",".money",function(){
+		//alert($(this).val());
+		var freightfee=parseFloat($(this).parent().parent().children("td").eq(4).find("input").val());
+		var unitprice=parseFloat($(this).parent().parent().children("td").eq(5).find("input").val());
+		var quantity=parseFloat($(this).parent().parent().children("td").eq(6).find("input").val());
+		//alert(freightfee+(unitprice*quantity));
+		var totlemoney=freightfee+(unitprice*quantity);
+		if(!isNaN(totlemoney)){
+			$(this).parent().parent().children("td").eq(8).find("input").val(totlemoney.toFixed(2));
+		}
+		
+	});
+	
+</script>
+

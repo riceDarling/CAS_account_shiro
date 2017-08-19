@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.account.dao.AccountRequisitionActDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.account.entity.AccountRequisitionAct">
+		INSERT INTO account_requisition_act(
+			requisition_id,
+			requisition_name,
+			checker_name,
+			start_time,
+			state,
+			actindex,
+			step
+		) VALUES (
+			#{requisitionId},
+			#{requisitionName},
+			#{checkerName},
+			#{startTime},
+			#{state},
+			#{actindex},
+			#{step}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.account.entity.AccountRequisitionAct">
+		UPDATE account_requisition_act SET 	
+		 	<if test="requisitionId != null">
+		  	requisition_id = #{requisitionId},
+		    </if>
+		    <if test="requisitionName != null">
+		  		requisition_name = #{requisitionName},
+		    </if>	
+		 	<if test="checkerName != null">
+		  		checker_name=#{checkerName},
+		    </if>
+			<if test="startTime != null">
+		  		start_time = #{startTime},
+		    </if>
+			<if test="state != null">
+		  		state = #{state},
+		    </if>
+			<if test="actindex != null">
+		  		actindex=#{actindex},
+		    </if>
+			<if test="endTime != null">
+		  		end_time = #{endTime},
+		    </if>
+			<if test="conclusion != null">
+		  		conclusion = #{conclusion},
+		    </if>
+			<if test="remarks != null">
+		  		remarks = #{remarks},
+		    </if>
+			<if test="step != null">
+		  		step = #{step}
+		    </if>
+			
+		WHERE id = #{id}
+	</update>
+	 
+	<select id="getbyRequisitionIdAndChecknameAndState" resultType="com.account.entity.AccountRequisitionAct" parameterType="com.account.entity.AccountRequisitionAct">
+			SELECT 
+			a.id,a.requisition_id AS requisitionId,a.requisition_name AS requisitionName,a.checker_name AS checkerName,a.step
+			FROM account_requisition_act a 
+			WHERE a.requisition_id = #{requisitionId}
+			AND a.checker_name=#{checkerName}
+			AND a.state=0
+	</select>
+	
+	<select id="getbyRequisitionId" resultType="map" parameterType="string">
+			SELECT 
+			a.*,b.`username` requisitionName,c.`username` checkerName
+		FROM account_requisition_act a 
+		LEFT JOIN admin b ON a.requisition_name=b.id
+		LEFT JOIN admin c ON a.checker_name=c.id
+		WHERE a.requisition_id = #{requisitionId}
+	</select>
+	
+	<select id="findList" resultType="map" parameterType="com.account.entity.AccountRequisitionAct">
+	SELECT  b.title,b.id,a.start_time,b.proc_ins_id,a.actindex,a.id AS aid,b.create_by AS createBy
+		FROM account_requisition_act a 
+		LEFT JOIN account_requisition b ON a.requisition_id=b.id
+		WHERE a.checker_name=#{checkerName}
+		AND state=#{state}
+		AND a.actindex=0
+		GROUP BY b.id
+		UNION
+		SELECT b.title,b.id,a.start_time,b.proc_ins_id,a.actindex,a.id AS aid,b.create_by AS createBy 
+		FROM account_requisition_act a 
+		LEFT JOIN account_purchase b ON a.requisition_id=b.id
+		WHERE a.checker_name=#{checkerName}
+		AND state=#{state}
+		AND a.actindex=2
+		GROUP BY b.id
+		UNION
+		SELECT b.title,b.id,a.start_time,b.status AS proc_ins_id,a.actindex,a.id AS aid,b.create_by AS createBy 
+		FROM account_requisition_act a 
+		LEFT JOIN account_inquiry b ON a.requisition_id=b.id
+		WHERE a.checker_name=#{checkerName}
+		AND state=#{state}
+		AND a.actindex=1
+		GROUP BY b.id
+		ORDER BY aid DESC
+	</select>
+	
+	
+	<select id="getbyRequisitionIdAndState" resultType="com.account.entity.AccountRequisitionAct" parameterType="string">
+			SELECT 
+			a.id,a.requisition_id AS requisitionId,a.requisition_name AS requisitionName,a.checker_name AS checkerName,a.step,a.actindex
+			FROM account_requisition_act a 
+			WHERE a.requisition_id = #{requisitionId}
+			AND a.state=0
+	</select>
+	
+	
+	<delete id="deleteByRequisitionId" parameterType="string">
+		DELETE FROM account_requisition_act WHERE requisition_id=#{requisitionId}
+	</delete>
+	
+	
+		<update id="revoke" parameterType="com.account.entity.AccountRequisitionAct">
+		UPDATE account_requisition_act SET 	
+		  	checker_name=#{checkerName}
+		WHERE id = #{id}
+	</update>
+</mapper>

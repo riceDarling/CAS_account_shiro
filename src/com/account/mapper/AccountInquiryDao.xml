@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.account.dao.AccountInquiryDao">
+    
+	<sql id="accountInquiryColumns">
+		a.id AS "id",
+		a.inquirynum AS "inquirynum",
+		a.ordernum AS "ordernum",
+		a.validdate AS "validdate",
+		a.inquiry AS "inquiry",
+		a.requisition AS "requisition",
+		a.maker AS "maker",
+		a.create_by AS "createBy",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy",
+		a.update_date AS "update",
+		a.del_flag AS "delFlag",
+		a.status AS "status",
+		a.title AS "title"
+	</sql>
+	
+	<sql id="accountInquiryJoins">
+	</sql>
+    
+	<select id="get" resultType="com.account.entity.AccountInquiry">
+		SELECT 
+			<include refid="accountInquiryColumns"/>
+		FROM account_inquiry a
+		<include refid="accountInquiryJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="com.account.entity.AccountInquiry">
+		SELECT 
+			<include refid="accountInquiryColumns"/>
+		FROM account_inquiry a
+		<include refid="accountInquiryJoins"/>
+		<where>
+			a.del_flag = 0
+			    <if test="status != null and status != ''">
+			    	AND a.status = #{status}
+			    </if>
+			     <if test="inquiry != null and inquiry != ''">
+			    	 AND (FIND_IN_SET(#{inquiry},a.inquiry))>0
+			    </if>
+			   
+		</where>
+		<choose>
+			<when test="page !=null ">
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.account.entity.AccountInquiry">
+		SELECT 
+			<include refid="accountInquiryColumns"/>
+		FROM account_inquiry a
+		<include refid="accountInquiryJoins"/>
+		<where>
+			a.del_flag = 0
+		</where>		
+		<choose>
+			<when test="page !=null">
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" parameterType="com.account.entity.AccountInquiry">
+		INSERT INTO account_inquiry(
+			id,
+			inquirynum,
+			ordernum,
+			validdate,
+			inquiry,
+			requisition,
+			maker,
+			status,
+			title,	
+			create_by,
+			create_date,	
+			del_flag
+		) VALUES (
+			#{id},
+			#{inquirynum},
+			#{ordernum},
+			#{validdate},
+			#{inquiry},
+			#{requisition},
+			#{maker},
+			#{status},
+			#{title},
+			#{createBy},
+			#{createDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.account.entity.AccountInquiry">
+		UPDATE account_inquiry SET 	
+			validdate = #{validdate},
+			inquiry=#{inquiry},
+			maker = #{maker},
+			status=#{status},
+			update_by = #{updateBy},
+			update_date = #{update}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE account_inquiry SET 
+			del_flag = 1
+		WHERE id = #{id}
+	</update>
+	
+	<update id="commit1">
+		UPDATE account_inquiry SET 
+			status = 1
+		WHERE ordernum = #{ordernum}
+	</update>
+	
+	
+	<select id="selectInquiryByDateAndStatus" parameterType="com.account.entity.AccountInquiry" resultType="com.account.entity.AccountInquiry">
+		SELECT 
+			<include refid="accountInquiryColumns"/>
+		FROM account_inquiry a
+		<include refid="accountInquiryJoins"/>
+			where 1=1 
+			<if test="beginDate != null and beginDate != ''">
+			    	AND a.create_date &gt; #{beginDate}
+			    </if> 
+			    <if test="endDate != null and endDate != ''">
+			    	AND a.create_date &lt; #{endDate}
+			    </if>
+			    <if test="status != null and status != ''">
+			    	AND a.status = #{status}
+			    </if>
+			    <choose>
+			<when test="page !=null ">
+				
+			</when>
+			<otherwise>
+				ORDER BY a.create_date DESC
+			</otherwise>
+		</choose>
+    	</select>
+    	
+    	
+    <update id="setAccountInquiryStatus" parameterType="com.account.entity.AccountInquiry">
+		UPDATE account_inquiry SET 	
+			status=#{status}
+		WHERE ordernum = #{ordernum}
+	</update>
+	
+	
+	<select id="getRequisitionId" resultType="string">
+		SELECT 
+			requisition 
+		FROM account_inquiry 
+		WHERE orderNum=#{ordernum}
+	</select>
+		
+		
+	<update id="setInquiryStatusById" parameterType="string">
+		UPDATE account_inquiry SET 
+			status = #{1}
+		WHERE id = #{0}
+	</update>
+</mapper>

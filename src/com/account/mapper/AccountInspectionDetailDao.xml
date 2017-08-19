@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.account.dao.AccountInspectionDetailDao">
+    
+	<sql id="accountInspectionDetailColumns">
+		a.id AS "id",
+		a.parent_id AS "parent_Id",
+		a.materialname AS "materialname",
+		a.inspectionmode AS "inspectionmode",
+		a.ingredient AS "ingredient",
+		a.granularity AS "granularity",
+		a.appearance AS "appearance",
+		a.status AS "status",
+		a.size AS "size",
+		a.remarks as "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="accountInspectionDetailJoins">
+		LEFT JOIN account_inspection b ON b.id = a.parent_id
+	</sql>
+    
+	<select id="getById" parameterType="java.lang.String" resultType="com.account.entity.AccountInspectionDetail">
+		SELECT 
+			<include refid="accountInspectionDetailColumns"/>
+		FROM account_inspection_detail a
+		<include refid="accountInspectionDetailJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+<select id="getAccount_inspectionInfo" parameterType="java.lang.String" resultType="com.account.entity.AccountInspectionInfo">
+	SELECT *FROM account_inspection a LEFT JOIN account_inspection_detail b
+     ON a.orderNum=b.orderNum  where a.orderNum=#{orderNum} 
+	</select>
+	<select id="findList" parameterType="java.util.Map" resultType="com.account.entity.AccountInspectionDetail">
+		SELECT 
+			<include refid="accountInspectionDetailColumns"/>
+		FROM account_inspection_detail a
+		<include refid="accountInspectionDetailJoins"/>
+		where
+			a.del_flag = '0'
+			<if test="parent != null and parent_Id != null and parent_Id != ''">
+				AND a.parent_id = #{parent_Id}
+			</if>
+			<if test="materialname != null and materialname != ''">
+				AND a.materialname = #{materialname}
+			</if>
+			<if test="inspectionmode != null and inspectionmode != ''">
+				AND a.inspectionmode = #{inspectionmode}
+			</if>
+	</select>
+	
+	<insert id="add" parameterType="com.account.entity.AccountInspectionDetail">
+		INSERT INTO account_inspection_detail(
+			id,
+			parent_id,
+			materialname,
+			inspectionmode,
+			ingredient,
+			granularity,
+			appearance,
+			size,
+			status,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{parent_Id},
+			#{materialname},
+			#{inspectionmode},
+			#{ingredient},
+			#{granularity},
+			#{appearance},
+			#{size},
+			#{status},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.account.entity.AccountInspectionDetail">
+		UPDATE account_inspection_detail SET 	
+			parent_id = #{parent_Id},
+			size = #{size},
+			materialname = #{materialname},
+			inspectionmode = #{inspectionmode},
+			ingredient = #{ingredient},
+			granularity = #{granularity},
+			appearance = #{appearance},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateDetail" parameterType="com.account.entity.AccountInspectionDetail">
+		UPDATE account_inspection_detail SET 	
+		<if test="inspectionmode != null and inspectionmode != ''">
+			inspectionmode = #{inspectionmode},
+		</if>
+		<if test="ingredient != null and ingredient != ''">
+			ingredient = #{ingredient},
+		</if>
+		<if test="granularity != null and granularity != ''">
+			granularity = #{granularity},
+		</if>
+		<if test="appearance != null and appearance != ''">
+			appearance = #{appearance},
+		</if>
+		<if test="status != null and status != ''">
+			status = #{status},
+		</if>
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete" parameterType="java.lang.String">
+		UPDATE account_inspection_detail SET 
+			del_flag = '1' 
+			WHERE id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-pencil-square"></i>计量单位列表
+					<i class="fa fa-pencil-square"></i> <a href_1="paraInfoForm.html">计量单位添加</a>
+				</h3>
+			</div>
+			<div class="panel-body">
+				<div class="form-group" >
+					<label class="col-md-1 control-label" style="width:9%; !important">计量类型：</label>
+					<div class="col-md-3">
+						<select class="form-control" name="pId" id="pId">
+							<option value=""></option>
+						</select>
+					</div>
+					<label class="col-md-1 control-label" style="width:9%; !important">计量单位：</label>
+					<div class="col-md-3">
+						<input class="form-control" name="pName" id="pName"/>
+					</div>
+					<div class="col-md-2">
+						<input class="btn btn-info btn-animate-demo" id="sub_search" type="submit" value="查询"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="panel">
+			<div class="panel-body">
+				<table class="table table-bordered table-condensed table-hover" id="example">
+					<thead>
+						<tr>
+							<th class="visible-lg">计量类型</th>
+							<th class="visible-lg">计量单位</th>
+							<th class="visible-lg">操作</th>
+						</tr>
+					</thead>
+					<tbody id="secondPageTbody">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$("[href_1]").click(function(){
+		$.cookie("paraInfo_edit",null);
+		$("#index_content").load($(this).attr("href_1"));
+	});
+		dataTable();
+		getParaType();
+	function getParaType(){
+		$.ajax({
+			url : "../accountPara/findList",
+			type : "post",
+			success : function (data){
+				data = data.obj;
+				var html = "";
+				html += "<option value=''>选择类型</option>";
+				for (i in data) {
+					html += "<option value='" + data[i].id + "'>" + data[i].name + "</option>";
+				}
+				$("#pId").html(html);
+			}
+		});
+	}
+	$("#sub_search").click(function(){
+		$("#example").dataTable().fnDestroy();
+		dataTable();
+	});
+	function dataTable(){
+		var piPage = {
+			pName:$("#pName").val(),
+			pId:$("#pId option:selected").val()
+		};
+		$('#example').dataTable({
+			 ajax:{
+				 url:"http://"+IP_config+"/account/paraInfo/findList",
+					type:"post",
+					data:piPage,
+					async:false,
+					success:function(data){
+						data = data.obj;
+						 for (var index in data.list) {
+					            var content = "<tr>";
+					            content += "<td>" + data.list[index].pName + "</td>";
+					            content += "<td>" + data.list[index].name + "</td>";
+					            content += "<td><a href_2='paraInfoForm.html' name='"+data.list[index].id+"' class='btn btn-warning' ><i class='fa fa-edit'></i></a><a del_id="+data.list[index].id+" name='del_material' class='btn btn-success'><i class='fa fa-trash-o'></i></a></td>";
+					            content += "</tr>";
+					            $("#secondPageTbody").append(content);
+					        }
+					}
+			    },
+		    "bPaginate": true, //翻页功能
+		    "bLengthChange": true, //改变每页显示数据数量
+		    "bFilter": true, //过滤功能
+		    "bSort": false, //排序功能
+		    "bInfo": true,//页脚信息
+		    "bAutoWidth": true,//自动宽度
+			"oLanguage": {
+				"sLengthMenu": "每页显示 _MENU_ 条记录",
+				"sZeroRecords": "对不起，查询不到任何相关数据",
+				"sInfo": "当前显示 _START_ 到 _END_ 条，共 _TOTAL_条记录",
+				"sInfoEmtpy": "找不到相关数据",
+				"sInfoFiltered": "数据表中共为 _MAX_ 条记录)",
+				"sProcessing": "正在加载中...",
+				"sSearch": "搜索",
+				"oPaginate": {
+					"sFirst": "第一页",
+					"sPrevious":" 上一页 ",
+					"sNext": " 下一页 ",
+					"sLast": " 最后一页 "
+				},		
+			}
+		});
+	}
+	$("[href_2]").click(function(){
+		 $.cookie("paraInfo_edit",$(this).attr("name"));
+		 //alert($.cookie("warehouse_edit"));
+		 $("#index_content").empty();
+		  $("#index_content").load($(this).attr("href_2"));
+	 });
+	
+	$("a[name='del_material']").click(function(){
+		var id = $(this).attr("del_id");
+		
+		$.ajax({
+			url:"http://"+IP_config+"/account/paraInfo/delete",
+			type:"post",
+			data:{
+				"id" : id
+			},
+			success:function(data){
+				layer.alert(data.msg);
+				$("#index_content").load("paraInfoList.html");
+			}
+		});
+		
+	});
+</script>
+</html>

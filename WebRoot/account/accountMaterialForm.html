@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-pencil-square"></i><a href_1="accountMaterialList.html"> 物资列表</a> 
+					<i class="fa fa-pencil-square"></i>物资添加
+				</h3>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="panel">
+		<ul class="nav nav-tabs">
+		<li class="active"><a href="">物资添加</a></li></ul>
+			<div class="panel-body">
+				<form id="material_form" class="form-horizontal row-border">
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">物资名称：</label>
+						<div class="col-sm-6">
+							<input type="hidden" name="id" id="id"/>
+							<input type="hidden" name="materialNum" id="materialNum"/>
+							<input name="materialName" class="form-control" id="materialName"/>
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">规格型号：</label>
+						<div class="col-sm-6">
+							<input name="size" class="form-control" id="size" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">成分含量：</label>
+						<div class="col-sm-6">
+							<input name="ingredient" class="form-control" id="ingredient" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">计量单位：</label>
+						<div class="col-sm-6">
+							<input name="unit" class="form-control" id="unit" />
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">备注信息：</label>
+						<div class="col-sm-6">
+							<textarea name="remarks" class="form-control" id="remarks" rows="2" class="input-xxlarge required"></textarea>
+						</div>
+					</div>
+				</form>
+				<div class="panel-footer">
+					<div class="row">
+						<div class="col-sm-6 col-sm-offset-3">
+							<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /> 
+							<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	var material_editId = $.cookie("material_edit");
+		$("[href_1]").click(function() {
+			$("#index_content").load($(this).attr("href_1"));
+		});
+		$(function(){
+			var ordernum = "25-";
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			var day = date.getDate();
+			if (month < 10) {
+				month = "0" + month;
+			}
+			if (day < 10) {
+				day = "0" + day;
+			}
+			ordernum = ordernum + year + month + day + "-";
+			var ordernumRandom = "";
+			for (var i = 0; i < 5; ++i) {
+				var num = Math.random();
+				num = parseInt(num * 10);
+				ordernumRandom += num;
+			}
+			ordernum += ordernumRandom;
+			$("#materialNum").val(ordernum);
+		});
+		
+		//提交
+		$("#submitbtn").click(function() {
+			var data = $("#material_form").serialize();
+			//alert(data.id);
+			$.ajax({
+				url : "../material/insert",
+				type : "post",
+				data : data,
+				dataType : "json",
+				success : function (){
+					layer.alert("操作成功");
+					$("#index_content").load("accountMaterialList.html");
+				}
+			});
+							
+		});
+		
+		$(document).ready(function(){
+			//alert(material_editId);
+			if(material_editId != null) {
+				$.ajax({
+					url : "../material/selectById",
+					type : "post",
+					data : {
+						"id" : material_editId,
+					},
+					dataType : "json",
+					success : function (data){
+						$("#id").val(data.obj.id);
+						$("#materialNum").val(data.obj.materialNum);
+						$("#materialName").val(data.obj.materialName);
+						$("#size").val(data.obj.size);
+						$("#ingredient").val(data.obj.ingredient);
+						$("#unit").val(data.obj.unit);
+						$("#remarks").val(data.obj.remarks);
+					}
+				});
+			}
+		});
+	</script>
+</body>
+</html>

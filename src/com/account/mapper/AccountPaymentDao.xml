@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.account.dao.AccountPaymentDao">
+    
+	<sql id="accountPaymentColumns">
+		a.id AS "id",
+		a.ordernum AS "ordernum",
+		a.supplier AS "supplier",
+		a.payamount AS "payamount",
+		a.payway AS "payway",
+		a.paybank AS "paybank",
+		a.paybanknum AS "paybanknum",
+		a.paycategory AS "paycategory",
+		a.contractnum AS "contractnum",
+		a.paydate AS "paydate",
+		date_format(a.create_date,'%Y-%c-%d') AS "createdate",
+		a.remarks AS "remarks"
+	</sql>
+    
+	<select id="getById" parameterType="java.lang.String" resultType="com.account.entity.AccountPayment" >
+		SELECT 
+			<include refid="accountPaymentColumns"/>
+		FROM account_payment a
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" parameterType="java.util.Map" resultType="com.account.entity.AccountPayment">
+		SELECT 
+			<include refid="accountPaymentColumns"/>,b.contracttitle as contracttitle
+		FROM account_payment a ,account_contract b
+	     where a.contractnum=b.contractnum and
+			a.del_flag = '0'
+			<if test="supplier != null and supplier != ''">
+				AND a.supplier LIKE CONCAT('%',#{supplier},'%' )
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				AND a.create_date  &gt;= #{beginDate}
+			</if>
+			
+			<if test="endDate != null and endDate != ''">
+				AND a.create_date &lt;= #{endDate}
+			</if>
+			ORDER BY a.create_date DESC
+	</select>
+	
+	
+	<insert id="save" parameterType="com.account.entity.AccountPayment">
+		INSERT INTO account_payment(
+			id,
+			ordernum,
+			supplier,
+			payamount,
+			payway,
+			paybank,
+			paybanknum,
+			paycategory,
+			contractnum,
+			paydate,
+			create_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{ordernum},
+			#{supplier},
+			#{payamount},
+			#{payway},
+			#{paybank},
+			#{paybanknum},
+			#{paycategory},
+			#{contractnum},
+			#{paydate},
+			#{createdate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.account.entity.AccountPayment">
+		UPDATE account_payment SET 	
+			ordernum = #{ordernum},
+			supplier = #{supplier},
+			payamount = #{payamount},
+			payway = #{payway},
+			paybank = #{paybank},
+			paybanknum = #{paybanknum},
+			paycategory = #{paycategory},
+			contractnum = #{contractnum},
+			paydate = #{paydate},
+			create_date = #{createdate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete" parameterType="java.lang.String">
+		UPDATE account_payment SET 
+			del_flag = '1'
+		WHERE id = #{id}
+	</update>
+</mapper> 

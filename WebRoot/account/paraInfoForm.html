@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+  <link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+ 
+ <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+ <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+</head>
+<body>
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-pencil-square"></i><a href_1="paraInfoList.html"> 计量单位列表</a> 
+					<i class="fa fa-pencil-square"></i>计量单位添加
+				</h3>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="panel">
+		<ul class="nav nav-tabs">
+		<li class="active"><a href="">计量单位添加</a></li></ul>
+			<div class="panel-body">
+				<form id="paraInfo_form" class="form-horizontal row-border">
+					<div class="form-group">
+						<label class="col-sm-3 control-label">计量类型：</label>
+						<div class="col-sm-6">
+							<input type="hidden" name="id" class="form-control" id="id" />
+							<select class="form-control" name="pId" id="pId">
+								<option value=""></option>
+							</select>	
+						</div>
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-3 control-label">计量单位：</label>
+						<div class="col-sm-6">
+							<input name="name" class="form-control" id="name" />
+						</div>
+					</div>
+				</form>
+				<div class="panel-footer">
+					<div class="row">
+						<div class="col-sm-6 col-sm-offset-3">
+							<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /> 
+							<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	var paraInfo_editId = $.cookie("paraInfo_edit");
+		$("[href_1]").click(function() {
+			$("#index_content").load($(this).attr("href_1"));
+		});
+		
+		//提交
+		$("#submitbtn").click(function() {
+			var data = $("#paraInfo_form").serialize();
+			$.ajax({
+				url : "../paraInfo/insert",
+				type : "post",
+				data : data,
+				dataType : "json",
+				success : function (){
+					layer.alert("操作成功");
+					$("#index_content").load("paraInfoList.html");
+				}
+			});
+							
+		});
+		
+		$(document).ready(function(){
+			getParaType();
+			selectById();
+		});
+		
+		function getParaType(){
+			$.ajax({
+				url : "../accountPara/findList",
+				type : "post",
+				success : function (data){
+					data = data.obj;
+					var html = "";
+					html += "<option value=''>选择类型</option>";
+					for (i in data) {
+						html += "<option value='" + data[i].id + "'>" + data[i].name + "</option>";
+					}
+					$("#pId").html(html);
+				}
+			});
+		}
+		
+		function selectById(){
+			if(paraInfo_editId != null) {
+				$.ajax({
+					url : "../paraInfo/selectById",
+					type : "post",
+					data : {
+						"id" : paraInfo_editId,
+					},
+					dataType : "json",
+					success : function (data){
+						$("#id").val(data.obj.id);
+						$("#pId option[value='"+data.obj.pId+"']").prop("selected",true);
+						$("#name").val(data.obj.name);
+					}
+				});
+			}
+		}
+	</script>
+</body>
+</html>
