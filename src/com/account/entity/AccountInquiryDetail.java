@@ -1,13 +1,10 @@
 package com.account.entity;
 
 import org.hibernate.validator.constraints.Length;
-import java.util.Date;
 
 /**
  * 询价单子表Entity
  * 
- * @author yang
- * @version 2017-07-13
  */
 public class AccountInquiryDetail extends BaseModel {
 

@@ -17,6 +17,7 @@ public class AccountArrival {
 	private String arrivalstatus="0";//0:未到货 1:未送检  2:已送检 
 	private String delFlag="0";//是否删除
 	private String sumquantity;//订货数量(总)
+	private String title;//标题 查询使用
 	private String sumnum;//到货数量(总) 查询使用
 	private String summoney;//总价(总) 查询使用
 	private String beginDate;//开始日期 查询使用
@@ -199,6 +200,18 @@ public class AccountArrival {
 	 */
 	public void setAccountArrivalDetail(List<AccountArrivalDetail> accountArrivalDetail) {
 		this.accountArrivalDetail = accountArrivalDetail;
+	}
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
+	/**
+	 * @param title the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 }

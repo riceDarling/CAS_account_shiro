@@ -56,8 +56,10 @@ public class AccountArrivalController {
 		}
 		return rm;
 	}
+
 	/**
 	 * 查询到货主表详细信息
+	 * 
 	 * @param req
 	 * @return
 	 */
@@ -74,8 +76,10 @@ public class AccountArrivalController {
 		}
 		return rm;
 	}
+
 	/**
 	 * 查询到货子表物资信息
+	 * 
 	 * @param req
 	 * @return
 	 */
@@ -92,6 +96,25 @@ public class AccountArrivalController {
 		}
 		return rm;
 	}
+
+	/**
+	 * 查询所有到货单号及标题
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "findAllorderNum")
+	public ResponseModel<List<AccountArrival>> findAllorderNum() {
+		ResponseModel<List<AccountArrival>> rm = new ResponseModel<List<AccountArrival>>();
+		try {
+			List<AccountArrival> accountArrival = accountArrivalService.findAllorderNum();
+			rm.isSuccessMsg(accountArrival, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "delete")
 	public ResponseModel<String> delete(HttpServletRequest req) {

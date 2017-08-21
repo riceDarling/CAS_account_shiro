@@ -28,10 +28,6 @@
 		WHERE a.id = #{id}
 	</select>
 	
-<select id="getAccount_inspectionInfo" parameterType="java.lang.String" resultType="com.account.entity.AccountInspectionInfo">
-	SELECT *FROM account_inspection a LEFT JOIN account_inspection_detail b
-     ON a.orderNum=b.orderNum  where a.orderNum=#{orderNum} 
-	</select>
 	<select id="findList" parameterType="java.util.Map" resultType="com.account.entity.AccountInspectionDetail">
 		SELECT 
 			<include refid="accountInspectionDetailColumns"/>
@@ -91,26 +87,7 @@
 		WHERE id = #{id}
 	</update>
 	
-	<update id="updateDetail" parameterType="com.account.entity.AccountInspectionDetail">
-		UPDATE account_inspection_detail SET 	
-		<if test="inspectionmode != null and inspectionmode != ''">
-			inspectionmode = #{inspectionmode},
-		</if>
-		<if test="ingredient != null and ingredient != ''">
-			ingredient = #{ingredient},
-		</if>
-		<if test="granularity != null and granularity != ''">
-			granularity = #{granularity},
-		</if>
-		<if test="appearance != null and appearance != ''">
-			appearance = #{appearance},
-		</if>
-		<if test="status != null and status != ''">
-			status = #{status},
-		</if>
-			remarks = #{remarks}
-		WHERE id = #{id}
-	</update>
+	
 	
 	<update id="delete" parameterType="java.lang.String">
 		UPDATE account_inspection_detail SET 

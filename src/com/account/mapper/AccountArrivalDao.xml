@@ -19,7 +19,7 @@
 		resultType="com.account.entity.AccountArrival">
 		SELECT
 		<include refid="accountArrivalColumns" />
-		from account_arrival a 
+		from account_arrival a
 		where
 		a.`id` = #{id}
 
@@ -28,10 +28,12 @@
 		resultType="com.account.entity.AccountArrival">
 		SELECT
 		<include refid="accountArrivalColumns" />
-		,sum(b.quantity) as sumquantity,sum(b.num) as sumnum,sum(b.money) as summoney
+		,sum(b.quantity) as sumquantity,sum(b.num) as sumnum,sum(b.money) as
+		summoney
 		FROM
 		account_arrival a ,account_arrival_detail b
-		WHERE a.id=b.parent_Id
+		WHERE
+		a.id=b.parent_Id
 		and
 		a.del_flag='0'
 		<if test="supplier != null and supplier != ''">
@@ -88,7 +90,8 @@
 		WHERE id = #{id}
 	</update>
 	<update id="updateStatus" parameterType="java.lang.String">
-		UPDATE account_arrival SET
+		UPDATE account_arrival
+		SET
 		arrivalstatus = '1'
 		WHERE id = #{id}
 	</update>
@@ -97,9 +100,9 @@
 		del_flag = '1'
 		WHERE id = #{id}
 	</update>
-	<!-- <select id="getLastForm" parameterType="java.lang.String" resultType="com.account.entity.AccountArrival"> 
-		SELECT <include refid="accountArrivalColumns" /> , am.materialName, am.size, 
-		ac.`contractTitle` FROM account_arrival a, account_material am, account_contract 
-		ac WHERE a.`material_id` = am.`id` AND a.`contract_id` = ac.`id` AND a.id 
-		= #{id} </select> -->
+	<select id="findAllorderNum" resultType="com.account.entity.AccountArrival">
+		SELECT a.id as id,a.arrivalnum as arrivalnum,b.title as title
+		FROM account_arrival a,account_purchase b
+		where a.ordernum=b.ordernum
+	</select>
 </mapper>

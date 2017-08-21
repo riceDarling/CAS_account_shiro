@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.account.entity.AccountArrival;
 import com.account.entity.AccountInspection;
-import com.account.entity.AccountInspectionInfo;
 import com.account.service.AccountInspectionService;
 import com.account.utils.ResponseModel;
 
@@ -31,10 +29,10 @@ public class AccountInspectionController {
 	@RequestMapping(value = "findList")
 	public ResponseModel<List<AccountInspection>> findList(HttpServletRequest req) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("title", req.getParameter("title"));
-		map.put("contractTitle", req.getParameter("contractTitle"));
-		map.put("beginInspectiondate", req.getParameter("beginInspectiondate"));
-		map.put("endInspectiondate", req.getParameter("endInspectiondate"));
+		map.put("supplier", req.getParameter("supplier"));
+		map.put("status", req.getParameter("status"));
+		map.put("beginDate", req.getParameter("beginDate"));
+		map.put("endDate", req.getParameter("endDate"));
 		ResponseModel<List<AccountInspection>> rm = new ResponseModel<List<AccountInspection>>();
 		try {
 			List<AccountInspection> li = accountInspectionService.findList(map);
@@ -66,51 +64,6 @@ public class AccountInspectionController {
 			String id = req.getParameter("id");
 			accountInspectionService.delete(id);
 			rm.isSuccessMsg("", "删除成功");
-		} catch (Exception e) {
-			rm.isErrorMsg("失败");
-		}
-		return rm;
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "nextForm")
-	public ResponseModel<List<AccountInspection>> nextForm(HttpServletRequest req) {
-
-		ResponseModel<List<AccountInspection>> rm = new ResponseModel<List<AccountInspection>>();
-		try {
-			String id = req.getParameter("id");
-			List<AccountInspection> list = accountInspectionService.getNextInspection(id);
-			rm.isSuccessMsg(list, "成功");
-		} catch (Exception e) {
-			rm.isErrorMsg("失败");
-		}
-		return rm;
-	}
-
-	/**
-	 * 待送检列表
-	 */
-	@ResponseBody
-	@RequestMapping(value = "formSec")
-	public ResponseModel<List<AccountArrival>> formSec() {
-		ResponseModel<List<AccountArrival>> rm = new ResponseModel<List<AccountArrival>>();
-		try {
-			List<AccountArrival> li = accountInspectionService.getArrivalList();
-			rm.isSuccessMsg(li, "成功");
-		} catch (Exception e) {
-			rm.isErrorMsg("失败");
-		}
-		return rm;
-
-	}
-
-	@RequestMapping(value = "getAccountInspectionDetailByArrivalnum")
-	public ResponseModel<List<AccountInspectionInfo>> getAccountInspectionDetailByArrivalnum(HttpServletRequest req) {
-		ResponseModel<List<AccountInspectionInfo>> rm = new ResponseModel<List<AccountInspectionInfo>>();
-		try {
-			String arrivalnum = req.getParameter("arrivalnum");
-			List<AccountInspectionInfo> list = accountInspectionService.getAccount_inspectionInfo(arrivalnum);
-			rm.isSuccessMsg(list, "成功");
 		} catch (Exception e) {
 			rm.isErrorMsg("失败");
 		}

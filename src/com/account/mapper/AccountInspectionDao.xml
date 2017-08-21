@@ -5,9 +5,14 @@
 	<sql id="accountInspectionColumns">
 		a.id AS "id",
 		a.ordernum AS "ordernum",
-		a.arrivalnum AS "arrivalnum",
-		a.inspectionman AS "inspectionman",
-	    date_format(a.inspectiondate,'%Y-%c-%d') AS "inspectiondate",
+		a.arrivalnum AS
+		"arrivalnum",
+		a.suppliernum AS "suppliernum",
+		a.inspectionman AS
+		"inspectionman",
+		date_format(a.inspectiondate,'%Y-%c-%d') AS
+		"inspectiondate",
+		a.status AS "status",
 		a.remarks AS "remarks"
 	</sql>
 	<select id="getById" parameterType="java.lang.String"
@@ -17,44 +22,39 @@
 		FROM account_inspection a
 		WHERE a.id = #{id}
 	</select>
-
 	<select id="findList" parameterType="java.util.Map"
 		resultType="com.account.entity.AccountInspection">
 		SELECT
-		<include refid="accountInspectionColumns" />,
-		ac.id AS contractId,
-		ac.`contractTitle`as contractTitle,
-		ap.title as title
+		<include refid="accountInspectionColumns" />
+		,b.supplier as supplier
 		FROM
-		account_inspection a,
-		account_arrival aa,
-		account_contract ac,
-		account_purchase ap
-		where
-		a.del_flag = '0'
-		AND a.`arrivalNum` = aa.`id`
-		AND aa.`contract_id` = ac.`id`
-		AND ac.`purchaseNum` = ap.`orderNum`
-		<if test="title != null and title != ''">
-			AND ap.title LIKE concat('%',#{title},'%')
+		account_inspection a ,account_supplier b
+		WHERE
+		a.suppliernum=b.suppliernum
+		and
+		a.del_flag='0'
+		<if test="supplier != null and supplier != ''">
+			and a.supplier like CONCAT(CONCAT('%',#{supplier}),'%')
 		</if>
-		<if test="contractTitle != null and contractTitle != ''">
-			AND ac.contractTitle LIKE concat('%',#{contractTitle},'%')
+		<if test="status != null and status != ''">
+			and a.status = #{arrivalstatus}
 		</if>
-		<if test="beginInspectiondate != null and beginInspectiondate != '' ">
-			AND a.inspectiondate &gt;= #{beginInspectiondate}
+		<if test="beginDate != null and beginDate != ''">
+			AND a.inspectiondate &gt;= #{beginDate}
 		</if>
-		<if test="endInspectiondate != null and endInspectiondate != ''">
-			AND a.inspectiondate &lt;= #{endInspectiondate}
+		<if test="endDate != null and endDate != ''">
+			AND a.inspectiondate &lt;= #{endDate}
 		</if>
-		ORDER BY a.inspectiondate DESC
+		group by a.id ORDER BY a.inspectiondate DESC
 	</select>
 
-	<insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="com.account.entity.AccountInspection">
+	<insert id="save" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.account.entity.AccountInspection">
 		INSERT INTO account_inspection(
 		id,
 		ordernum,
 		arrivalnum,
+		suppliernum,
 		inspectionman,
 		checker,
 		inspectiondate,
@@ -65,6 +65,7 @@
 		#{id},
 		#{ordernum},
 		#{arrivalnum},
+		#{suppliernum},
 		#{inspectionman},
 		#{checker},
 		#{inspectiondate},
@@ -74,145 +75,28 @@
 		)
 	</insert>
 
-	<update id="update" parameterType="java.util.Map">
+	<update id="update" parameterType="com.account.entity.AccountInspection">
 		UPDATE account_inspection SET
 		ordernum = #{ordernum},
 		arrivalnum = #{arrivalnum},
+		suppliernum=#{suppliernum},
 		inspectionman =#{inspectionman},
-		checker = #{checker},
+		checker =
+		#{checker},
 		inspectiondate =#{inspectiondate},
 		remarks = #{remarks},
 		del_flag=#{delFlag}
 		WHERE id =#{id}
 	</update>
-<update id="upArrivalSatus" parameterType="java.lang.String">
-   UPDATE account_arrival SET
-		arrivalstatus = '1'
-		WHERE id = #{arrivalnum}
-</update>
+	<update id="upSatus" parameterType="java.lang.String">
+		UPDATE account_inspection
+		SET
+		status = '1'
+		WHERE id = #{id}
+	</update>
 	<update id="delete" parameterType="java.lang.String">
 		UPDATE account_inspection SET
 		del_flag = '1'
 		WHERE id = #{id}
 	</update>
-
-	<select id="getArrivalList" resultType="com.account.entity.AccountArrival">
-		SELECT
-		aa.`id` AS arrivalId,
-		aa.`contract_id` as contractId,
-		aa.`material_id` as materialId,
-		aa.`arrival_date` as arrivalDate ,
-		ac.`contractTitle` as contractTitle
-		FROM
-		account_arrival aa
-		LEFT JOIN account_inspection
-		ai
-		ON aa.`id` = ai.`arrivalNum`
-		LEFT JOIN account_contract ac
-		ON
-		aa.`contract_id` = ac.`id`
-		where aa.arrivalstatus='0'
-		ORDER BY aa.`arrival_date` DESC
-	</select>
-
-
-	<!-- 根据到货时间及合同ID获取到货未送检详情 -->
-	<select id="getDetailByDateAndContractId" parameterType="com.account.entity.AccountArrival"
-		resultType="com.account.entity.AccountArrival">
-		SELECT
-		aa.`id` AS arrivalId,
-		aa.`contract_id`,
-		aa.`material_id`,
-		aa.`arrival_date`,
-		aa.`tobe_num`,
-		aa.`arrival_num`,
-		am.`materialName`,
-		am.`size`,
-		ac.`contractTitle`
-		FROM
-		account_arrival aa
-		LEFT JOIN account_inspection ai
-		ON aa.`id` = ai.`arrivalNum`
-		LEFT JOIN
-		account_inspection_detail aid
-		ON ai.`id` = aid.`parent_Id`
-		LEFT JOIN
-		account_material am
-		ON aa.`material_id` = am.`id`
-		LEFT JOIN
-		account_contract ac
-		ON aa.`contract_id` = ac.`id`
-		WHERE ai.`id` IS NULL
-		AND aa.contract_id = #{contractId}
-		AND aa.`arrival_date` =#{arrivalDate}
-	</select>
-
-	<!-- 根据合同ID和送检日期获取送检详细信息 -->
-	<select id="getNextInspection" parameterType="java.lang.String"
-		resultType="com.account.entity.AccountInspection">
-		SELECT
-		a.id AS "contractId",
-		a.contractnum AS "contractnum",
-		a.contracttitle AS "contracttitle",
-		a.purchasenum AS "purchasenum",
-		aa.`arrival_num` AS arrivalnum,
-		ai.`inspectionDate` AS inspectiondate,
-		aid.`materialName` AS materialname,
-		aid.`ingredient` ingredient ,
-		aid.`id` as inspectionDetailId,
-		aid.status as inspectionDetailstatus,
-		aid.size as size,
-		aid.inspectionmode as inspectionmode,
-		aid.granularity as granularity,
-		aid.appearance as appearance
-		FROM
-		account_contract a,
-		account_arrival aa,
-		account_inspection ai,
-		account_inspection_detail aid
-		WHERE
-		a.`id` = aa.`contract_id`
-		AND aa.`id` = ai.`arrivalNum`
-		AND ai.`id` =aid.`parent_Id`
-		AND ai.`id` = #{id}
-	</select>
-
-	<!-- 根据合同ID和送检日期及送检子表ID获取送检详细信息 -->
-	<select id="getInspectionDetailToAdd" parameterType="com.account.entity.AccountInspection"
-		resultType="com.account.entity.AccountInspection">
-		SELECT
-		a.id AS "id",
-		a.contractnum AS "contractnum",
-		a.contracttitle AS "contracttitle",
-		a.purchasenum AS "purchasenum",
-		a.supplierNum AS "supplierNum",
-		a.caigouname AS "caigouname",
-		a.create_date AS "createdate",
-		a.money AS "money",
-		a.status AS "status",
-		a.remarks AS "remarks",
-		a.del_flag AS "delFlag",
-		aa.`arrival_num` AS
-		arrivalnum,
-		ai.`inspectionDate` AS inspectiondate,
-		ai.inspectionman,
-		aid.`materialName` AS materialname,
-		aid.`ingredient`,
-		aid.`id` AS
-		inspectionDetailId,
-		aid.size
-		FROM
-		account_contract a,
-		account_arrival aa,
-		account_inspection ai,
-		account_inspection_detail aid
-		WHERE
-		a.`id` = aa.`contract_id`
-		AND aa.`id` = ai.`arrivalNum`
-		AND ai.`id` =
-		aid.`parent_Id`
-		AND a.`id` = #{contractId}
-		AND ai.`inspectiondate` =#{inspectiondate}
-		AND aid.`id` = #{inspectionDetailId}
-	</select>
 </mapper>

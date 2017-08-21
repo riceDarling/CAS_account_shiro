@@ -10,10 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.account.dao.AccountInspectionDao;
 import com.account.dao.AccountInspectionDetailDao;
-import com.account.entity.AccountArrival;
 import com.account.entity.AccountInspection;
 import com.account.entity.AccountInspectionDetail;
-import com.account.entity.AccountInspectionInfo;
 import com.account.service.AccountInspectionService;
 
 @Service
@@ -32,8 +30,8 @@ public class AccountInspectionServiceImpl implements AccountInspectionService {
 		AccountInspectionDetail accountInspectionDetail = new AccountInspectionDetail();
 		for (int i = 0; i < size; i++) {
 			accountInspectionDetail = accountInspection.getAccountInspectionDetail().get(i);
-			if (!accountInspectionDetail.getStatus().equals("1")) {
-				accountInspectionDao.upArrivalSatus(accountInspection.getArrivalnum());
+			if (!accountInspectionDetail.getStatus().equals("0")&&accountInspectionDetail.getStatus().length()>0) {
+				accountInspectionDao.upSatus(accountInspection.getId());
 			}
 			accountInspectionDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
 			accountInspectionDetail.setParent_Id(accountInspection.getId());
@@ -52,36 +50,6 @@ public class AccountInspectionServiceImpl implements AccountInspectionService {
 		accountInspectionDao.update(map);
 	}
 
-	@Override
-	public void updateDetail(AccountInspectionDetail accountInspectionDetail) {
-		accountInspectionDetailDao.updateDetail(accountInspectionDetail);
-
-	}
-
-	@Override
-	public List<AccountInspectionInfo> getAccount_inspectionInfo(String arrivalnum) {
-		return accountInspectionDetailDao.getAccount_inspectionInfo(arrivalnum);
-	}
-
-	@Override
-	public List<AccountArrival> getArrivalList() {
-		return accountInspectionDao.getArrivalList();
-	}
-
-	@Override
-	public List<AccountArrival> getDetailByDateAndContractId(AccountArrival accountArrival) {
-		return accountInspectionDao.getDetailByDateAndContractId(accountArrival);
-	}
-
-	@Override
-	public List<AccountInspection> getNextInspection(String id) {
-		return accountInspectionDao.getNextInspection(id);
-	}
-
-	@Override
-	public AccountInspection getInspectionDetailToAdd(AccountInspection accountInspection) {
-		return accountInspectionDao.getInspectionDetailToAdd(accountInspection);
-	}
 
 	@Override
 	public AccountInspection getById(String id) {

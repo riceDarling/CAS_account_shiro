@@ -85,4 +85,9 @@ public class AccountArrivalServiceImpl implements AccountArrivalService {
 		return accountArrivalDetailDao.getByArrivalId(id);
 	}
 
+	@Override
+	public List<AccountArrival> findAllorderNum() {
+		return accountArrivalDao.findAllorderNum();
+	}
+
 }

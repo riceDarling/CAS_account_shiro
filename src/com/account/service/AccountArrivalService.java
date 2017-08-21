@@ -16,7 +16,8 @@ public interface AccountArrivalService {
 	List<AccountArrival> findList(Map<String, Object> map);
 
 	AccountArrival getById(String id);
-	List<AccountArrivalDetail> getByArrivalId(String id);
-	// List<AccountArrival> getLastForm(String id);
 
+	List<AccountArrivalDetail> getByArrivalId(String id);
+
+	public List<AccountArrival> findAllorderNum();
 }

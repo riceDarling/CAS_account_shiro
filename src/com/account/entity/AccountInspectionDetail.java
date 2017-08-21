@@ -15,7 +15,7 @@ public class AccountInspectionDetail {
 	private String granularity;		// 粒度
 	private String appearance;		// 外观
 	private String size;			//规格型号
-	private String status;			//检验状态 0:创建 1:不合格2:合格3:免检4:已入库
+	private String status;			//检验状态 0:创建 1:不合格2:合格3:免检
 	private String remarks;	
 	private String delFlag="0";//是否删除
 	public String getStatus() {
