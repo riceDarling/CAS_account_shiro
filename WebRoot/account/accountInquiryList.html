@@ -151,15 +151,15 @@ $("#sub_search").click(function(){
 							html+='<td><input type="text" detailid="'+obj.id+'" class="form-control  input-small required " name="" id=""></td>';
 						}
 						if(obj.inquiryTime!=null){
-							html+='<td><input  type="text"  readonly  value="'+obj.inquiryTime+'" class="form_datetime form-control " id="inquiryTime">-';
+							html+='<td><input  type="text"  readonly  value="'+obj.inquiryTime+'" class="form_datetime form-control " id="inquiryTime" style="width: 30%;display: inline-block">-';
 						}else{
-							html+='<td><input  type="text"  readonly  value="" class="form_datetime form-control " id="inquiryTime">-';
+							html+='<td><input  type="text"  readonly  value="" class="form_datetime form-control " id="inquiryTime" style="width: 30%;display: inline-block">-';
 						}
 						
 						if(obj.validdate!=null){
-							html+='<input type="text" readonly value="'+obj.validdate+'" class="form_datetime form-control" id="validdate"></td>';
+							html+='<input type="text" readonly value="'+obj.validdate+'" class="form_datetime form-control" id="validdate" style="width: 30%;display: inline-block"></td>';
 						}else{
-							html+='<input type="text" readonly value="" class="form_datetime form-control" id="validdate"></td>';
+							html+='<input type="text" readonly value="" class="form_datetime form-control" id="validdate" style="width: 30%;display: inline-block"></td>';
 						}
 						
 						
