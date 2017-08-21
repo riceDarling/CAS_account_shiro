@@ -121,7 +121,7 @@
 			#{materialcode}
 		)
 	</insert>
-	
+	<!-- 
 	<update id="update" parameterType="com.account.entity.AccountInquiryDetail">
 		UPDATE account_inquiry_detail SET 	
 			inquirydetailnum = #{inquirydetailnum},
@@ -139,7 +139,7 @@
 			remarks = #{remarks}
 		WHERE id = #{id}
 	</update>
-	
+	 -->
 	<update id="delete" parameterType="string">
 		UPDATE account_inquiry_detail SET 
 			del_flag = #{DEL_FLAG_DELETE}
@@ -176,5 +176,66 @@
 			state ="0"
 		WHERE ordernum=#{ordernum}
 	</delete>
+	<select id="getAccountSupplierByPurchasenum" parameterType="com.account.entity.AccountInquiryDetail"
+	resultType="com.account.entity.AccountInquiryDetail">
+	SELECT  b.materialNum  as materialcode,
+	b.materialName as materialname,b.size as size
+	FROM account_inquiry_detail a
+	LEFT JOIN account_material b
+	ON a.materialCode=b.materialNum
+	WHERE a.inquirydetailnum=#{inquirydetailnum} AND
+	a.supplierCode=#{suppliercode} group by materialname
+</select>
+	<select id="getAccountSupplierByPurchasenumtitle" parameterType="String"
+		resultType="com.account.entity.AccountInquiryDetail">
+		SELECT a.inquirydetailnum as inquirydetailnum,b.orderNum as ordernum,
+		c.supplier as supplier,c.supplierNum as suppliercode
+		FROM account_inquiry_detail a
+		LEFT JOIN account_inquiry b
+		ON a.inquirydetailnum=b.id
+		LEFT JOIN account_supplier c ON a.suppliercode=c.supplierNum
+		LEFT JOIN account_material d ON a.materialcode=d.materialNum
+		WHERE b.title = #{purchasenumtitle}
+		group by c.supplier
+	</select>
+	
+	<select id="selectAllmaterial" resultType="map" parameterType="string">
+		SELECT 
+			a.materialname AS "materialname",	
+			a.materialcode AS "materialcode"
+		FROM account_inquiry_detail a
+		<include refid="accountInquiryDetailJoins"/>
+		WHERE a.ordernum = #{ordernum}
+		GROUP BY a.materialcode
+	</select>
+	
+	<select id="selectDetail" resultType="com.account.entity.AccountInquiryDetail" parameterType="com.account.entity.AccountInquiryDetail">
+		SELECT 
+			<include refid="accountInquiryDetailColumns"/>
+		FROM account_inquiry_detail a
+		<include refid="accountInquiryDetailJoins"/>
+		WHERE a.ordernum = #{ordernum}
+		<if test="materialcode!=null and materialcode!=''">
+			AND materialcode=#{materialcode}
+		</if>
+		
+	</select>
+	
+	
+	 <update id="update" parameterType="com.account.entity.AccountInquiryDetail">
+		UPDATE account_inquiry_detail
+		SET 
+		     <if test="unitprice != null and unitprice!=''">
+		        unitprice = #{unitprice},
+		      </if>
+		      <if test="inquiryTime != null and inquiryTime!=''">
+		        inquiry_time = #{inquiryTime},
+		      </if>
+		      <if test="validdate != null and validdate!=''">
+		        validdate = #{validdate},
+		      </if>
+		     del_flag = 0
+		WHERE id = #{id}
+	</update> 
 	
 </mapper>

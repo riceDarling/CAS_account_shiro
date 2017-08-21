@@ -155,6 +155,10 @@ td{
   position: relative;
   background: #FFFFFF;
 }
+textarea {
+	resize:none !important;
+	/* height: 150px !important; */
+}
 .site-holder.mini-sidebar li.submenu ul {
   width: 200px;
   display: block;

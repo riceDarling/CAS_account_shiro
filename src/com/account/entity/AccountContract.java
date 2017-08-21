@@ -1,5 +1,7 @@
 package com.account.entity;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.Length;
 
 
@@ -17,16 +19,15 @@ public class AccountContract {
 	private String purchasenum;		// 采购单号
 	private String supplierNum;	//供应商编号
 	private String caigouname;		// 乙方
-	private int quantity;		// 数量
-	private Double unitprice;		// 单价
-	private Double money;		// 采购金额
 	private String file;//附件
+	private Double summoney;//总金额
 	private String status="0";		// 合同状态(0:未完成  1:完成)
 	private String remarks;//备注信息
 	private String createdate;//签订日期
 	private String beginDate;//开始日期
 	private String endDate;//结束日期
 	private String delFlag="0";//是否删除
+	List<AccountContractDetail> accountContractDetail;
 	/**
 	 * @return the id
 	 */
@@ -81,43 +82,6 @@ public class AccountContract {
 	public void setCaigouname(String caigouname) {
 		this.caigouname = caigouname;
 	}
-	
-	/**
-	 * @return the quantity
-	 */
-	public int getQuantity() {
-		return quantity;
-	}
-
-	/**
-	 * @param quantity the quantity to set
-	 */
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	/**
-	 * @return the unitprice
-	 */
-	public Double getUnitprice() {
-		return unitprice;
-	}
-
-	/**
-	 * @param unitprice the unitprice to set
-	 */
-	public void setUnitprice(Double unitprice) {
-		this.unitprice = unitprice;
-	}
-
-	public Double getMoney() {
-		return money;
-	}
-
-	public void setMoney(Double money) {
-		this.money = money;
-	}
-
 	
 	@Length(min=0, max=1, message="合同状态(0:未完成  1:完成)长度必须介于 0 和 1 之间")
 	public String getStatus() {
@@ -240,6 +204,34 @@ public class AccountContract {
 	 */
 	public void setFile(String file) {
 		this.file = file;
+	}
+
+	/**
+	 * @return the accountContractDetail
+	 */
+	public List<AccountContractDetail> getAccountContractDetail() {
+		return accountContractDetail;
+	}
+
+	/**
+	 * @param accountContractDetail the accountContractDetail to set
+	 */
+	public void setAccountContractDetail(List<AccountContractDetail> accountContractDetail) {
+		this.accountContractDetail = accountContractDetail;
+	}
+
+	/**
+	 * @return the summoney
+	 */
+	public Double getSummoney() {
+		return summoney;
+	}
+
+	/**
+	 * @param summoney the summoney to set
+	 */
+	public void setSummoney(Double summoney) {
+		this.summoney = summoney;
 	}
 	
 }

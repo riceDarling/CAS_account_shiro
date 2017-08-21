@@ -66,15 +66,16 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 	
 		if (accountPurchase.getId()==null) {
 			// 生成17位单据编号 04-20170203-00001
-			//String ordernum = "06-" + FormatDateUtils.dateToString(new Date()) + "-" + RandomUtils.random();
-			//accountPurchase.setOrdernum(ordernum);
+			String ordernum = "06-" + FormatDateUtils.dateToString(new Date()) + "-" + RandomUtils.random();
+			accountPurchase.setOrdernum(ordernum);
 			
-			//accountPurchase.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-			//accountPurchase.setMaker(loginAdmin.getId().toString());
-			//accountPurchase.setProcInsId("start");
-			//accountPurchase.setCreateBy(loginAdmin.getId().toString());
-			//accountPurchase.setCreateDate(new Date());
-			//accountPurchaseDao.insert(accountPurchase);
+			accountPurchase.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+			accountPurchase.setMaker(loginAdmin.getId().toString());
+			accountPurchase.setProcInsId("start");
+			accountPurchase.setCreateBy(loginAdmin.getId().toString());
+			accountPurchase.setCreateDate(new Date());
+			accountPurchase.setAct_checker(accountPurchase.getChecker());
+			accountPurchaseDao.insert(accountPurchase);
 		} else {
 			AccountRequisitionAct now_act = new AccountRequisitionAct();		
 			now_act.setCheckerName(loginAdmin.getId().toString());
@@ -82,18 +83,22 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 			now_act = accountRequisitionActDao.getbyRequisitionIdAndChecknameAndState(now_act);
 			now_act.setState(1);
 			now_act.setConclusion(1);
-			now_act.setRemarks("提交申请");
+			now_act.setRemarks("提交重申");
 			now_act.setEndTime(new Date());
 			now_act.setActindex(2);
 			accountRequisitionActDao.update(now_act);
 			
 			accountPurchase.setProcInsId("start");
+			accountPurchase.setAct_checker(accountPurchase.getChecker());
 			accountPurchase.setUpdate(new Date());
 			accountPurchase.setUpdateBy(loginAdmin.getId().toString());
 			accountPurchaseDao.update(accountPurchase);
 		}
 
 		List<AccountPurchaseDetail> detailList=accountPurchaseDetailDao.findList(new AccountPurchaseDetail(accountPurchase));
+		/*for (AccountPurchaseDetail detail : detailList) {
+			accountPurchaseDetailDao.delete(detail.getId());
+		}*/
 		if(detailList.size()>0){
 			accountPurchaseDetailDao.deleteByparentId(accountPurchase.getId());
 		}
@@ -105,7 +110,7 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 			accountPurchaseDetail.setCreateDate(new Date());
 			accountPurchaseDetailDao.insert(accountPurchaseDetail);
 		}
-		List<AccountPurchaseSupplier> supplierList=accountPurchaseSupplierDao.getbyParentId(accountPurchase.getId());
+	/*	List<AccountPurchaseSupplier> supplierList=accountPurchaseSupplierDao.getbyParentId(accountPurchase.getId());
 		if(supplierList.size()>0){
 			accountPurchaseSupplierDao.deleteByparentId(accountPurchase.getId());
 		}
@@ -115,7 +120,7 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 			accountPurchaseSupplier.setCreateBy(loginAdmin.getId().toString());
 			accountPurchaseSupplier.setCreateDate(new Date());
 			accountPurchaseSupplierDao.insert(accountPurchaseSupplier);
-		}
+		}*/
 
 		AccountRequisitionAct act = new AccountRequisitionAct();
 		act.setActindex(2);
@@ -125,6 +130,7 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 		act.setStep(0);
 		act.setState(1);
 		act.setCheckerName(loginAdmin.getId().toString());
+		accountPurchase.setAct_checker(accountPurchase.getChecker());
 		accountRequisitionActDao.insert(act);
 
 		act.setConclusion(1);
@@ -169,8 +175,9 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 		now_act.setActindex(2);
 		accountRequisitionActDao.update(now_act);
 		if ("yes".equals(accountPurchase.getConclusion())) {
-			//如果有人进行审核并且通过，修改主表状态为"examine"，表示当前这个任务无法撤回了
+			//如果有人进行审核并且通过，修改主表状态为"examine"
 			accountPurchase.setProcInsId("examine");
+			accountPurchase.setAct_checker(accountPurchase.getChecker());
 			accountPurchaseDao.update(accountPurchase);
 			// 如果同意则，进入下一个节点
 			AccountRequisitionAct next_act = new AccountRequisitionAct();
@@ -188,6 +195,15 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 			accountPurchaseDao.update(accountPurchase);
 			
 		} else {
+			//办理人修改为，上一步办理人
+			Map<String,Object> map=new HashMap<String, Object>();
+			map.put("requisitionId", now_act.getRequisitionId());
+			map.put("step",now_act.getStep()-1);
+			AccountRequisitionAct 	previous_act=accountRequisitionActDao.getbyRequisitionIdAndStep(map);
+			accountPurchase.setAct_checker(previous_act.getCheckerName());
+			accountPurchase.setProcInsId("rejected");
+			accountPurchaseDao.update(accountPurchase);
+			
 			// 返回上一个节点驳回目标人为上一节点人
 			AccountRequisitionAct next_act = new AccountRequisitionAct();
 			next_act.setActindex(2);
@@ -206,11 +222,7 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 			accountInquiryDao.setAccountInquiryStatus(accountInquiry);
 		}
 	}
-	@Override
-	public List<AccountPurchase> getAccountPurchaseTitle() {
-		return accountPurchaseDao.getAccountPurchaseTitle();
-	}
-	public List<AccountPurchaseDetail> getAccountSupplierByPurchasenum(AccountPurchaseDetail accountPurchaseDetail){
+	/*public List<AccountPurchaseDetail> getAccountSupplierByPurchasenum(AccountPurchaseDetail accountPurchaseDetail){
 		return accountPurchaseDetailDao.getAccountSupplierByPurchasenum(accountPurchaseDetail);
 	}
 	public Map<String,AccountPurchaseDetail> getAccountSupplierByPurchasenumtitle(String purchasenumtitle){
@@ -229,6 +241,17 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 			}
 		}
 		return map;
+	}*/
+
+	@Override
+	public AccountPurchase findPage(AccountPurchase entity) {
+		entity.getPage().setList(accountPurchaseDao.findList(entity));
+		return entity;	
+	}
+
+	@Override
+	public void delete(String accountPurchaseid) {
+		accountPurchaseDao.delete(accountPurchaseid);
 	}
 
 }

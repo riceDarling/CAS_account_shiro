@@ -5,31 +5,28 @@
 				<i class="fa fa-pencil-square"></i>询价单 
 			</h3>
 		</div>
-		<div class="panel-body">
+		<div class="panel-body" id="inquiry_select">
 				<label class="col-lg-1 col-md-2 control-label">申购单标题：</label>
 				<div class="col-lg-2 col-md-2">
-					<select name="status" class="form-control">
+					<select name="status" class="form-control" id="inquiry_title">
 						<option value="">请选择</option>
-						<option value="0">未完成</option>
-						<option value="1">已完成</option>
+					
 					</select>
 				</div>
 				<label class="col-lg-1 col-md-2 control-label">物资：</label>
 				<div class="col-lg-2 col-md-2">
-					<select name="status" class="form-control">
+					<select name="status" class="form-control" id="inquiry_material">
 						<option value="">请选择</option>
-						<option value="0">未完成</option>
-						<option value="1">已完成</option>
 					</select>
 				</div>
-				<label class="col-lg-1 col-md-2 control-label">型号：</label>
+				<!-- <label class="col-lg-1 col-md-2 control-label">型号：</label>
 				<div class="col-lg-2 col-md-2">
 					<select name="status" class="form-control">
 						<option value="">请选择</option>
 						<option value="0">未完成</option>
 						<option value="1">已完成</option>
 					</select>
-				</div>
+				</div> -->
 				<div class="col-lg-1 col-md-2">
 						<input class="btn btn-info " id="sub_search" type="submit" value="查询">
 				</div>
@@ -50,11 +47,7 @@
 					</tr>
 				</thead>
 				<tbody id="secondPageTbody">
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-					<td>4</td>
+				
 				</tbody>
 			</table>
 		</div>
@@ -67,3 +60,164 @@
 		</div>
 	</div>
 </div>
+<script>
+//获取标题
+$.ajax("../accountInquiry/selectAllTitle", {
+	dataType: "json",
+	xhrFields: {
+		withCredentials: true
+	},
+	type: "GET",
+	success: function(data) {
+		//console.log(data);
+		if(data.success){
+			//获取成功
+			//layer.alert(data.msg);
+			var html="<option value=''>请选择</option>";
+			for (i in data.obj) {
+				var obj = data.obj[i];
+				html+='<option value="'+obj.ordernum+'">'+obj.title+'</option>';
+			}
+			$("#inquiry_title").html(html);
+		}else{
+			//获取失败提示
+			layer.alert(data.msg);
+		}
+	}
+});
+
+$("#inquiry_select").on("change","#inquiry_title",function(){
+	var html="<option value=''></option>";
+	$("#inquiry_material").html(html);
+	//var ordernum=$("#inquiry_title").find("option:selected").attr("ordernum");
+	var ordernum=$(this).val();
+	
+	//获取物资
+	$.ajax("../accountInquiry/selectAllmaterial", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		data:{
+			"accountInquiryOrdernum":ordernum
+		},
+		type: "GET",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				var html="<option value=''>请选择</option>";
+				for (i in data.obj) {
+					var obj = data.obj[i];
+					html+='<option value="'+obj.materialcode+'">'+obj.materialname+'</option>';
+				}
+				$("#inquiry_material").html(html);
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+});
+$("#sub_search").click(function(){
+	var ordernum=$("#inquiry_title").val();
+	var materialcode=$("#inquiry_material").val();
+	
+		//获取物资
+		$.ajax("../accountInquiry/selectDetail", {
+			dataType: "json",
+			xhrFields: {
+				withCredentials: true
+			},
+			data:{
+				"ordernum":ordernum,
+				"materialcode":materialcode
+			},
+			type: "GET",
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					//获取成功
+					//layer.alert(data.msg);
+					var html="";
+					for (i in data.obj) {
+						var obj = data.obj[i];
+						html+='<tr>';
+						html+='<td>'+obj.materialname+'</td>';
+						html+='<td>'+obj.size+'</td>';
+						html+='<td>'+obj.supplier+'</td>';
+						if(obj.unitprice!=null){
+							html+='<td><input type="text" detailid="'+obj.id+'" value="'+obj.unitprice+'" class="form-control  input-small required " name="" id=""></td>';
+						}else{
+							html+='<td><input type="text" detailid="'+obj.id+'" class="form-control  input-small required " name="" id=""></td>';
+						}
+						if(obj.inquiryTime!=null){
+							html+='<td><input  type="text"  readonly  value="'+obj.inquiryTime+'" class="form_datetime form-control " id="inquiryTime">-';
+						}else{
+							html+='<td><input  type="text"  readonly  value="" class="form_datetime form-control " id="inquiryTime">-';
+						}
+						
+						if(obj.validdate!=null){
+							html+='<input type="text" readonly value="'+obj.validdate+'" class="form_datetime form-control" id="validdate"></td>';
+						}else{
+							html+='<input type="text" readonly value="" class="form_datetime form-control" id="validdate"></td>';
+						}
+						
+						
+						html+='</tr>';
+					}
+					$("#secondPageTbody").html(html);
+					$(".form_datetime").datetimepicker({
+						language:  'zh-CN', 
+						minView: "month", //选择日期后，不会再跳转去选择时分秒 
+					    format: 'yyyy-mm-dd',
+					    todayBtn:  1,
+					    autoclose: 1,});
+				}else{
+					//获取失败提示
+					layer.alert(data.msg);
+				}
+			}
+		});
+	
+});
+$("#btnCancel").click(function(){
+	var data_json={};
+	var jsonlist = new Array();
+	$("#secondPageTbody tr").each(function(){
+		var id=$(this).children("td").eq(3).find("input").attr("detailid");
+		var unitprice=$(this).children("td").eq(3).find("input").val();
+		var inquiryTime=$(this).children("td").eq(4).find("input").eq(0).val();
+		var validdate=$(this).children("td").eq(4).find("input").eq(1).val();
+		//console.log(id+unitprice+inquiryTime+validdate);
+		var json={};
+		json["id"]=id;
+		json["unitprice"]=unitprice;
+		json["inquiryTime"]=inquiryTime;
+		json["validdate"]=validdate;
+		jsonlist.push(json);
+	});
+	data_json["detailList"]=jsonlist;
+	$.ajax("../accountInquiry/saveDetail", {
+		dataType: "json",
+		contentType:"application/json;charset=UTF-8",
+		data:JSON.stringify(data_json),
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "POST",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//提交成功
+				layer.alert(data.msg);
+				//$("#index_content").load("requisitionList.html");
+			}else{
+				//提交失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+});
+</script>

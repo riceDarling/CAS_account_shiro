@@ -15,7 +15,8 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy",
 		a.update_date AS "updateDate",
-		a.del_flag AS "delFlag"
+		a.del_flag AS "delFlag",
+		a.act_checker AS "act_checker"
 	</sql>
 	
 	<select id="get" parameterType="string" resultType="com.account.entity.AccountRequisition">
@@ -28,9 +29,8 @@
 	
 	<select id="findList" resultType="com.account.entity.AccountRequisition">
 		SELECT 
-			<include refid="accountRequisitionColumns"/>,b.checker_name AS 'act_checker',MAX(b.id)
+			<include refid="accountRequisitionColumns"/>
 		FROM account_requisition a
-		LEFT JOIN account_requisition_act b ON a.id=b.requisition_id
 		<where>
 			a.del_flag = 0		
 		</where>
@@ -73,6 +73,7 @@
 			checker,
 			create_by,
 			create_date,
+			act_checker,
 			del_flag
 		) VALUES (
 			#{id},
@@ -85,6 +86,7 @@
 			#{checker},
 			#{createBy},
 			#{createDate},
+			#{act_checker},
 			#{delFlag}
 		)
 	</insert>
@@ -109,6 +111,7 @@
 			 <if test="checker != null">
 				checker = #{checker},
 		    </if>
+		    act_checker=#{act_checker},
 			update_by = #{updateBy},
 			update_date = #{update}
 		WHERE id = #{id}
@@ -134,4 +137,9 @@
 		FROM account_requisition a
 		WHERE a.id = #{ordernum}
 	</select>
+	<select id="getAccountPurchaseTitle" resultType="com.account.entity.AccountRequisition">
+		SELECT ap.title as title FROM account_requisition ap WHERE ap.proc_ins_id='end' and del_flag='0'
+	</select>
+
+	
 </mapper>

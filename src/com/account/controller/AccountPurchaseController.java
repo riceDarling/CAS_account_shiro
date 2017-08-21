@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,15 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.account.entity.AccountInquiry;
 import com.account.entity.AccountInquiryDetail;
-import com.account.entity.AccountPayment;
 import com.account.entity.AccountPurchase;
-import com.account.entity.AccountPurchaseDetail;
 import com.account.entity.AccountPurchaseSupplier;
+import com.account.entity.AccountRequisition;
 import com.account.service.AccountInquiryDetailService;
 import com.account.service.AccountPurchaseService;
 import com.account.service.AccountRequisitionActService;
+import com.account.utils.PageUtil;
 import com.account.utils.ResponseModel;
 import com.alibaba.fastjson.JSON;
 
@@ -65,6 +65,21 @@ public class AccountPurchaseController {
 		return rm;
 	}
 	
+	
+	@ResponseBody
+	@RequestMapping("list")
+	public ResponseModel<AccountPurchase> list(AccountPurchase entity, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ResponseModel<AccountPurchase> rm = new ResponseModel<AccountPurchase>();
+		try {
+			entity.setPage(new PageUtil<AccountPurchase>());
+			accountPurchaseService.findPage(entity);
+			rm.isSuccessMsg(entity,"获取申购单列表成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("获取申购单列表失败");
+		}
+		return rm;
+	}
+	
 	/**
 	 * (申请单主表,询价报表)
 	 * @param requisitionid
@@ -96,8 +111,8 @@ public class AccountPurchaseController {
 			//字表数据
 			accountPurchaseService.setAccountPurchaseDetailListService(accountPurchase);
 			//供应商数据
-			List<AccountPurchaseSupplier> accountPurchaseSuppliers= accountPurchaseService.getbyParentId(accountPurchaseid);
-			accountPurchase.setSupplierList(accountPurchaseSuppliers);
+			//List<AccountPurchaseSupplier> accountPurchaseSuppliers= accountPurchaseService.getbyParentId(accountPurchaseid);
+			//accountPurchase.setSupplierList(accountPurchaseSuppliers);
 			List<Map<String,Object>> actlist=accountRequisitionActService.getbyRequisitionId(accountPurchaseid);
 			map.put("purchase", accountPurchase);
 			map.put("actlist", actlist);
@@ -128,52 +143,20 @@ public class AccountPurchaseController {
 		return rm;
 	}
 
-	/**
-	 * 获取采购标题
-	 */
 	@ResponseBody
-	@RequestMapping(value = "getAccountPurchaseTitle")
-	public ResponseModel<List<AccountPurchase>> getAccountPurchaseTitle() {
-		ResponseModel<List<AccountPurchase>> rm = new ResponseModel<List<AccountPurchase>>();
-		try {
-			List<AccountPurchase> accountPurchase = accountPurchaseService.getAccountPurchaseTitle();
-			rm.isSuccessMsg(accountPurchase, "成功");
+	@RequestMapping(value = "delete")
+	public ResponseModel<String> delete(String accountPurchaseid) {
+		ResponseModel<String> rm = new ResponseModel<String>();
+		try { 
+			accountPurchaseService.delete(accountPurchaseid);
+			//提交申请单
+			rm.isSuccessMsg("","删除成功");
+			
 		} catch (Exception e) {
-			rm.isErrorMsg("失败");
+			rm.isErrorMsg("删除失败");		
 		}
+		
 		return rm;
 	}
 
-	/**
-	 * 根据物资编码获取详细信息
-	 */
-	@ResponseBody
-	@RequestMapping(value = "getAccountSupplierByPurchasenum")
-	public ResponseModel<List<AccountPurchaseDetail>> getAccountSupplierByPurchasenum(AccountPurchaseDetail accountPurchaseDetail) {
-		ResponseModel<List<AccountPurchaseDetail>> rm = new ResponseModel<List<AccountPurchaseDetail>>();
-		try {
-			List<AccountPurchaseDetail> adDetails = accountPurchaseService.getAccountSupplierByPurchasenum(accountPurchaseDetail);
-			rm.isSuccessMsg(adDetails, "成功");
-		} catch (Exception e) {
-			rm.isErrorMsg("失败");
-		}
-		return rm;
-	}
-
-	/**
-	 * 根据采购标题获取供应商列表信息
-	 */
-	@ResponseBody
-	@RequestMapping(value = "getAccountSupplierByPurchasenumtitle")
-	public ResponseModel<Map<String, AccountPurchaseDetail>> getAccountSupplierByPurchasenumtitle(HttpServletRequest req) {
-		ResponseModel<Map<String, AccountPurchaseDetail>> rm = new ResponseModel<Map<String, AccountPurchaseDetail>>();
-		try {
-			String purchasenumtitle = req.getParameter("purchasenumtitle");
-			Map<String, AccountPurchaseDetail> accountPurchaseDetail = accountPurchaseService.getAccountSupplierByPurchasenumtitle(purchasenumtitle);
-			rm.isSuccessMsg(accountPurchaseDetail, "成功");
-		} catch (Exception e) {
-			rm.isErrorMsg("失败");
-		}
-		return rm;
-	}
 }

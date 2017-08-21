@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.account.entity.AccountContract;
+import com.account.entity.AccountContractDetail;
 import com.account.service.AccountContractService;
 import com.account.utils.ResponseModel;
 
@@ -27,7 +29,7 @@ public class AccountContractController {
 
 	@ResponseBody
 	@RequestMapping(value = "save")
-	public ResponseModel<String> test(AccountContract accountContract) {
+	public ResponseModel<String> save(@RequestBody AccountContract accountContract) {
 		ResponseModel<String> rm = new ResponseModel<String>();
 		try {
 			accountContractService.save(accountContract);
@@ -56,6 +58,11 @@ public class AccountContractController {
 		}
 		return rm;
 	}
+	/**
+	 * 查询合同主表信息
+	 * @param req
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "getById")
 	public ResponseModel<AccountContract> getById(HttpServletRequest req) {
@@ -64,6 +71,24 @@ public class AccountContractController {
 			String id = req.getParameter("id");
 			AccountContract accountContract = accountContractService.getById(id);
 			rm.isSuccessMsg(accountContract, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
+	/**
+	 * 查询子表物资信息
+	 * @param req
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getByContractId")
+	public ResponseModel<List<AccountContractDetail>> getByContractId(HttpServletRequest req) {
+		ResponseModel<List<AccountContractDetail>> rm = new ResponseModel<List<AccountContractDetail>>();
+		try {
+			String id = req.getParameter("id");
+			List<AccountContractDetail> accountContractDetail = accountContractService.getByContractId(id);
+			rm.isSuccessMsg(accountContractDetail, "成功");
 		} catch (Exception e) {
 			rm.isErrorMsg("失败");
 		}
@@ -82,5 +107,20 @@ public class AccountContractController {
 		}
 		return rm;
 	}
-	
+	/**
+	 * 获取合同标题列表
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "findAllTitle")
+	public ResponseModel<List<Map<String,Object>>> findAllTitle() {
+		ResponseModel<List<Map<String,Object>>> rm = new ResponseModel<List<Map<String,Object>>>();
+		try {
+			List<Map<String,Object>> li = accountContractService.findAllTitle();
+			rm.isSuccessMsg(li, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
 }

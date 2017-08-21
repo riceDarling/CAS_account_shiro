@@ -1,6 +1,9 @@
 package com.account.entity;
 
 import org.hibernate.validator.constraints.Length;
+
+import com.account.utils.PageUtil;
+
 import java.util.List;
 
 /**
@@ -14,7 +17,7 @@ public class AccountPurchase extends BaseModel {
 	private String id;
 	private String title; // 标题
 	private String ordernum; // 单据编号
-	private String inquirynum; // 询价单号
+	private String inquirynum; // 合同单号
 	private String maker; // 制单人
 	private String checker; // 审核人
 	private String procInsId; // 流程节点状态
@@ -25,6 +28,46 @@ public class AccountPurchase extends BaseModel {
 	private String comment;// 流程过程中的意见
 
 	private String conclusion;// 流程同意是否
+
+	private String act_checker;// 当前节点办理人
+
+	private PageUtil<AccountPurchase> page;
+
+	private String supplierNum;// 供应商编号，查询使用
+
+	private String supplier;// 供应商名称，查询使用
+
+	public String getSupplierNum() {
+		return supplierNum;
+	}
+
+	public void setSupplierNum(String supplierNum) {
+		this.supplierNum = supplierNum;
+	}
+
+	public String getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(String supplier) {
+		this.supplier = supplier;
+	}
+
+	public PageUtil<AccountPurchase> getPage() {
+		return page;
+	}
+
+	public void setPage(PageUtil<AccountPurchase> page) {
+		this.page = page;
+	}
+
+	public String getAct_checker() {
+		return act_checker;
+	}
+
+	public void setAct_checker(String act_checker) {
+		this.act_checker = act_checker;
+	}
 
 	public String getId() {
 		return id;
@@ -120,4 +163,5 @@ public class AccountPurchase extends BaseModel {
 	public void setAccountPurchaseDetailList(List<AccountPurchaseDetail> accountPurchaseDetailList) {
 		this.accountPurchaseDetailList = accountPurchaseDetailList;
 	}
+
 }

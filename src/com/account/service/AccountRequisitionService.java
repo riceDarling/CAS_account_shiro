@@ -20,4 +20,5 @@ public interface AccountRequisitionService {
 	void delete(String requisitionid);
 	
 	void findPage(AccountRequisition entity);
+	public List<AccountRequisition> getAccountPurchaseTitle();
 }

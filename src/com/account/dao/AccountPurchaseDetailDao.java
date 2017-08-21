@@ -25,9 +25,5 @@ public interface AccountPurchaseDetailDao {
 	
 	void deleteByparentId(String parentId);
 	
-	public List<AccountPurchaseDetail> getAccountSupplierByPurchasenum(AccountPurchaseDetail accountPurchaseDetail);
-
-	public List<AccountPurchaseDetail> getAccountSupplierByPurchasenumtitle(String purchasenumtitle);
-
 	
 }

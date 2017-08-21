@@ -4,6 +4,7 @@
 package com.account.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import com.account.utils.PageUtil;
 
@@ -32,8 +33,17 @@ public class AccountInquiry extends BaseModel {
 	private String conclusion;// 流程同意是否
 	private String checker; // 审核人
 
+	private List<AccountInquiryDetail> detailList;
 
 	private PageUtil<AccountInquiry> page;
+
+	public List<AccountInquiryDetail> getDetailList() {
+		return detailList;
+	}
+
+	public void setDetailList(List<AccountInquiryDetail> detailList) {
+		this.detailList = detailList;
+	}
 
 	public String getComment() {
 		return comment;

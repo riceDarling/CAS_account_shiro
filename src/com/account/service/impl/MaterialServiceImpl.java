@@ -42,7 +42,7 @@ public class MaterialServiceImpl implements MaterialService{
 		if (record.getId() != null && !record.getId().equals("")) {
 			record.setDelFlag("0");
 			mDao.updateByPrimaryKeySelective(record);
-			msDao.deleteByMaterialId(record.getId());
+			msDao.deleteByMaterialNum(record.getMaterialNum());
 			for (MaterialSupplier element : record.getMaterialSupplier()) {
 				element.setMaterial(record.getMaterialNum());
 				msDao.insertSelective(element);

@@ -1,6 +1,8 @@
 package com.account.service.impl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.shiro.SecurityUtils;
@@ -168,5 +170,12 @@ public class AccountInquiryServiceImpl implements AccountInquiryService {
 		}
 		
 	}
+
+	@Override
+	public List<Map<String, Object>> selectAllTitle() {
+		// TODO Auto-generated method stub
+		return accountInquiryDao.selectAllTitle();
+	}
+
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.account.entity.AccountContract;
+import com.account.entity.AccountContractDetail;
 
 public interface AccountContractService {
 	void save(AccountContract accountContract);
@@ -21,4 +22,7 @@ public interface AccountContractService {
 	AccountContract getById(String id);
 
 	List<AccountContract> getAllAccountContractInfo();
+	List<AccountContractDetail> getByContractId(String id);
+
+	List<Map<String, Object>> findAllTitle();
 }

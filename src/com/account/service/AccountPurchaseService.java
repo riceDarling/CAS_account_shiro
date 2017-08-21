@@ -1,10 +1,8 @@
 package com.account.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.account.entity.AccountPurchase;
-import com.account.entity.AccountPurchaseDetail;
 import com.account.entity.AccountPurchaseSupplier;
 
 public interface AccountPurchaseService {
@@ -17,9 +15,7 @@ public interface AccountPurchaseService {
 	public void setAccountPurchaseDetailListService(AccountPurchase accountPurchase);
 	
 	public void saveAudit(AccountPurchase entity);
-	public List<AccountPurchase> getAccountPurchaseTitle();
-	public List<AccountPurchaseDetail> getAccountSupplierByPurchasenum(AccountPurchaseDetail accountPurchaseDetail);
-
-	public Map<String,AccountPurchaseDetail> getAccountSupplierByPurchasenumtitle(String purchasenumtitle);
-
+	public AccountPurchase findPage(AccountPurchase entity);
+	public void delete(String accountPurchaseid);
+	
 }

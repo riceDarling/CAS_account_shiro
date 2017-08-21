@@ -14,7 +14,7 @@ public class AccountInquiryDetail extends BaseModel {
 	private String id;
 	private String inquirydetailnum; // 询价单号
 	private String ordernum; // 单据编号
-	private String validdate; // 询价有效期限
+	private String validdate; // 询价有效期限结束时间
 	private String supplier; // 供应商名称
 	private String materialname; // 物资名称
 	private String size; // 规格型号
@@ -24,7 +24,7 @@ public class AccountInquiryDetail extends BaseModel {
 	private String maker; // 制单人
 
 	private String materialcode; // 物资编号
-	private Date inquiryTime; // 询价时间
+	private String inquiryTime; // 询价时间(询价有效期限开始时间)
 	private String suppliercode; // 供应商编号
 	private String brand; // 商标
 
@@ -72,11 +72,11 @@ public class AccountInquiryDetail extends BaseModel {
 		this.suppliercode = suppliercode;
 	}
 
-	public Date getInquiryTime() {
+	public String getInquiryTime() {
 		return inquiryTime;
 	}
 
-	public void setInquiryTime(Date inquiryTime) {
+	public void setInquiryTime(String inquiryTime) {
 		this.inquiryTime = inquiryTime;
 	}
 

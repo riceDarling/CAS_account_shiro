@@ -1,6 +1,7 @@
 package com.account.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.account.dao.AccountInquiryDao;
+import com.account.dao.AccountPurchaseDao;
 import com.account.dao.AccountRequisitionActDao;
+import com.account.dao.AccountRequisitionDao;
+import com.account.entity.AccountPurchase;
+import com.account.entity.AccountRequisition;
 import com.account.entity.AccountRequisitionAct;
 import com.account.entity.Admin;
 import com.account.service.AccountRequisitionActService;
@@ -26,6 +31,13 @@ public class AccountRequisitionActServiceImpl implements AccountRequisitionActSe
 	
 	@Autowired
 	private AccountInquiryDao accountInquiryDao;
+	
+	@Autowired
+	private AccountRequisitionDao accountRequisitionDao;
+	
+	
+	@Autowired
+	private AccountPurchaseDao accountPurchaseDao;
 
 	
 	public void insert(AccountRequisitionAct entity) {
@@ -64,9 +76,46 @@ public class AccountRequisitionActServiceImpl implements AccountRequisitionActSe
 			if(now_act.getActindex()==1){
 				accountInquiryDao.setInquiryStatusById(now_act.getRequisitionId(), "0");
 			}*/
+			if(now_act.getActindex()==0){
+				
+				AccountRequisition accountRequisition=accountRequisitionDao.get(requisitionId);
+				//AccountRequisition accountRequisition=new AccountRequisition();
+				//accountRequisition.setId(requisitionId);
+				if("rejected".equals(accountRequisition.getProcInsId())){
+					return "当前处于驳回状态，无法撤销";
+				}else{	
+					//如果是申购，则要修改申购主表办理人
+					//办理人修改为，上一步办理人
+					Map<String,Object> map=new HashMap<String, Object>();
+					map.put("requisitionId", now_act.getRequisitionId());
+					map.put("step",now_act.getStep()-1);
+					AccountRequisitionAct 	previous_act=dao.getbyRequisitionIdAndStep(map);
+					accountRequisition.setAct_checker(previous_act.getCheckerName());
+					accountRequisitionDao.update(accountRequisition);
+				}
+				
+			}else if(now_act.getActindex()==2){
+				AccountPurchase accountPurchase=accountPurchaseDao.get(requisitionId);
+				//AccountPurchase accountPurchase=new AccountPurchase();
+				//accountPurchase.setId(requisitionId);
+				if("rejected".equals(accountPurchase.getProcInsId())){
+					return "当前处于驳回状态，无法撤销";
+				}else{
+					//办理人修改为，上一步办理人
+					Map<String,Object> map=new HashMap<String, Object>();
+					map.put("requisitionId", now_act.getRequisitionId());
+					map.put("step",now_act.getStep()-1);
+					AccountRequisitionAct 	previous_act=dao.getbyRequisitionIdAndStep(map);
+					accountPurchase.setAct_checker(previous_act.getCheckerName());
+					accountPurchaseDao.update(accountPurchase);
+				}	
+			}
+			
 			//步数-1
 			int step=now_act.getStep();
-			now_act.setStep(step-1);
+			if(step>0){
+				now_act.setStep(step-1);
+			}	
 			dao.revoke(now_act);
 			return "撤销成功";
 		}else{

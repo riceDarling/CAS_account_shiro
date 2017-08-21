@@ -9,7 +9,7 @@
 			</h3>
 		</div>
 		<div class="panel-body">
-			<form  class="form-horizontal row-border">
+			<form class="form-horizontal row-border">
 				<label class="col-lg-2 col-md-2 control-label">供应商名称：</label>
 				<div class="col-lg-2 col-md-2">
 					<input name="supplier" type="text" htmlEscape="false" class="form-control form-cascade-control" />
@@ -76,25 +76,25 @@
 			async : false,
 			data : {
 				"supplier" : supplier,
-				"beginDate":beginDate,
-				"endDate":endDate
+				"beginDate" : beginDate,
+				"endDate" : endDate
 			},
 			success : function(data) {
 				if (data.success) {
 					$("#secondPageTbody").empty();
+					var content = "<tr>"
 					for ( var index in data.obj) {
-						var content = "<tr>"
-							content += "<td>" + data.obj[index].supplier + "</td>"
-							content += "<td>" + data.obj[index].contracttitle + "</td>"
-							content += "<td>" + data.obj[index].payamount + "</td>"
-							content += "<td>" + data.obj[index].payway + "</td>"
-							content += "<td>" + data.obj[index].paybank + "</td>"
-							content += "<td>" + data.obj[index].paycategory + "</td>"
-							content += "<td>" + data.obj[index].paydate + "</td>"
-							content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' value='"+data.obj[index].contractnum+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
-							content += "</tr>"
-						$("#secondPageTbody").append(content)
+						content += "<td>" + data.obj[index].supplier + "</td>"
+						content += "<td>" + data.obj[index].contracttitle + "</td>"
+						content += "<td>" + data.obj[index].payamount + "</td>"
+						content += "<td>" + data.obj[index].payway + "</td>"
+						content += "<td>" + data.obj[index].paybank + "</td>"
+						content += "<td>" + data.obj[index].paycategory + "</td>"
+						content += "<td>" + data.obj[index].paydate + "</td>"
+						content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' value='"+data.obj[index].contractnum+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+						content += "</tr>"
 					}
+					$("#secondPageTbody").html(content);
 				}
 			}
 		})
@@ -105,19 +105,19 @@
 			type : "post",
 			success : function(data) {
 				if (data.success) {
+					var content = "<tr>"
 					for ( var index in data.obj) {
-						var content = "<tr>"
-							content += "<td>" + data.obj[index].supplier + "</td>"
-							content += "<td>" + data.obj[index].contracttitle + "</td>"
-							content += "<td>" + data.obj[index].payamount + "</td>"
-							content += "<td>" + data.obj[index].payway + "</td>"
-							content += "<td>" + data.obj[index].paybank + "</td>"
-							content += "<td>" + data.obj[index].paycategory + "</td>"
-							content += "<td>" + data.obj[index].paydate + "</td>"
-							content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' value='"+data.obj[index].contractnum+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
-							content += "</tr>"
-						$("#secondPageTbody").append(content)
+						content += "<td>" + data.obj[index].supplier + "</td>"
+						content += "<td>" + data.obj[index].contracttitle + "</td>"
+						content += "<td>" + data.obj[index].payamount + "</td>"
+						content += "<td>" + data.obj[index].payway + "</td>"
+						content += "<td>" + data.obj[index].paybank + "</td>"
+						content += "<td>" + data.obj[index].paycategory + "</td>"
+						content += "<td>" + data.obj[index].paydate + "</td>"
+						content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' value='"+data.obj[index].contractnum+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+						content += "</tr>"
 					}
+					$("#secondPageTbody").html(content);
 				}
 			}
 		})
@@ -136,7 +136,7 @@
 			dataType : "json",
 			data : {
 				"id" : id,
-				"contractId":contractnum
+				"contractId" : contractnum
 			},
 			success : function(data) {
 				if (data.success) {

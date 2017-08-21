@@ -1,6 +1,7 @@
 package com.account.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.account.entity.AccountInquiryDetail;
 
@@ -19,7 +20,17 @@ public interface AccountInquiryDetailDao {
 	
 	void setInquiryDetailStateById(String id,String state);
 	
-	public List<AccountInquiryDetail> selectInquiryDetailEndByOrdernum(String accountInquiryid);
+	public List<AccountInquiryDetail> selectInquiryDetailEndByOrdernum(String ordernum);
 	
 	void updateByOrdernum(String ordernum);
+
+	List<Map<String, Object>> selectAllmaterial(String accountInquiryOrdernum);
+
+	List<AccountInquiryDetail> selectDetail(AccountInquiryDetail entity);
+
+	void update(AccountInquiryDetail entity);
+	public List<AccountInquiryDetail> getAccountSupplierByPurchasenum(AccountInquiryDetail accountInquiryDetail);
+
+	public List<AccountInquiryDetail> getAccountSupplierByPurchasenumtitle(String purchasenumtitle);
+
 }

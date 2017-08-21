@@ -24,5 +24,4 @@ public interface AccountPurchaseDao {
 
 	public void delete(String id);
 
-	public List<AccountPurchase> getAccountPurchaseTitle();
 }

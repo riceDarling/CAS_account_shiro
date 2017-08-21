@@ -30,7 +30,7 @@
 					<div class="control-group">
 						<label class="control-label">供应商名称：</label>
 						<div class="controls">
-						<select name="supplier" class="form-control" id="supplier">
+							<select name="supplier" class="form-control" id="supplier">
 							</select>
 						</div>
 					</div>
@@ -212,33 +212,34 @@
 					}
 				}
 			});
-			if($.cookie("accountPayment_id")!="null"){
-			$.ajax({
-				url : "http://" + IP_config + "/account/accountPaymentController/getById",
-				type : "post",
-				dataType : "json",
-				data : {
-					"id" : $.cookie("accountPayment_id")
-				},
-				success : function(data) {
-					$("#payId").val($.cookie("accountPayment_id"));
-					$.cookie("accountPayment_id", null);
-					if (data.success && data.obj != null && data.obj != "") {
-						$("#ordernum").val(data.obj.ordernum);
-						$("#supplier").val(data.obj.supplier);
-						$("#payamount").val(data.obj.payamount);
-						$("#payway").val(data.obj.payway);
-						$("#paybank").val(data.obj.paybank);
-						$("#payway").val(data.obj.payway);
-						$("#paybanknum").val(data.obj.paybanknum);
-						$("#paycategory").val(data.obj.paycategory);
-						$("#contractnum").val(data.obj.contractnum);
-						$("#paydate").val(data.obj.paydate);
-						$("#createdate").val(data.obj.createdate);
-						$("#remarks").val(data.obj.remarks);
+			if ($.cookie("accountPayment_id") != "null") {
+				$.ajax({
+					url : "http://" + IP_config + "/account/accountPaymentController/getById",
+					type : "post",
+					dataType : "json",
+					data : {
+						"id" : $.cookie("accountPayment_id")
+					},
+					success : function(data) {
+						$("#payId").val($.cookie("accountPayment_id"));
+						$.cookie("accountPayment_id", null);
+						if (data.success && data.obj != null && data.obj != "") {
+							$("#ordernum").val(data.obj.ordernum);
+							$("#supplier").val(data.obj.supplier);
+							$("#payamount").val(data.obj.payamount);
+							$("#payway").val(data.obj.payway);
+							$("#paybank").val(data.obj.paybank);
+							$("#payway").val(data.obj.payway);
+							$("#paybanknum").val(data.obj.paybanknum);
+							$("#paycategory").val(data.obj.paycategory);
+							$("#contractnum").val(data.obj.contractnum);
+							$("#paydate").val(data.obj.paydate);
+							$("#createdate").val(data.obj.createdate);
+							$("#remarks").val(data.obj.remarks);
+						}
 					}
-				}
-			});}
+				});
+			}
 		});
 
 		//提交

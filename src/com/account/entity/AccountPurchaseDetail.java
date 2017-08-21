@@ -22,7 +22,7 @@ public class AccountPurchaseDetail extends BaseModel {
 	private String id;
 	private AccountPurchase parent; // 主表id 父类
 	private String suppliercode; // 供应商编号
-	private String materialcode; // 物资编号
+	private String materialcode; // 物资编号(物资型号)
 	private String packway; // 包装方式
 	private String transport; // 运输方式
 	private String freightfee; // 运费金额
@@ -37,8 +37,17 @@ public class AccountPurchaseDetail extends BaseModel {
 
 	private String supplier;// 供应商字符串
 	private String materialname;// 物资名称
+	private String size;// 规格型号
 
 	private PageUtil<AccountPurchaseDetail> page;
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
 
 	public String getSupplier() {
 		return supplier;

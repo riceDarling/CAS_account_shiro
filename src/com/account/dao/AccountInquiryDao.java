@@ -4,6 +4,7 @@
 package com.account.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.account.entity.AccountInquiry;
 
@@ -33,4 +34,7 @@ public interface AccountInquiryDao {
 	void delete(String id);
 	
 	void setInquiryStatusById(String id,String status);
+	
+	
+	List<Map<String,Object>> selectAllTitle();
 }

@@ -14,7 +14,8 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy",
 		a.update_date AS "update",
-		a.del_flag AS "delFlag"
+		a.del_flag AS "delFlag",
+		a.act_checker AS "act_checker"
 	</sql>
 	
 	<sql id="accountPurchaseJoins">
@@ -22,9 +23,9 @@
     
 	<select id="get" resultType="com.account.entity.AccountPurchase">
 		SELECT 
-			<include refid="accountPurchaseColumns"/>
+			<include refid="accountPurchaseColumns"/>,b.supplierNum,b.caigouname AS 'supplier'	
 		FROM account_purchase a
-		<include refid="accountPurchaseJoins"/>
+		LEFT JOIN account_contract b ON a.inquirynum=b.id
 		WHERE a.id = #{id}
 	</select>
 	
@@ -77,6 +78,7 @@
 			create_date,
 			update_by,
 			update_date,
+			act_checker,
 			del_flag
 		) VALUES (
 			#{id},
@@ -90,13 +92,17 @@
 			#{createDate},
 			#{updateBy},
 			#{update},
+			#{act_checker},
 			#{delFlag}
 		)
 	</insert>
 	
 	<update id="update" parameterType="com.account.entity.AccountPurchase">
 		UPDATE account_purchase SET 	
-			proc_ins_id = #{procInsId},
+			 <if test="procInsId != null">
+				proc_ins_id = #{procInsId},
+		    </if>
+			act_checker=#{act_checker},
 			update_by = #{updateBy},
 			update_date = #{update}
 		WHERE id = #{id}
@@ -108,9 +114,4 @@
 		WHERE id = #{id}
 	</update>
 	
-	<select id="getAccountPurchaseTitle" resultType="com.account.entity.AccountPurchase">
-		SELECT ap.title as title FROM account_purchase ap WHERE ap.proc_ins_id='end'
-	</select>
-
-
 </mapper>

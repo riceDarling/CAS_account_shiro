@@ -1,17 +1,13 @@
-/**
- * Copyright &copy; 2012-2016 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
- */
 package com.account.controller;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.account.entity.AccountRequisition;
-import com.account.entity.AccountRequisitionAct;
-import com.account.entity.Admin;
 import com.account.service.AccountRequisitionActService;
 import com.account.service.AccountRequisitionService;
 import com.account.utils.PageUtil;
@@ -128,5 +122,19 @@ public class AccountRequisitionController {
 		}
 		return rm;
 	}
-
+	/**
+	 * 获取采购标题
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getAccountPurchaseTitle")
+	public ResponseModel<List<AccountRequisition>> getAccountPurchaseTitle() {
+		ResponseModel<List<AccountRequisition>> rm = new ResponseModel<List<AccountRequisition>>();
+		try {
+			List<AccountRequisition> accountRequisition = accountRequisitionService.getAccountPurchaseTitle();
+			rm.isSuccessMsg(accountRequisition, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
 }

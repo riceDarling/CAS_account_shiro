@@ -8,24 +8,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.account.dao.AccountContractDao;
+import com.account.dao.AccountContractDetailDao;
 import com.account.entity.AccountContract;
+import com.account.entity.AccountContractDetail;
 import com.account.service.AccountContractService;
 
 @Service
 public class AccountContractServiceImpl implements AccountContractService {
 	@Autowired
 	private AccountContractDao accountContractDao;
+	@Autowired
+	private AccountContractDetailDao accountContractDetailDao;
 
 	@Override
 	public void save(AccountContract accountContract) {
-		if (accountContract.getId() != null&&accountContract.getId().trim().length()>0) {
+		AccountContractDetail accountContractDetail = new AccountContractDetail();
+		int size = accountContract.getAccountContractDetail().size();
+		if (accountContract.getId() != null && accountContract.getId().trim().length() > 0) {
 			accountContractDao.update(accountContract);
+			accountContractDetailDao.delete(accountContract.getId());
+			for (int i = 0; i < size; i++) {
+				accountContractDetail = accountContract.getAccountContractDetail().get(i);
+				accountContractDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+				accountContractDetail.setParent_Id(accountContract.getId());
+				accountContractDetailDao.save(accountContractDetail);
+			}
 		} else {
 			accountContract.setId(UUID.randomUUID().toString().replaceAll("-", ""));
 			accountContractDao.save(accountContract);
+			for (int i = 0; i < size; i++) {
+				accountContractDetail = accountContract.getAccountContractDetail().get(i);
+				accountContractDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+				accountContractDetail.setParent_Id(accountContract.getId());
+				accountContractDetailDao.save(accountContractDetail);
+			}
+
 		}
-		
-		
+
 	}
 
 	@Override
@@ -57,9 +76,20 @@ public class AccountContractServiceImpl implements AccountContractService {
 	public AccountContract getById(String id) {
 		return accountContractDao.getById(id);
 	}
+
 	@Override
 	public void update(AccountContract accountContract) {
 		accountContractDao.update(accountContract);
+	}
+	@Override
+	public List<AccountContractDetail> getByContractId(String id) {
+		return accountContractDetailDao.getByContractId(id);
+	}
+
+	@Override
+	public List<Map<String, Object>> findAllTitle() {
+		// TODO Auto-generated method stub
+		return accountContractDao.findAllTitle();
 	}
 
 }

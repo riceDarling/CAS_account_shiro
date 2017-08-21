@@ -28,4 +28,6 @@ public interface AccountContractDao {
 	AccountContract getById(String id);
 
 	List<AccountContract> getAllAccountContractInfo();
+
+	List<Map<String, Object>> findAllTitle();
 }

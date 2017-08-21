@@ -1,6 +1,3 @@
-/**
- * Copyright &copy; 2012-2016 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
- */
 package com.account.dao;
 
 import java.util.List;
@@ -26,5 +23,5 @@ public interface AccountRequisitionDao  {
 	
 	void delete(String id);
 	
-	
+	public List<AccountRequisition> getAccountPurchaseTitle();
 }

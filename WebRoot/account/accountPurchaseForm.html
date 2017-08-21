@@ -1,3 +1,4 @@
+ <script src="lib/js/purchaseForm.js"></script>
 <div class="col-md-12">
 	<div class="panel panel-cascade">
 		<div class="panel-heading">
@@ -8,15 +9,14 @@
 		<div class="panel-body">
 				<label class="col-lg-1 col-md-2 control-label">合同编号：</label>
 				<div class="col-lg-2 col-md-2">
-					<select name="status" class="form-control">
+					<select name="status" class="form-control" id="accountPurchaseForm_contract">
 						<option value="">请选择</option>
-						<option value="0">未完成</option>
-						<option value="1">已完成</option>
+			
 					</select>
 				</div>
 				<label class="col-lg-1 col-md-2 control-label">订货单名称：</label>
 				<div class="col-lg-2 col-md-2">
-					<input name="supplier" type="text" htmlEscape="false" class="form-control" />
+					<input name="supplier" type="text" htmlEscape="false" class="form-control" id="title" />
 				</div>
 		</div>
 	</div>
@@ -35,20 +35,26 @@
 					</tr>
 				</thead>
 				<tbody id="secondPageTbody">
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-					<td>5</td>
+					
 				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
+
+<div class="form-group">
+	<label class="col-lg-2 col-md-3 control-label">审核人：</label>
+		<div class="col-lg-4 col-md-3">
+			<select  tabindex="1" name="checker" id="accountPurchaseForm_checker" class="form-control">
+				 <option value=""></option>
+                   						
+			 </select>	
+		</div>
+</div>
 <div class="panel-footer">
 	<div class="row">
 		<div class="col-sm-6 col-sm-offset-11">
-			<input id="btnCancel" class="btn btn-primary" type="button" value="提交" />
+			<input id="accountPurchaseSubmit" class="btn btn-primary" type="button" value="提交" />
 		</div>
 	</div>
 </div>
@@ -56,4 +62,98 @@
 	$("[href_1]").click(function() {
 		$("#index_content").load($(this).attr("href_1"));
 	});
+	
+	$.ajax("../admin/getAdminList", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "GET",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				var html="<option value=''></option>";
+				for (i in data.obj) {
+					var admin = data.obj[i];
+					html+='<option value="'+admin.id+'">'+admin.username+'</option>';
+				}
+				$("#accountPurchaseForm_checker").html(html);
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	//获取合同标题列表
+	$.ajax("../accountContractController/findAllTitle", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "GET",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				var html="<option value=''>请选择</option>";
+				for (i in data.obj) {
+					var contract = data.obj[i];
+					html+='<option value="'+contract.id+'">'+contract.contractTitle+'</option>';
+				}
+				$("#accountPurchaseForm_contract").html(html);
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	$("#accountPurchaseForm_contract").change(function(){
+		var contract_id=$(this).val();
+		//获取合同子表详细信息
+		$.ajax("../accountContractController/getByContractId", {
+			dataType: "json",
+			xhrFields: {
+				withCredentials: true
+			},
+			type: "GET",
+			data:{
+				"id":contract_id
+			},
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					//获取成功
+					//layer.alert(data.msg);
+					var html="";
+					for (i in data.obj) {
+						var detail = data.obj[i];
+						html+='<tr><td materialcode="'+detail.materialcode+'">';
+						html+=detail.materialname+'</td><td>';
+						html+=detail.size+'</td><td>';
+						html+=detail.unitprice+'</td><td>';
+						html+='<input type="text" class="input-small required form-control money" name="quantity" >'+'</td><td>';
+						html+='<input type="text" class="input-small required form-control" name="totlemoney" readonly>'+'</td></tr>';
+						//html+='<option value="'+contract.id+'">'+contract.contractTitle+'</option>';
+					}
+					$("#secondPageTbody").html(html);
+				}else{
+					//获取失败提示
+					layer.alert(data.msg);
+				}
+			}
+		});
+	});
+	
+	$("#secondPageTbody").on("change",".money",function(){
+		var	quantity=$(this).val();
+		var unitprice=$(this).parent().parent().children("td").eq(2).text();
+		var totlemoney=quantity*unitprice;
+		if(!isNaN(totlemoney)){
+			$(this).parent().parent().children("td").eq(4).find("input").val(totlemoney.toFixed(2));
+		}
+	});
+	
 </script>

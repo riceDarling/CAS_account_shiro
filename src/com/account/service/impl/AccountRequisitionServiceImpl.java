@@ -1,9 +1,7 @@
-/**
- * Copyright &copy; 2012-2016 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
- */
 package com.account.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,14 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.account.dao.AccountInputDetailDao;
 import com.account.dao.AccountInquiryDao;
 import com.account.dao.AccountInquiryDetailDao;
 import com.account.dao.AccountRequisitionActDao;
 import com.account.dao.AccountRequisitionDao;
 import com.account.dao.AccountRequisitionDetailDao;
 import com.account.dao.MaterialSupplierMapper;
-import com.account.entity.AccountInputDetail;
 import com.account.entity.AccountInquiry;
 import com.account.entity.AccountInquiryDetail;
 import com.account.entity.AccountRequisition;
@@ -80,6 +76,7 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 			accountRequisition.setCreateBy(loginAdmin.getId().toString());
 			accountRequisition.setCreateDate(new Date());
 			accountRequisition.setProcInsId("start");
+			accountRequisition.setAct_checker(accountRequisition.getChecker());
 			accountRequisitionDao.insert(accountRequisition);
 		} else {
 			AccountRequisitionAct now_act = new AccountRequisitionAct();
@@ -98,6 +95,7 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 			accountRequisition.setCreateBy(loginAdmin.getId().toString());
 			accountRequisition.setCreateDate(new Date());
 			accountRequisition.setProcInsId("start");
+			accountRequisition.setAct_checker(accountRequisition.getChecker());
 			accountRequisitionDao.update(accountRequisition);
 		}
 		
@@ -123,6 +121,7 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 		act.setConclusion(1);
 		act.setRemarks("提交申请");
 		act.setEndTime(new Date());
+		accountRequisition.setAct_checker(accountRequisition.getChecker());
 		accountRequisitionActDao.update(act);
 
 		AccountRequisitionAct next_act = new AccountRequisitionAct();
@@ -159,8 +158,9 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 		accountRequisition.setUpdateBy(loginAdmin.getId().toString());
 		accountRequisitionActDao.update(now_act);
 		if ("yes".equals(accountRequisition.getConclusion())) {
-			// 如果有人进行审核并且通过，修改主表状态为"examine"，表示当前这个任务无法撤回了
+			// 如果有人进行审核并且通过，修改主表状态为"examine"
 			accountRequisition.setProcInsId("examine");
+			accountRequisition.setAct_checker(accountRequisition.getChecker());
 			accountRequisitionDao.update(accountRequisition);
 			// 如果同意则，进入下一个节点
 			AccountRequisitionAct next_act = new AccountRequisitionAct();
@@ -242,6 +242,14 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 			next_act.setCheckerName(accountRequisition.getChecker());
 			accountRequisitionActDao.insert(next_act);*/
 		} else {
+			//办理人修改为，上一步办理人
+			Map<String,Object> map=new HashMap<String, Object>();
+			map.put("requisitionId", now_act.getRequisitionId());
+			map.put("step",now_act.getStep()-1);
+			AccountRequisitionAct 	previous_act=accountRequisitionActDao.getbyRequisitionIdAndStep(map);
+			accountRequisition.setAct_checker(previous_act.getCheckerName());
+			accountRequisition.setProcInsId("rejected");
+			accountRequisitionDao.update(accountRequisition);
 			// 返回上一个节点驳回目标人为上一节点（逐级驳回）
 			AccountRequisitionAct next_act = new AccountRequisitionAct();
 			next_act.setActindex(0);
@@ -250,7 +258,7 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 			next_act.setStartTime(new Date());
 			next_act.setStep(now_act.getStep() - 1);
 			next_act.setState(0);
-			next_act.setCheckerName(now_act.getRequisitionName());
+			next_act.setCheckerName(previous_act.getCheckerName());
 			accountRequisitionActDao.insert(next_act);
 		}
 
@@ -266,6 +274,10 @@ public class AccountRequisitionServiceImpl implements AccountRequisitionService 
 	public void findPage(AccountRequisition entity) {
 		List<AccountRequisition> list=accountRequisitionDao.findList(entity);
 		entity.getPage().setList(list);
+	}
+	@Override
+	public List<AccountRequisition> getAccountPurchaseTitle() {
+		return accountRequisitionDao.getAccountPurchaseTitle();
 	}
 
 }

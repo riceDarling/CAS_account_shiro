@@ -55,7 +55,9 @@
 						<label class="col-lg-1 col-sm-3 control-label">供应商列表：</label>
 						<div class="col-lg-3 col-sm-2">
 							<table class="table table-striped" id="materialSupplier">
+								<tbody>
 								
+								</tbody>
 							</table>
 						</div>
 						<div class="col-lg-3 col-sm-3"></div>
@@ -100,8 +102,25 @@
 		$("#supplier").change(function(){
 			var supplier=$(this).val();
 			var supplierNum=$("#supplier").find("option:selected").attr("supplierNum");
-			var html='<tr><td supplierNum="'+supplierNum+'">'+supplier+'</td><td></td></tr>';
-			$("#materialSupplier").append(html);
+			var isRepeat=0;
+			$("#materialSupplier tbody tr").each(function(){
+				var old_supplierNum=$(this).children("td").eq(0).attr("supplierNum");
+				if(old_supplierNum==supplierNum){
+					isRepeat=1;
+					layer.alert("供应商列表中已存在["+supplier+"],不可重复添加");
+					return false;
+				}else{
+					
+				}
+			});
+			if(isRepeat==0){
+				var html='<tr><td supplierNum="'+supplierNum+'">'+supplier+'</td><td><i class="fa fa-times tr_remove"></i></td></tr>';
+				$("#materialSupplier tbody").append(html);
+			}	
+		});
+		
+		$("#materialSupplier tbody").on("click",".tr_remove",function(){
+			$(this).parent().parent().remove();
 		});
 		
 		$(function(){
@@ -187,8 +206,8 @@
 							for(i in data.obj.materialSupplier){
 								supplierid=data.obj.materialSupplier[i].supplierid;
 								supplier=data.obj.materialSupplier[i].supplier;
-								var html='<tr><td supplierNum="'+supplierid+'">'+supplier+'</td><td></td></tr>';
-								$("#materialSupplier").append(html);
+								var html='<tr><td supplierNum="'+supplierid+'">'+supplier+'</td><td><i class="fa fa-times tr_remove"></i></td></tr>';
+								$("#materialSupplier tbody").append(html);
 							}
 						}
 					}

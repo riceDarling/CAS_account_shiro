@@ -1,133 +1,124 @@
-<div class="col-md-12">
-		<div class="panel panel-cascade">
-			<div class="panel-heading">
-				<h3 class="panel-title">
-					<i class="fa fa-pencil-square"></i>合同列表 <i class="fa fa-pencil-square"></i> <a href_1="accountContractForm.html">合同添加</a>
-				</h3>
-			</div>
-			<div class="panel-body">
-						<form class="form-horizontal cascade-forms" method="post" action="#" name="signup_form" id="signup_form" novalidate="novalidate">
-							<div class="form-group">
-								<label class="col-lg-3 col-md-3 control-label">申购标题：</label> 
-								<div class="col-lg-9 col-md-9">
-								<select  name="purchasenumtitle" id="purchasenumtitle">
-								</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-lg-2 col-md-3 control-label">合同名称：</label>
-								<div class="col-lg-4 col-md-3">
-									<input type="text" class="form-control form-cascade-control input-small required" name="contracttitle" htmlEscape="false" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-lg-23 col-md-3 control-label">状态：</label>
-								<div class="col-lg-9 col-md-39 " >
-								 <select name="status">
-									<option value="">请选择</option>
-									<option value="0">未完成</option>
-									<option value="1">已完成</option>
-								</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-lg-2 col-md-3 control-label">开始日期：</label>
-								<div class="col-lg-4 col-md-3">
-									<input size="16" type="text"  readonly class="form_datetime form-control" name="beginDate">
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label">结束日期：</label>
-								<div class="col-lg-4 col-md-3">
-									<input size="16" type="text"  readonly class="form_datetime form-control" name="endDate">
-								</div>
-							</div>
-						</form>
-			</div>
-			<div class="panel-footer">
-				<div class="row">
-					<div class="col-sm-6 col-sm-offset-3">
-						<input id="btnCancel" class="btn btn-primary" type="button" value="查询" />
-					</div>
+<style>
+	.distance{
+		margin-top:10px !important;
+	}
+</style>
+<div class="col-lg-12 col-md-12">
+	<div class="panel panel-cascade">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="fa fa-pencil-square"></i>合同列表 <i class="fa fa-pencil-square"></i> <a href_1="accountContractForm.html">合同添加</a>
+			</h3>
+		</div>
+		<div class="panel-body">
+			<form class="form-horizontal cascade-forms" method="post" action="#" name="signup_form" id="signup_form" novalidate="novalidate">
+				<label class="col-lg-1 col-md-3 control-label">申购标题：</label>
+				<div class="col-lg-3 col-md-6">
+					<select class="form-control"  name="purchasenumtitle" id="purchasenumtitle">
+					</select>
 				</div>
-			</div>
+
+				<label class="col-lg-1 col-md-3 control-label">合同名称：</label>
+				<div class="col-lg-3 col-md-6">
+					<input type="text" class="form-control  input-small required" name="contracttitle" htmlEscape="false" />
+				</div>
+				<label class="col-lg-1 col-md-3 control-label">状态：</label>
+				<div class="col-lg-3 col-md-6 ">
+					<select class="form-control" name="status">
+						<option value="">请选择</option>
+						<option value="0">未完成</option>
+						<option value="1">已完成</option>
+					</select>
+				</div>
+				<label class="col-lg-1 col-md-3 control-label distance">开始日期：</label>
+				<div class="col-lg-3 col-md-6 distance">
+					<input size="16" type="text" readonly class="form_datetime form-control" name="beginDate">
+				</div> 
+				<label class="col-lg-1 col-sm-3 control-label distance">结束日期：</label>
+				<div class="col-lg-3 col-md-6 distance">
+					<input size="16" type="text" readonly class="form_datetime form-control" name="endDate">
+				</div>
+				<div class="col-lg-1 col-sm-6 distance">
+					<input id="btnCancel" class="btn btn-primary" style="margin-left: 133% !important;" type="button" value="查询" />
+				</div>
+			</form>
 		</div>
 	</div>
-	<div class="col-md-12">
-		<div class="panel">
-			<div class="panel-body">
-				<table class="table table-bordered table-condensed table-hover" >
-					<thead>
-						<tr>
-							<th class="visible-lg">申购标题</th>
-							<th class="visible-lg">供应商</th>
-							<th class="visible-lg">合同名称</th>
-							<th class="visible-lg">合同编号</th>
-							<th class="visible-lg">纸质合同编号</th>
-							<th class="visible-lg">合同金额</th>
-							<th class="visible-lg">签订时间</th>
-							<th class="visible-lg">附件</th>
-							<th class="visible-lg">合同状态</th>
-							<th class="visible-lg">操作</th>
-						</tr>
-					</thead>
-					<tbody id="secondPageTbody">
-					</tbody>
-				</table>
-			</div>
+</div>
+<div class="col-lg-12  col-md-12">
+	<div class="panel">
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="visible-lg">申购标题</th>
+						<th class="visible-lg">供应商</th>
+						<th class="visible-lg">合同名称</th>
+						<th class="visible-lg">合同编号</th>
+						<th class="visible-lg">纸质合同编号</th>
+						<th class="visible-lg">合同总金额</th>
+						<th class="visible-lg">签订时间</th>
+						<th class="visible-lg">合同状态</th>
+						<th class="visible-lg">操作</th>
+					</tr>
+				</thead>
+				<tbody id="secondPageTbody">
+				</tbody>
+			</table>
 		</div>
 	</div>
-	<script>
+</div>
+<script>
 	$("[href_1]").click(function() {
 		$("#index_content").load($(this).attr("href_1"));
 	});
 	$(".form_datetime").datetimepicker({
-		language : 'zh-CN',
-		minView : "month", //选择日期后，不会再跳转去选择时分秒 
-		format : 'yyyy-mm-dd',
-		todayBtn : 1,
-		autoclose : 1,
+		language: 'zh-CN',
+		minView: "month", //选择日期后，不会再跳转去选择时分秒 
+		format: 'yyyy-mm-dd',
+		todayBtn: 1,
+		autoclose: 1,
 	});
-	 $(function(){
+	$(function() {
 		//获取采购订货单标题
-			$.ajax({
-				url : "http://"+IP_config+"/account/accountPurchase/getAccountPurchaseTitle",
-				type : "post",
-				success : function(data) {
-					var html = "<option>请选择</option>";
-					for (i in data.obj) {
-						html += "<option value="+data.obj[i].title+">"+ data.obj[i].title + "</option>";
-					}
-					$("#purchasenumtitle").html(html);
+		$.ajax({
+			url: "http://" + IP_config + "/account/accountRequisition/getAccountPurchaseTitle",
+			type: "post",
+			success: function(data) {
+				var html = "<option>请选择</option>";
+				for(i in data.obj) {
+					html += "<option value=" + data.obj[i].title + ">" + data.obj[i].title + "</option>";
+				}
+				$("#purchasenumtitle").html(html);
 
-				}
-			});
-		 $.ajax({
-				url : "http://" + IP_config + "/account/accountContractController/findList",
-				type : "post",
-				success : function(data) {
-					for ( var index in data.obj) {
-						var content = "<tr>"
-						content += "<td>" + data.obj[index].title + "</td>"
-						content += "<td>" + data.obj[index].supplier + "</td>"
-						content += "<td>" + data.obj[index].contracttitle + "</td>"
-						content += "<td>" + data.obj[index].contractnum + "</td>"
-						content += "<td>" + data.obj[index].papercontract + "</td>"
-						content += "<td>" + data.obj[index].money + "</td>"
-						content += "<td>" + data.obj[index].createdate + "</td>"
-						content += "<td type='file' value='"+ data.obj[index].file +"'>"+ data.obj[index].file +"</td>"
-						if (data.obj[index].status == 0) {
-							content += "<td>未完成</td>"
-						} else {
-							content += "<td>已完成</td>"
-						}
-						  content += "<td><button name='"+data.obj[index].id+"'  value='"+data.obj[index].title+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
-						 content += "</tr>"
-						$("#secondPageTbody").html(content)
+			}
+		});
+		$.ajax({
+			url: "http://" + IP_config + "/account/accountContractController/findList",
+			type: "post",
+			success: function(data) {
+				var content = "<tr>"
+				for(var index in data.obj) {
+					content += "<td>" + data.obj[index].title + "</td>"
+					content += "<td>" + data.obj[index].supplier + "</td>"
+					content += "<td>" + data.obj[index].contracttitle + "</td>"
+					content += "<td>" + data.obj[index].contractnum + "</td>"
+					content += "<td>" + data.obj[index].papercontract + "</td>"
+					content += "<td>" + data.obj[index].summoney + "</td>"
+					content += "<td>" + data.obj[index].createdate + "</td>"
+					//	content += "<td type='file' value='"+ data.obj[index].file +"'>"+ data.obj[index].file +"</td>"
+					if(data.obj[index].status == 0) {
+						content += "<td>未完成</td>"
+					} else {
+						content += "<td>已完成</td>"
 					}
+					content += "<td><button name='" + data.obj[index].id + "' supplier='" + data.obj[index].supplier + "' value='" + data.obj[index].title + "' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='" + data.obj[index].id + "' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+					content += "</tr>"
 				}
-		 })
-	 });
+				$("#secondPageTbody").html(content)
+			}
+		})
+	});
 
 	$("#btnCancel").click(function() {
 		var purchasenumtitle = $("[name='purchasenumtitle'] option:selected").val();
@@ -136,21 +127,21 @@
 		var beginDate = $("[name='beginDate']").val();
 		var endDate = $("[name='endDate']").val();
 		$.ajax({
-			url : "http://" + IP_config + "/account/accountContractController/findList",
-			type : "post",
-			async : false,
-			data : {
-				"purchasenumtitle" : purchasenumtitle,
-				"contracttitle" : contracttitle,
-				"status" : status,
-				"beginDate":beginDate,
-				"endDate":endDate
+			url: "http://" + IP_config + "/account/accountContractController/findList",
+			type: "post",
+			async: false,
+			data: {
+				"purchasenumtitle": purchasenumtitle,
+				"contracttitle": contracttitle,
+				"status": status,
+				"beginDate": beginDate,
+				"endDate": endDate
 			},
-			success : function(data) {
-				if (data.success) {
+			success: function(data) {
+				if(data.success) {
 					$("#secondPageTbody").empty();
-					for ( var index in data.obj) {
-						var content = "<tr>"
+					var content = "<tr>"
+					for(var index in data.obj) {
 						content += "<td>" + data.obj[index].title + "</td>"
 						content += "<td>" + data.obj[index].supplier + "</td>"
 						content += "<td>" + data.obj[index].contracttitle + "</td>"
@@ -158,46 +149,47 @@
 						content += "<td>" + data.obj[index].papercontract + "</td>"
 						content += "<td>" + data.obj[index].money + "</td>"
 						content += "<td>" + data.obj[index].createdate + "</td>"
-						content += "<td type='file' value='"+ data.obj[index].file +"'>"+ data.obj[index].file +"</td>"
-						if (data.obj[index].status == 0) {
+						//content += "<td type='file' value='"+ data.obj[index].file +"'>"+ data.obj[index].file +"</td>"
+						if(data.obj[index].status == 0) {
 							content += "<td>未完成</td>"
 						} else {
 							content += "<td>已完成</td>"
 						}
-						  content += "<td><button name='"+data.obj[index].id+"' value='"+data.obj[index].title+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
-						  content += "</tr>"
-						$("#secondPageTbody").html(content)
+						content += "<td><button name='" + data.obj[index].id + "' value='" + data.obj[index].title + "' supplier='" + data.obj[index].supplier + "' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='" + data.obj[index].id + "' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+						content += "</tr>"
 					}
+					$("#secondPageTbody").html(content)
 				}
 			}
 		})
 	});
-	
-		
-	 $("#secondPageTbody").on("click", ".selectCon", function() {
-			var id = $(this).attr("name");
-			$.cookie("accountContract_id", id);
-			var title = $(this).val();
-			$.cookie("accountContract_title", title);
-			$("#index_content").load("accountContractForm2.html");
+
+	$("#secondPageTbody").on("click", ".selectCon", function() {
+		var id = $(this).attr("name");
+		$.cookie("accountContract_id", id);
+		var title = $(this).val();
+		$.cookie("accountContract_title", title);
+		var supplier = $(this).attr("supplier");
+		$.cookie("accountContract_supplier", supplier);
+		$("#index_content").load("accountContractForm2.html");
+	});
+	$("#secondPageTbody").on("click", ".selectCon2", function() {
+		var id = $(this).attr("name");
+		$.ajax({
+			url: "http://" + IP_config + "/account/accountContractController/delete",
+			type: "post",
+			dataType: "json",
+			data: {
+				"id": id
+			},
+			success: function(data) {
+				if(data.success) {
+					layer.alert(data.msg);
+					$("#index_content").load("accountContractList.html");
+				} else {
+					layer.alert(data.msg);
+				}
+			}
 		});
-	 $("#secondPageTbody").on("click", ".selectCon2", function() {
-				var id = $(this).attr("name");
-				$.ajax({
-					url:"http://"+IP_config+"/account/accountContractController/delete",
-					type:"post",
-					dataType:"json",
-					data:{
-						"id" : id
-					},
-					success : function(data) {
-						if(data.success){
-							layer.alert(data.msg);
-							$("#index_content").load("accountContractList.html");
-						}else{
-							layer.alert(data.msg);
-						}
-					}
-				});
-			});
-	</script>
+	});
+</script>

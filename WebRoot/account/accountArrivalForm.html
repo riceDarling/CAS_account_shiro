@@ -1,57 +1,81 @@
 <div class="col-lg-12 col-md-12">
-		<div class="panel panel-cascade">
-			<div class="panel-heading">
-				<h3 class="panel-title">
-					<i class="fa fa-pencil-square"></i><a href_1="accountArrivalList.html"> 到货列表</a> <i class="fa fa-pencil-square"></i>到货添加
-				</h3>
+	<div class="panel panel-cascade">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="fa fa-pencil-square"></i><a href_1="accountArrivalList.html"> 到货列表</a> <i class="fa fa-pencil-square"></i>到货添加
+			</h3>
+		</div>
+		<div class="panel-body">
+			<div class="form-group">
+				<label class="col-lg-1 col-md-6 control-label">订货单号：</label> <select name="contractNumtitle" id="contractNumtitle">
+				</select>
 			</div>
-			<div class="panel-body">
-				<div class="form-group">
-					<label class="col-lg-1 col-md-6 control-label">合同编号：</label>
-					<div class="col-lg-2 col-md-3">
-						<input class="form-control" name="pName" id="pName">
-					</div>
-					<div class="col-lg-1 col-md-2">
-						<input class="btn btn-info " id="sub_search" type="submit" value="查询">
-					</div>
-				</div>
+			<div class="col-lg-1 col-md-2">
+				<input class="btn btn-info " id="sub_search" type="submit" value="查询">
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-12 col-md-12">
-		<div class="panel">
-			<div class="panel-body">
-				<span><b>供应商名称:</b><input type="text" id="supplier" class="form-control" disabled="disabled" /></span> <span><input type="hidden" id="contractId" /></span>
+</div>
+</div>
+<div class="col-lg-12 col-md-12">
+	<div class="panel">
+		<div class="panel-body">
+			<label class="control-label">到货单号：</label>
+			<div class="controls">
+				<input name="contractnum" readonly="true" htmlEscape="false" maxlength="32" id="contractnum" class="form-control" /> <input type="button" value="自动生成" id="automatic" />
+			</div>
+			<div class="control-group">
+				<label class="control-label">订货单号：</label>
+				<div class="controls">
+					<input name="purchasenum" id="purchasenum" htmlEscape="false" maxlength="32" class="form-control" />
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="col-lg-1 col-md-3 control-label">供应商名称：</label>
+				<div class="col-lg-4 col-md-3">
+					<input type="hidden" id="contractId" /> <input type="text" id="supplier" class="form-control" disabled="disabled" /></span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="col-lg-1 col-md-3 control-label">到货日期：</label>
+				<div class="col-lg-4 col-md-3">
+					<input size="16" type="text" value="" readonly class="form_datetime form-control" name="arrivalDate" id="arrivalDate">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">采购原料：</label>
 				<table class="table table-bordered table-condensed table-hover" id="contentTable5">
 					<thead>
 						<tr>
 							<th>物资名称</th>
 							<th>规格型号</th>
-							<th>合同数量</th>
-							<th>应到数量</th>
-							<th>实到数量</th>
+							<th>单价</th>
+							<th>总价</th>
+							<th>订货数量</th>
+							<th>到货数量</th>
 						</tr>
 					</thead>
 					<tbody id="tb_data">
 					</tbody>
 				</table>
 			</div>
-			<div class="panel-body">
-				<form class="form-horizontal row-border">
-					<div class="control-group">
-					<label class="col-lg-1 col-md-3 control-label">到货日期：</label>
-						<div class="col-lg-4 col-md-3">
-							<input size="16" type="text" value="" readonly class="form_datetime form-control"  name="arrivalDate" id="arrivalDate">
-						</div>
-					</div>
-					<div class="control-group">
-						<input id="btnSubmit" class="btn btn-primary" type="button" value="保 存" /> 
-					</div>
-				</form>
+			<div class="control-group">
+				<label class="control-label">备注信息：</label>
+				<div class="controls">
+					<textarea name="remarks" id="remarks" htmlEscape="false" rows="4" maxlength="255" class="form-control" />
+				</div>
 			</div>
 		</div>
+		<div class="panel-body">
+			<form class="form-horizontal row-border">
+				<div class="control-group">
+					<input id="btnSubmit" class="btn btn-primary" type="button" value="保 存" />
+				</div>
+			</form>
+		</div>
 	</div>
-	<script type="text/javascript">
+</div>
+<script type="text/javascript">
 		$("[href_1]").click(function() {
 			$("#index_content").load($(this).attr("href_1"));
 		});
@@ -68,7 +92,7 @@
 				url : "http://" + IP_config + "/account/accountContractController/findList",
 				type : "post",
 				success : function(data) {
-					var html = "<option value=''></option>";
+					var html = "<option value=''>请选择</option>";
 					for (i in data.obj) {
 						html += "<option value="+data.obj[i].contractnum+">" + data.obj[i].contractnum + "</option>";
 
@@ -77,7 +101,6 @@
 
 				}
 			});
-			
 			});
 		$("#selectCon").click(function() {
 			var contractNum = $("#contractNumtitle").val();

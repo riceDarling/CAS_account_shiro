@@ -1,7 +1,29 @@
-<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
-<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
-<div class="col-md-12">
+<style>
+	/* .contract{
+	    display: block;
+	    width: 100%;
+	    height: 34px;
+	    padding: 6px 12px;
+	    font-size: 14px;
+	    line-height: 1.42857143;
+	    color: #555;
+	    background-color: #fff;
+	    background-image: none;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+	    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+ 	}
+	.contract[readonly]{
+		cursor: not-allowed;
+	    background-color: #eee;
+	    opacity: 1;
+	} */
+</style>
+<div class="col-lg-12 col-md-12">
 	<div class="panel panel-cascade">
 		<div class="panel-heading">
 			<h3 class="panel-title">
@@ -11,26 +33,26 @@
 		<div class="panel-body">
 			<form action class="form-horizontal row-border">
 				<div class="form-group">
-					<label class="col-sm-3 control-label">申购标题：</label> <select name="purchasenumtitle" id="purchasenumtitle">
-					</select>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label">供应商：</label> <select name="supplier" id="supplier">
-						<option value="">请选择</option>
-					</select>
+					<label class="col-lg-1 col-sm-3 control-label">申购标题：</label> 
+					<div class="col-lg-3 col-md-6">
+						<select class="form-control" name="purchasenumtitle" id="purchasenumtitle">
+						</select>
+					</div>
+					<label class="col-lg-1 col-sm-3 control-label">供应商：</label> 
+					<div class="col-lg-3 col-md-6">
+						<select class="form-control" name="supplier" id="supplier">
+							<option value="">请选择</option>
+						</select>
+					</div>
+					<div class="col-lg-1 col-sm-6">
+						<input id="btnSubmit" class="btn btn-primary" type="button" value="查询" />
+					</div>
 				</div>
 			</form>
 		</div>
-		<div class="panel-footer">
-			<div class="row">
-				<div class="col-sm-6 col-sm-offset-3">
-					<input id="btnSubmit" class="btn btn-primary" type="button" value="查询" />
-				</div>
-			</div>
-		</div>
 	</div>
 </div>
-<div class="col-md-12">
+<div class="col-lg-12 col-md-12">
 	<div class="panel">
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#">合同编辑</a></li>
@@ -40,37 +62,57 @@
 				<div class="control-group">
 					<label class="control-label">合同编号：</label>
 					<div class="controls">
-						<input name="contractnum" readonly="true" htmlEscape="false" maxlength="32" id="contractnum" class="form-control" /> <input type="button" value="自动生成" id="automatic" />
+						<input name="contractnum"  htmlEscape="false" maxlength="32" id="contractnum" class="form-control" readonly style="width:30% !important;display:inline-block;
+						"/>
+						<input type="button" class="btn btn-primary" style="padding: 4px 12px;" value="自动生成" id="automatic" />
 					</div>
 				</div>
 				<div class="control-group" hidden="true">
 					<label class="control-label">采购单号：</label>
 					<div class="controls">
-						<input name="purchasenum" id="purchasenum" htmlEscape="false" maxlength="32" class="form-control" />
+						<input name="purchasenum" id="purchasenum" htmlEscape="false" style="width:30%;" maxlength="32" class="form-control" />
 					</div>
 				</div>
 				<div class="control-group" hidden="true">
 					<label class="control-label">供应商编号：</label>
 					<div class="controls">
-						<input name="supplierNum" id="supplierNum" htmlEscape="false" maxlength="32" class="form-control" />
+						<input name="supplierNum" id="supplierNum" htmlEscape="false" style="width:30%;" maxlength="32" class="form-control" />
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label">合同名称：</label>
 					<div class="controls">
-						<input name="contracttitle" id="contracttitle" htmlEscape="false" maxlength="255" class="form-control" />
+						<input name="contracttitle" id="contracttitle" htmlEscape="false" style="width:30%;" maxlength="255" class="form-control" />
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label">纸质合同编号：</label>
 					<div class="controls">
-						<input name="papercontract" id="papercontract" htmlEscape="false" maxlength="255" class="form-control" />
+						<input name="papercontract" id="papercontract" htmlEscape="false" style="width:30%;" maxlength="255" class="form-control" />
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label">乙方：</label>
 					<div class="controls">
-						<input name="caigouname" id="caigouname" htmlEscape="false" maxlength="255" readonly="true" class="form-control" />
+						<input name="caigouname" id="caigouname" htmlEscape="false" style="width:30%;" maxlength="255" readonly="true" class="form-control" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">签订日期：</label>
+					<div class="controls">
+						<input size="16" type="text" readonly="true" style="width:30%;" class="form_datetime form-control" name="createdate" id="createdate" />
+					</div>
+				</div>
+				<!-- <div class="control-group">
+					<label class="control-label">附件上传：</label>
+					<div class="controls">
+						<input name="file" id="file" type="file" htmlEscape="false" maxlength="255" class="form-control" />
+					</div>
+				</div> -->
+				<div class="control-group">
+					<label class="control-label">备注信息：</label>
+					<div class="controls">
+						<textarea name="remarks" id="remarks" htmlEscape="false" style="width:30%;" rows="4" maxlength="255" class="form-control" />
 					</div>
 				</div>
 				<div class="control-group">
@@ -89,26 +131,8 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="control-group">
-					<label class="control-label">签订日期：</label>
-					<div class="controls">
-						<input size="16" type="text" readonly="true" class="form_datetime form-control" name="createdate" id="createdate" />
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">附件上传：</label>
-					<div class="controls">
-						<input name="file" id="file" type="file" htmlEscape="false" maxlength="255" class="form-control" />
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">备注信息：</label>
-					<div class="controls">
-						<textarea name="remarks" id="remarks" htmlEscape="false" rows="4" maxlength="255" class="form-control" />
-					</div>
-				</div>
 				<div class="form-actions">
-					<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /><input id="btnCancel" class="btn" type="button" value="返 回" />
+					<input id="submitbtn" style="margin-right:5px;" class="btn btn-primary" type="button" value="保 存" /><input id="btnCancel" class="btn" type="button" value="返 回" />
 				</div>
 			</form>
 		</div>
@@ -128,7 +152,7 @@
 	$(function() {
 		//获取采购订货单标题
 		$.ajax({
-			url : "http://" + IP_config + "/account/accountPurchase/getAccountPurchaseTitle",
+			url : "http://" + IP_config + "/account/accountRequisition/getAccountPurchaseTitle",
 			type : "post",
 			success : function(data) {
 				var html = "<option value=''>请选择</option>";
@@ -163,7 +187,13 @@
 		$("#contractnum").val(ordernum);
 	});
 	function money() {
-		$("#contentTable>tbody>tr td:nth-child(5)").find("input").val($("#contentTable>tbody>tr td:nth-child(3)").find("input").val() * $("#contentTable>tbody>tr td:nth-child(4)").find("input").val());
+		var len = $("#contentTable>tbody>tr").length;
+		var aiArr = new Array();
+		for(var i = 0;i < len;i++){
+			var quantity = $("#contentTable>tbody>tr:eq("+i+") td:eq(2) input").val();
+			var unitprice = $("#contentTable>tbody>tr:eq("+i+") td:eq(3) input").val();
+			var money = $("#contentTable>tbody>tr:eq("+i+") td:eq(4) input").val(quantity*unitprice);
+		}
 	}
 	$("#btnCancel").click(function() {
 		$("#index_content").load("accountContractList.html");
@@ -174,7 +204,7 @@
 		if (purchasenumtitle != null && purchasenumtitle != "") {
 			//获取采购订货单列表供应商数据列表
 			$.ajax({
-				url : "http://" + IP_config + "/account/accountPurchase/getAccountSupplierByPurchasenumtitle",
+				url : "http://" + IP_config + "/account/accountInquiry/getAccountSupplierByPurchasenumtitle",
 				type : "post",
 				data : {
 					"purchasenumtitle" : purchasenumtitle
@@ -183,7 +213,7 @@
 				success : function(data) {
 					var html = "";
 					for (i in data.obj) {
-						html += "<option value='"+data.obj[i].packway+"' name='"+data.obj[i].transport+"'  class='"+data.obj[i].materialcode+"'>" + data.obj[i].suppliercode + "</option>";
+						html += "<option value='"+data.obj[i].ordernum+"' name='"+data.obj[i].suppliercode+"'  class='"+data.obj[i].inquirydetailnum+"'>" + data.obj[i].supplier + "</option>";
 					}
 					$("#supplier").html(html);
 
@@ -201,20 +231,20 @@
 		$("#caigouname").val($("#supplier").find("option:selected").text());
 		var dataline = {};
 		dataline["suppliercode"] = $("#supplier").find("option:selected").attr("name");
-		dataline["materialcode"] = $("#supplier").find("option:selected").attr("class");
+		dataline["inquirydetailnum"] = $("#supplier").find("option:selected").attr("class");
 		//获取采购具体原料列表
 		$.ajax({
-			url : "http://" + IP_config + "/account/accountPurchase/getAccountSupplierByPurchasenum",
+			url : "http://" + IP_config + "/account/accountInquiry/getAccountSupplierByPurchasenum",
 			type : "post",
 			data : dataline,
 			async : false,
 			success : function(data) {
 				$("#contentTable>tbody").empty();
+				var html = "";
 				for (i in data.obj) {
-					var html = "<tr><td>" + data.obj[i].materialcode + "</td><td>" + data.obj[i].suppliercode + "</td><td><input name='quantity'   onchange='money()' /></td><td><input name='unitprice'   onchange='money()' /></td><td><input name='totlemoney' /></td></tr>";
-					$("#contentTable>tbody").html(html);
+					 html += "<tr><td value='"+data.obj[i].materialcode+"'>" + data.obj[i].materialname + "</td><td>" + data.obj[i].size + "</td><td><input name='quantity'   onchange='money()' /></td><td><input name='unitprice'   onchange='money()' /></td><td><input name='totlemoney' /></td></tr>";
 				}
-
+				$("#contentTable>tbody").html(html);
 			}
 		})
 	})
@@ -223,26 +253,43 @@
 		if ($("#contractnum").val() != null && $("#contractnum").val() != "") {
 			if ($("#contracttitle").val() != null && $("#contracttitle").val() != "") {
 				$("#submitbtn").attr("disabled", true);
-				var dataline = {};
-				dataline["purchasenum"] = $("#purchasenum").val();
-				dataline["supplierNum"] = $("#supplierNum").val();
-				dataline["contractnum"] = $("#contractnum").val();
-				dataline["papercontract"] = $("#papercontract").val();
-				dataline["contracttitle"] = $("#contracttitle").val();
-				dataline["caigouname"] = $("#caigouname").val();
-				dataline["createdate"] = $("#createdate").val();
-				dataline["quantity"] = $("#contentTable>tbody>tr td:nth-child(3)").find("input").val();
-				dataline["unitprice"] = $("#contentTable>tbody>tr td:nth-child(4)").find("input").val();
-				dataline["money"] = $("#contentTable>tbody>tr td:nth-child(5)").find("input").val();
-				dataline["file"] = $("#file").val();
-				dataline["remarks"] = $("#remarks").val();
+				var accountContract = {};
+				accountContract.contractnum = $("#contractnum").val();
+				accountContract.papercontract = $("#papercontract").val();
+				accountContract.contracttitle = $("#contracttitle").val();
+				accountContract.purchasenum= $("#purchasenum").val();
+				accountContract.supplierNum = $("#supplierNum").val();
+				accountContract.caigouname= $("#caigouname").val();
+				accountContract.createdate= $("#createdate").val();
+				//accountContract.file = $("#file").val();
+				accountContract.remarks = $("#remarks").val();
+				var len = $("#contentTable>tbody>tr").length;
+				var aiArr = new Array();
+				for(var i = 0;i < len;i++){
+					var accountContractDetail = {};
+					var materialcode = $("#contentTable>tbody>tr:eq("+i+") td:eq(0)").attr("value");
+					var materialname = $("#contentTable>tbody>tr:eq("+i+") td:eq(0)").text();
+					var size = $("#contentTable>tbody>tr:eq("+i+") td:eq(1)").text();
+					var quantity = $("#contentTable>tbody>tr:eq("+i+") td:eq(2) input").val();
+					var unitprice = $("#contentTable>tbody>tr:eq("+i+") td:eq(3) input").val();
+					var money = $("#contentTable>tbody>tr:eq("+i+") td:eq(4) input").val();
+					accountContractDetail.materialcode = materialcode;
+					accountContractDetail.materialname = materialname;
+					accountContractDetail.size = size;
+					accountContractDetail.quantity = quantity;
+					accountContractDetail.unitprice = unitprice;
+					accountContractDetail.money = money;
+					aiArr.push(accountContractDetail);
+				}
+				accountContract.accountContractDetail=aiArr;
 				$.ajax({
 					url : "http://" + IP_config + "/account/accountContractController/save",
 					type : "post",
-					data : dataline,
+					contentType:"application/json;charset=UTF-8",
+					data:JSON.stringify(accountContract), 
 					async : false
-				})
-				if (dataline != null && dataline != "") {
+				});
+				if (accountContract != null && accountContract != "") {
 					layer.alert("保存成功");
 					$("#index_content").load("accountContractList.html");
 				} else {

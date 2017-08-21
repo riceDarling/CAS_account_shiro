@@ -169,4 +169,18 @@
 			status = #{1}
 		WHERE id = #{0}
 	</update>
+	
+	
+	<select id="selectAllTitle" resultType="map">
+		SELECT 
+		a.id AS "id",
+		a.inquirynum AS "inquirynum",
+		a.ordernum AS "ordernum",
+		a.title AS "title"
+		FROM account_inquiry a
+		<include refid="accountInquiryJoins"/>
+		<where>
+			a.del_flag = 0
+		</where>		
+	</select>
 </mapper>
