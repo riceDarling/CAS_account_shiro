@@ -159,6 +159,9 @@ textarea {
 	resize:none !important;
 	/* height: 150px !important; */
 }
+/* label{
+	margin-top: 1% !important;
+} */
 .site-holder.mini-sidebar li.submenu ul {
   width: 200px;
   display: block;

@@ -12,41 +12,37 @@
 		</div>
 		<div class="panel-body">
 			<form class="form-horizontal cascade-forms" method="post" action="#" name="signup_form" id="signup_form" novalidate="novalidate">
-				<label class="col-lg-1 col-md-3 control-label">申购标题：</label>
-				<div class="col-lg-3 col-md-6">
+				<label class="col-lg-1 col-md-3 control-label" style="width: 14% !important;">申购标题：</label>
+				<div class="col-lg-2 col-md-6">
 					<select class="form-control"  name="purchasenumtitle" id="purchasenumtitle">
 					</select>
 				</div>
 
-				<label class="col-lg-1 col-md-3 control-label">合同名称：</label>
+				<label class="col-lg-1 col-md-3 control-label" style="width: 10% !important;">合同名称：</label>
 				<div class="col-lg-3 col-md-6">
 					<input type="text" class="form-control  input-small required" name="contracttitle" htmlEscape="false" />
 				</div>
-				<label class="col-lg-1 col-md-3 control-label">状态：</label>
-				<div class="col-lg-3 col-md-6 ">
+				<label class="col-lg-1 col-md-3 control-label" style="width: 10% !important;">状态：</label>
+				<div class="col-lg-2 col-md-6 ">
 					<select class="form-control" name="status">
 						<option value="">请选择</option>
 						<option value="0">未完成</option>
 						<option value="1">已完成</option>
 					</select>
 				</div>
-				<label class="col-lg-1 col-md-3 control-label distance">开始日期：</label>
-				<div class="col-lg-3 col-md-6 distance">
+				<label class="col-lg-1 col-md-3 control-label distance" style="width: 14% !important;">开始日期：</label>
+				<div class="col-lg-2 col-md-6 distance">
 					<input size="16" type="text" readonly class="form_datetime form-control" name="beginDate">
 				</div> 
-				<label class="col-lg-1 col-sm-3 control-label distance">结束日期：</label>
+				<label class="col-lg-1 col-sm-3 control-label distance" style="width: 10% !important;">结束日期：</label>
 				<div class="col-lg-3 col-md-6 distance">
 					<input size="16" type="text" readonly class="form_datetime form-control" name="endDate">
 				</div>
 				<div class="col-lg-1 col-sm-6 distance">
-					<input id="btnCancel" class="btn btn-primary" style="margin-left: 133% !important;" type="button" value="查询" />
+					<input id="btnCancel" class="btn btn-primary" style="margin-left: 185% !important;" type="button" value="查询" />
 				</div>
 			</form>
 		</div>
-	</div>
-</div>
-<div class="col-lg-12  col-md-12">
-	<div class="panel">
 		<div class="panel-body">
 			<table class="table table-bordered table-condensed table-hover">
 				<thead>
@@ -68,6 +64,7 @@
 		</div>
 	</div>
 </div>
+
 <script>
 	$("[href_1]").click(function() {
 		$("#index_content").load($(this).attr("href_1"));

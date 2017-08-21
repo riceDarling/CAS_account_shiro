@@ -24,22 +24,39 @@ public class AccountArrivalServiceImpl implements AccountArrivalService {
 	public void save(AccountArrival accountArrival) {
 		AccountArrivalDetail accountArrivalDetail = new AccountArrivalDetail();
 		int size = accountArrival.getAccountArrivalDetail().size();
-			accountArrival.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-			accountArrivalDao.save(accountArrival);
-			int sumquantity=0;
-			int sumnum=0;
+		if (accountArrival.getId() != null && accountArrival.getId().trim().length() > 0) {
+			accountArrivalDao.update(accountArrival);
+			accountArrivalDetailDao.delete(accountArrival.getId());
+			int sumquantity = 0;
+			int sumnum = 0;
 			for (int i = 0; i < size; i++) {
 				accountArrivalDetail = accountArrival.getAccountArrivalDetail().get(i);
 				accountArrivalDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
 				accountArrivalDetail.setParent_Id(accountArrival.getId());
-				sumquantity+=accountArrivalDetail.getQuantity();
-				sumnum+=accountArrivalDetail.getNum();
+				sumquantity += accountArrivalDetail.getQuantity();
+				sumnum += accountArrivalDetail.getNum();
 				accountArrivalDetailDao.save(accountArrivalDetail);
 			}
-			if(sumnum==sumquantity){
+			if (sumnum == sumquantity) {
 				accountArrivalDao.updateStatus(accountArrival.getId());
 			}
-			
+		} else {
+			accountArrival.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+			accountArrivalDao.save(accountArrival);
+			int sumquantity = 0;
+			int sumnum = 0;
+			for (int i = 0; i < size; i++) {
+				accountArrivalDetail = accountArrival.getAccountArrivalDetail().get(i);
+				accountArrivalDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+				accountArrivalDetail.setParent_Id(accountArrival.getId());
+				sumquantity += accountArrivalDetail.getQuantity();
+				sumnum += accountArrivalDetail.getNum();
+				accountArrivalDetailDao.save(accountArrivalDetail);
+			}
+			if (sumnum == sumquantity) {
+				accountArrivalDao.updateStatus(accountArrival.getId());
+			}
+		}
 	}
 
 	@Override
@@ -61,6 +78,11 @@ public class AccountArrivalServiceImpl implements AccountArrivalService {
 	@Override
 	public AccountArrival getById(String id) {
 		return accountArrivalDao.getById(id);
+	}
+
+	@Override
+	public List<AccountArrivalDetail> getByArrivalId(String id) {
+		return accountArrivalDetailDao.getByArrivalId(id);
 	}
 
 }

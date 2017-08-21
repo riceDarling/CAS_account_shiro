@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.account.entity.AccountArrival;
-import com.account.entity.AccountContract;
+import com.account.entity.AccountArrivalDetail;
 import com.account.service.AccountArrivalService;
 import com.account.utils.ResponseModel;
 
@@ -57,7 +57,7 @@ public class AccountArrivalController {
 		return rm;
 	}
 	/**
-	 * 查询到货详细信息
+	 * 查询到货主表详细信息
 	 * @param req
 	 * @return
 	 */
@@ -74,7 +74,24 @@ public class AccountArrivalController {
 		}
 		return rm;
 	}
-
+	/**
+	 * 查询到货子表物资信息
+	 * @param req
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getByArrivalId")
+	public ResponseModel<List<AccountArrivalDetail>> getByArrivalId(HttpServletRequest req) {
+		ResponseModel<List<AccountArrivalDetail>> rm = new ResponseModel<List<AccountArrivalDetail>>();
+		try {
+			String id = req.getParameter("id");
+			List<AccountArrivalDetail> accountArrivalDetail = accountArrivalService.getByArrivalId(id);
+			rm.isSuccessMsg(accountArrivalDetail, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
 	@ResponseBody
 	@RequestMapping(value = "delete")
 	public ResponseModel<String> delete(HttpServletRequest req) {

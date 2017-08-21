@@ -19,7 +19,8 @@
 		resultType="com.account.entity.AccountArrival">
 		SELECT
 		<include refid="accountArrivalColumns" />
-		from account_arrival a where
+		from account_arrival a 
+		where
 		a.`id` = #{id}
 
 	</select>
@@ -83,6 +84,7 @@
 		#{arrivalDate},
 		remarks = #{remarks},
 		arrivalstatus=#{arrivalstatus},
+		del_flag=#{delFlag}
 		WHERE id = #{id}
 	</update>
 	<update id="updateStatus" parameterType="java.lang.String">

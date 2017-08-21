@@ -1,6 +1,4 @@
-<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
-<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+
 <div class="col-md-12">
 	<div class="panel panel-cascade">
 		<div class="panel-heading">
@@ -24,17 +22,6 @@
 				</div>
 			</form>
 		</div>
-		<div class="panel-footer">
-			<div class="row">
-				<div class="col-sm-6 col-sm-offset-3">
-					<input id="btnCancel" class="btn btn-primary" type="button" value="查询" />
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="col-md-12">
-	<div class="panel">
 		<div class="panel-body">
 			<table class="table table-bordered table-condensed table-hover" id="example">
 				<thead>
@@ -53,8 +40,16 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="panel-footer">
+			<div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+					<input id="btnCancel" class="btn btn-primary" type="button" value="查询" />
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
+
 <script>
 	$("[href_1]").click(function() {
 		$("#index_content").load($(this).attr("href_1"));

@@ -14,6 +14,7 @@
 		<div class="control-group">
 			<label class="control-label">到货单号：</label>
 			<div class="controls">
+			<input type="text"  name="id" hidden="true" id="payId" style="width:30%;"  />
 				<input name="arrivalnum" readonly="true" htmlEscape="false" maxlength="32" id="arrivalnum" class="form-control" /> 
 			</div>
 			</div>
@@ -29,10 +30,16 @@
 					<input type="text" hidden="true" id="suppliernum" /> <input type="text" readonly="true" id="supplier" class="form-control"  /></span>
 				</div>
 			</div>
+			<div class="control-group" hidden="true">
+					<label class="control-label">到货状态：</label>
+					<div class="controls">
+						<input name="status" id="status" htmlEscape="false" style="width:30%;"  maxlength="32" class="form-control" />
+					</div>
+				</div>
 			<div class="control-group">
 				<label class="control-label">到货日期：</label>
 				<div class="controls">
-					<input size="16" type="text"  readonly="true" class="form_datetime form-control" name="arrivalDate" id="arrivalDate">
+					<input size="16" type="text"   class="form_datetime form-control" name="arrivalDate" id="arrivalDate">
 				</div>
 			</div>
 			<div class="control-group">
@@ -96,21 +103,41 @@
 			$("#index_content").load("accountArrivalList.html");
 		});
 		$(function() {
-			//获取数据
+			if ($.cookie("accountArrivalList_id") != "null") {
+				$("#payId").val($.cookie("accountArrivalList_id"));
+				$.ajax({
+					url : "http://" + IP_config + "/account/accountArrivalController/getById",
+					type : "post",
+					dataType : "json",
+					data : {
+						"id" : $.cookie("accountArrivalList_id")
+					},
+					success : function(data) {
+						if (data.success && data.obj != null && data.obj != "") {
+							$("#arrivalnum").val(data.obj.arrivalnum);
+							$("#ordernum").val(data.obj.ordernum);
+							$("#suppliernum").val(data.obj.suppliernum);
+							$("#supplierNum").val(data.obj.supplierNum);
+							$("#supplier").val(data.obj.supplier);
+							$("#arrivalDate").val(data.obj.arrivalDate);
+							$("#arrivalstatus").val(data.obj.arrivalstatus);
+							$("#remarks").val(data.obj.remarks);
+						}
+					}
+				});
+			}
 			$.ajax({
-				url : "http://" + IP_config + "/account/accountPurchase/formView",
+				url : "http://" + IP_config + "/account/accountArrivalController/getByArrivalId",
 				type : "post",
 				data : {
 					"id" : $.cookie("accountArrivalList_id")
 				},
 				async : false,
 				success : function(data) {
-					$("#suppliernum").val(data.obj.purchase.supplierNum);
-					$("#supplier").val(data.obj.purchase.supplier);
 					$("#contentTable>tbody").empty();
 					var html = "";
-					for (i in data.obj.purchase.accountPurchaseDetailList) {
-						html += "<tr><td  value='"+data.obj.purchase.accountPurchaseDetailList[i].materialcode+"'>" + data.obj.purchase.accountPurchaseDetailList[i].materialname + "</td><td>" + data.obj.purchase.accountPurchaseDetailList[i].size + "</td><td>" +  data.obj.purchase.accountPurchaseDetailList[i].unitprice + "</td><td>" + data.obj.purchase.accountPurchaseDetailList[i].totlemoney +"</td><td>" +  data.obj.purchase.accountPurchaseDetailList[i].quantity + "</td><td><input type='text' name='num'   onchange='mathnum()' /></td></tr>";
+					for (i in data.obj) {
+						html += "<tr><td  value='"+data.obj[i].materialcode+"'>" + data.obj[i].materialname + "</td><td>" + data.obj[i].size + "</td><td>" +  data.obj[i].unitprice + "</td><td>" + data.obj[i].money +"</td><td>" +  data.obj[i].quantity + "</td><td><input type='text' value='"+data.obj[i].num+"' name='num'   onchange='mathnum()' /></td></tr>";
 						}
 					$("#contentTable>tbody").html(html);
 				}
@@ -122,6 +149,7 @@
 				if ($("#ordernum").val() != null && $("#ordernum").val() != "") {
 					$("#submitbtn").attr("disabled", true);
 					var accountArrival = {};
+					accountArrival.id=$("#payId").val();
 					accountArrival.ordernum = $("#ordernum").val();
 					accountArrival.arrivalnum = $("#arrivalnum").val();
 					accountArrival.supplier = $("#supplier").val();
@@ -156,6 +184,7 @@
 						data:JSON.stringify(accountArrival), 
 						async : false
 					});
+					$.cookie("accountArrivalList_id", null);
 					if (accountArrival != null && accountArrival != "") {
 						layer.alert("保存成功");
 						$("#index_content").load("accountArrivalList.html");
