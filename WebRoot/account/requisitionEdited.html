@@ -107,12 +107,30 @@
 						</form>
 					</div>
 				</div>
-
+						<div class="panel-body ">
+							<table class="table table-striped" id="requisitionAudit_act_table">
+								<thead>
+									<tr>
+										<th>申请人</th>
+										<th>审核人</th>
+										<th>开始时间</th>
+										<th>结束时间</th>
+										<th>结论</th>
+										<th>意见</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
 			</div>
 		</div>
 	</div>
 </div>
 <script>
+$("[href_1]").click(function(){
+	$("#index_content").load($(this).attr("href_1"));
+});	
 $(".form_datetime").datetimepicker({
 	language:  'zh-CN', 
 	minView: "month", //选择日期后，不会再跳转去选择时分秒 
@@ -272,20 +290,36 @@ $.ajax("http://" + IP_config + "/account/accountRequisition/formView", {
 				$("#requisitionForm_table tbody").html(html);
 			}
 			
-		/* 	if (data.obj.actList.length > 0) {
+			
+			
+			if (data.obj.actList.length > 0) {
 				var html = "";
 				for (i in data.obj.actList) {
 					var act = data.obj.actList[i];
 					html += '<tr><td>'
 							+ act.requisitionName + '</td>' + '<td>'
 							+ act.checkerName + '</td>' + '<td>'
-							+ formatDateTime(act.start_time) + '</td>' + '<td>'
-							+ formatDateTime(act.end_time) + '</td>' + '<td>'
-							+ act.conclusion + '</td>' + '<td>'
-							+ act.remarks + '</td>' + '</tr>';
+							+ formatDateTime(act.start_time) + '</td>' + '<td>';
+							if(act.end_time!=null){
+								html+= formatDateTime(act.end_time) + '</td>' + '<td>';
+							}else{
+								html+='</td>' + '<td>';
+							}
+							if(act.conclusion==1){
+								html+='同意</td>' + '<td>';
+							}else if(act.conclusion==0){
+								html+='不同意</td>' + '<td>';
+							}else{
+								html+='</td>' + '<td>';
+							}
+							if(act.remarks!=null){
+								html+= act.remarks;
+							}else{
+								html+='</td>' + '</tr>';	
+							}
 				}
-				$("#requisitionView_act_table tbody").html(html);
-			} */
+				$("#requisitionAudit_act_table tbody").html(html);
+			} 
 
 		} else {
 			//获取信息提示

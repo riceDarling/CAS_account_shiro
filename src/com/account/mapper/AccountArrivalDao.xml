@@ -2,208 +2,102 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.account.dao.AccountArrivalDao">
 
-	 <sql id="accountArrivalColumns">
+	<sql id="accountArrivalColumns">
 		a.id AS "id",
 		a.ordernum as "ordernum",
-		a.contract_id AS "contractId",
-		a.material_id AS "materialId",
+		a.arrivalnum as
+		"arrivalnum",
+		a.supplier AS "supplier",
+		a.suppliernum AS "suppliernum",
 		date_format(a.arrival_date,'%Y-%c-%d') AS "arrivalDate",
-		a.tobe_num AS "tobeNum",
+		a.remarks AS
+		"remarks",
 		a.arrivalstatus as "arrivalstatus",
-		a.arrival_num AS "arrivalNum",
 		a.del_flag AS "delFlag"
 	</sql>
-
-	<sql id="accountContractColumns">
-		a.id AS "id",
-		a.contractnum AS "contractnum",
-		a.contracttitle AS "contracttitle",
-		a.purchasenum AS "purchasenum",
-		a.supplierNum AS "supplierNum",
-		a.caigouname AS "caigouname",
-		date_format(a.create_date,'%Y-%c-%d') AS "createdate",
-		a.money AS "money",
-		a.status AS "status",
-		a.remarks AS "remarks",
-		a.del_flag AS "delFlag"
-	</sql>
-
 	<select id="getById" parameterType="java.lang.String"
 		resultType="com.account.entity.AccountArrival">
 		SELECT
 		<include refid="accountArrivalColumns" />
-		,
-		ac.contractTitle,am.materialName
-		FROM account_arrival a
-		LEFT JOIN account_contract ac
-		ON a.`contract_id` = ac.`id`
-		LEFT JOIN account_material am
-		ON a.`material_id` = am.`id`
-		WHERE a.`contract_id` = #{id}
-		GROUP BY
-		a.`arrival_date`
+		from account_arrival a where
+		a.`id` = #{id}
+
 	</select>
-	<select id="findAllList" resultType="com.account.entity.AccountArrival">
-	select a.ordernum as ordernum FROM
-		account_arrival  a where a.del_flag='0'
-	</select>
-		<select id="findList" parameterType="java.util.Map"
+	<select id="findList" parameterType="java.util.Map"
 		resultType="com.account.entity.AccountArrival">
 		SELECT
 		<include refid="accountArrivalColumns" />
-		,
-		ac.contractTitle,
-		am.materialName,
-		ac.status,
-		asp.`supplier`
+		,sum(b.quantity) as sumquantity,sum(b.num) as sumnum,sum(b.money) as summoney
 		FROM
-		account_arrival a,
-		account_contract ac,
-		account_material am,
-		account_purchase ap,
-		account_purchase_detail apd,
-		account_supplier asp
-		WHERE a.`contract_id` = ac.`id`
-		AND a.`material_id` = am.`id`
-		AND ac.`purchaseNum` = ap.`orderNum`
-		AND ap.id = apd.`parent_Id`
-		AND apd.`supplierCode` = asp.supplierNum
-		And a.del_flag='0'
-		<if test="contractTitle != null and contractTitle != ''">
-			and ac.contractTitle like CONCAT(CONCAT('%',#{contractTitle}),'%')
-		</if>
+		account_arrival a ,account_arrival_detail b
+		WHERE a.id=b.parent_Id
+		and
+		a.del_flag='0'
 		<if test="supplier != null and supplier != ''">
-			and asp.supplier like CONCAT(CONCAT('%',#{supplier}),'%')
+			and a.supplier like CONCAT(CONCAT('%',#{supplier}),'%')
 		</if>
-		<if test="status != null and status != ''">
-			and ac.status = #{status}
+		<if test="arrivalstatus != null and arrivalstatus != ''">
+			and a.arrivalstatus = #{arrivalstatus}
 		</if>
-		GROUP BY a.`contract_id` ORDER BY a.arrival_date DESC
-	</select>
-	<select id="getNextForm" parameterType="java.lang.String"
-		resultType="com.account.entity.AccountArrival">
-		SELECT
-		<include refid="accountArrivalColumns" />
-		,
-		ac.`contractTitle`,
-		ap.`id`,
-		asp.`supplier` as supplier
-		FROM
-		account_arrival a,
-		account_contract ac,
-		account_purchase ap,
-		account_purchase_detail apd,
-		account_supplier asp
-		WHERE
-		a.`contract_id` = ac.`id`
-		AND ac.`purchaseNum` = ap.`orderNum`
-		AND ap.`id` = apd.`parent_Id`
-		AND apd.`supplierCode` = asp.`supplierNum`
-		AND a.`contract_id` = #{contractId}
-		GROUP BY a.`arrival_date` DESC
-	</select>
-	<select id="getLastForm" parameterType="java.lang.String"
-		resultType="com.account.entity.AccountArrival">
-		SELECT
-		<include refid="accountArrivalColumns" />
-		,
-		am.materialName,
-		am.size,
-		ac.`contractTitle`
-		FROM
-		account_arrival a,
-		account_material am,
-		account_contract ac
-		WHERE a.`material_id` = am.`id`
-		AND a.`contract_id` = ac.`id`
-		AND a.id = #{id}
+		<if test="beginDate != null and beginDate != ''">
+			AND a.arrival_date &gt;= #{beginDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND a.arrival_date &lt;= #{endDate}
+		</if>
+		group by a.id ORDER BY a.arrival_date DESC
 	</select>
 
-<!-- 根据合同获取到货信息 -->
-	<select id="getArrivalDetail" resultType="com.account.entity.AccountArrival">
-		SELECT 
-		  <include refid="accountContractColumns"/>,
-		  am.`id` AS materialId,
-		  am.`materialName` as materialName,
-		  am.size as size,
-		  am.id AS contractId,
-		  apd.quantity as quantity,
-		  asp.`supplier`as supplier,
-		  a.`supplierNum`,
-		  IFNULL(aa.`arrival_num`,0 ) AS arrivalNum
-		FROM
-		  account_contract a 
-		  LEFT JOIN account_purchase ap 
-		    ON a.`purchaseNum` = ap.`orderNum` 
-		  LEFT JOIN account_purchase_detail apd 
-		    ON ap.`id` = apd.`parent_Id` 
-		  LEFT JOIN account_material am 
-		    ON apd.`materialCode` = am.`materialNum` 
-		  LEFT JOIN account_supplier asp 
-		    ON a.supplierNum = asp.`supplierNum` 
-		  LEFT JOIN account_arrival aa
-    		ON aa.`contract_id` = a.`id`
-		WHERE  
-        a.`supplierNum` = apd.supplierCode AND a.contractNum = #{contractNum}  
-		GROUP BY am.`id`  
-	</select>
-	
-	<!-- 根据合同获取到货信息数量 -->
-	<select id="getArrivalDetailNum" resultType="com.account.entity.AccountArrival">
-		SELECT 
-		  <include refid="accountContractColumns"/>,
-		  IFNULL(aa.`arrival_num`,0 ) AS arrivalNum,
-		  aa.`material_id` AS materialId,
-		  am.`materialName` 
-		FROM
-		  account_contract a 
-		  LEFT JOIN account_arrival aa 
-		    ON a.`id` = aa.`contract_id` 
-		  LEFT JOIN account_material am 
-		    ON aa.`material_id` = am.`id` 
-		WHERE a.`contractNum` = #{contractNum}  
-	</select>
-	
-	
 	<insert id="save" parameterType="com.account.entity.AccountArrival">
 		INSERT INTO account_arrival(
 		id,
 		ordernum,
-		contract_id,
-		material_id,
+		arrivalnum,
+		supplier,
+		suppliernum,
 		arrival_date,
-		tobe_num,
-		arrival_num,
+		remarks,
 		arrivalstatus,
 		del_flag
 		) VALUES (
 		#{id},
 		#{ordernum},
-		#{contractId},
-		#{materialId},
+		#{arrivalnum},
+		#{supplier},
+		#{suppliernum},
 		#{arrivalDate},
-		#{tobeNum},
-		#{arrivalNum},
+		#{remarks},
 		#{arrivalstatus},
 		#{delFlag}
 		)
 	</insert>
 
-	<update id="update" parameterType="java.util.Map">
+	<update id="update" parameterType="com.account.entity.AccountArrival">
 		UPDATE account_arrival SET
 		ordernum = #{ordernum},
-		contract_id = #{contractId},
-		material_id = #{materialId},
-		arrival_date = #{arrivalDate},
-		tobe_num = #{tobeNum},
-		arrival_num = #{arrivalNum},
+		arrivalnum = #{arrivalnum},
+		supplier =
+		#{supplier},
+		suppliernum = #{suppliernum},
+		arrival_date =
+		#{arrivalDate},
+		remarks = #{remarks},
+		arrivalstatus=#{arrivalstatus},
 		WHERE id = #{id}
 	</update>
-
+	<update id="updateStatus" parameterType="java.lang.String">
+		UPDATE account_arrival SET
+		arrivalstatus = '1'
+		WHERE id = #{id}
+	</update>
 	<update id="delete" parameterType="java.lang.String">
 		UPDATE account_arrival SET
 		del_flag = '1'
 		WHERE id = #{id}
-	</update> 
-
+	</update>
+	<!-- <select id="getLastForm" parameterType="java.lang.String" resultType="com.account.entity.AccountArrival"> 
+		SELECT <include refid="accountArrivalColumns" /> , am.materialName, am.size, 
+		ac.`contractTitle` FROM account_arrival a, account_material am, account_contract 
+		ac WHERE a.`material_id` = am.`id` AND a.`contract_id` = ac.`id` AND a.id 
+		= #{id} </select> -->
 </mapper>

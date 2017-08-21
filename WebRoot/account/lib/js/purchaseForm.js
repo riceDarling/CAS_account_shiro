@@ -15,7 +15,7 @@ $("#accountPurchaseSubmit").click(function(){
 		json["materialcode"]=$(this).children("td").eq(0).attr("materialcode");
 		json["unitprice"]=$(this).children("td").eq(2).text();
 		json["quantity"]=$(this).children("td").eq(3).find("input").val();
-		json["totlemoney"]=$(this).children("td").eq(3).find("input").val();
+		json["totlemoney"]=$(this).children("td").eq(4).find("input").val();
 		listjson.push(json);
 	});
 	data_json["accountPurchaseDetailList"]=listjson;

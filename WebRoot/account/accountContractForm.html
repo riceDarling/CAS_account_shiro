@@ -188,7 +188,6 @@
 	});
 	function money() {
 		var len = $("#contentTable>tbody>tr").length;
-		var aiArr = new Array();
 		for(var i = 0;i < len;i++){
 			var quantity = $("#contentTable>tbody>tr:eq("+i+") td:eq(2) input").val();
 			var unitprice = $("#contentTable>tbody>tr:eq("+i+") td:eq(3) input").val();
@@ -242,7 +241,7 @@
 				$("#contentTable>tbody").empty();
 				var html = "";
 				for (i in data.obj) {
-					 html += "<tr><td value='"+data.obj[i].materialcode+"'>" + data.obj[i].materialname + "</td><td>" + data.obj[i].size + "</td><td><input name='quantity'   onchange='money()' /></td><td><input name='unitprice'   onchange='money()' /></td><td><input name='totlemoney' /></td></tr>";
+					 html += "<tr><td value='"+data.obj[i].materialcode+"'>" + data.obj[i].materialname + "</td><td>" + data.obj[i].size + "</td><td><input type='text'   onchange='money()' /></td><td><input type='text'   onchange='money()' /></td><td><input type='text' /></td></tr>";
 				}
 				$("#contentTable>tbody").html(html);
 			}
@@ -294,7 +293,7 @@
 					$("#index_content").load("accountContractList.html");
 				} else {
 					layer.alert("保存失败");
-					$("#index_content").load("accountContracFormhtml");
+					$("#index_content").load("accountContractForm.html");
 				}
 			} else {
 				layer.alert("请添写合同名称!");

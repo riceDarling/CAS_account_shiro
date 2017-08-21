@@ -23,5 +23,6 @@ public interface AccountPurchaseDao {
 	public void update(AccountPurchase accountPurchase);
 
 	public void delete(String id);
+	public List<AccountPurchase> findAllorderNum();
 
 }

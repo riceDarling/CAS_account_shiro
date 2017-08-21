@@ -102,6 +102,9 @@
 
 
 <script>
+$("[href_1]").click(function(){
+	$("#index_content").load($(this).attr("href_1"));
+});	
 	var requisitionAudit_id = $.cookie("requisitionAudit_id");
 	
 	$.ajax("http://" + IP_config + "/account/accountRequisition/formView", {
@@ -159,8 +162,12 @@
 								}else{
 									html+='</td>' + '<td>';
 								}
-								
-								html+= act.remarks + '</td>' + '</tr>';	
+								if(act.remarks!=null){
+									html+= act.remarks;
+								}else{
+									html+='</td>' + '</tr>';	
+								}
+								 
 					}
 					//取流程最新的记录
 					var act=data.obj.actList[data.obj.actList.length-1];

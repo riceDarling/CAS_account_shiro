@@ -17,5 +17,5 @@ public interface AccountPurchaseService {
 	public void saveAudit(AccountPurchase entity);
 	public AccountPurchase findPage(AccountPurchase entity);
 	public void delete(String accountPurchaseid);
-	
+	public List<AccountPurchase> findAllorderNum();
 }

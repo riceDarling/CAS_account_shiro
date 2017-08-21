@@ -13,29 +13,10 @@ public interface AccountArrivalDao {
 
 	void delete(String id);
 
-	void update(Map<String, Object> map);
-	List<AccountArrival> findAllList();
+	void update(AccountArrival accountArrival);
+    void updateStatus(String id);
 	List<AccountArrival> findList(Map<String, Object> map);
 
 	AccountArrival getById(String id);
-
-	List<AccountArrival> getNextForm(String contractId);
-
-	List<AccountArrival> getLastForm(String id);
-
-	/**
-	 * 根据合同获取到货信息
-	 * 
-	 * @param contractNum
-	 * @return
-	 */
-	public List<AccountArrival> getArrivalDetail(String contractNum);
-
-	/**
-	 * 根据合同获取到货信息数量
-	 * 
-	 * @param contractNum
-	 * @return
-	 */
-	public List<AccountArrival> getArrivalDetailNum(String contractNum);
+	// List<AccountArrival> getLastForm(String id);
 }

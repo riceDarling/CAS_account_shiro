@@ -27,13 +27,23 @@
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="com.account.entity.AccountRequisition">
+	<select id="findList" resultType="com.account.entity.AccountRequisition" parameterType="com.account.entity.AccountRequisition">
 		SELECT 
 			<include refid="accountRequisitionColumns"/>
 		FROM account_requisition a
-		<where>
-			a.del_flag = 0		
-		</where>
+		WHERE 
+		a.del_flag = 0		
+		<if test="title!=null and title!=''">
+			AND a.title LIKE concat('%',#{title},'%')
+		</if>
+		<if test="procInsId!=null &amp;&amp; procInsId!=''">
+			<if test='procInsId=="0"'>
+				AND a.proc_ins_id!='end'	
+			</if>
+			<if test='procInsId=="1"'>
+				AND a.proc_ins_id='end'
+			</if>
+		</if>
 		<choose>
 			<when test="page !=null ">
 				
@@ -44,7 +54,7 @@
 		</choose>
 	</select>
 	
-	<select id="findAllList" resultType="com.account.entity.AccountRequisition">
+	<select id="findAllList" resultType="com.account.entity.AccountRequisition" parameterType="com.account.entity.AccountRequisition">
 		SELECT 
 			<include refid="accountRequisitionColumns"/>
 		FROM account_requisition a

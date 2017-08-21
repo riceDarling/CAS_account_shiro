@@ -6,33 +6,39 @@
 			</h3>
 		</div>
 		<div class="panel-body">
-				<label class="col-lg-1 col-md-2 control-label">合同名称：</label>
-				<div class="col-lg-2 col-md-2">
-					<input name="contracttitle" type="text" htmlEscape="false" class="form-control " />
-				</div>
+			<div class="form-group">
 				<label class="col-lg-1 col-md-2 control-label">供应商：</label>
 				<div class="col-lg-2 col-md-2">
 					<input name="supplier" type="text" htmlEscape="false" class="form-control " />
 				</div>
-				<label class="col-lg-1 col-md-2 control-label">合同状态：</label>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-1 col-md-2 control-label">状态：</label>
 				<div class="col-lg-2 col-md-2">
-					<select name="status" class="form-control">
+					<select name="arrivalstatus" class="form-control">
 						<option value="">请选择</option>
-						<option value="0">未完成</option>
-						<option value="1">已完成</option>
+						<option value="0">未到货</option>
+						<option value="1">未送检</option>
+						<option value="2">已送检</option>
 					</select>
 				</div>
-				<div class="col-lg-1 col-sm-6">
-					<input id="btnCancel" class="btn btn-primary" type="button" value="查询" />
-				</div>
-		</div>
-		<!-- <div class="panel-footer">
-			<div class="row">
-				<div class="col-sm-6 col-sm-offset-3">
-					<input id="btnCancel" class="btn btn-primary" type="button" value="查询" />
+			</div>
+			<div class="form-group">
+				<label class="col-lg-2 col-md-3 control-label">开始日期：</label>
+				<div class="col-lg-4 col-md-3">
+					<input size="16" type="text" readonly class="form_datetime form-control" name="beginDate">
 				</div>
 			</div>
-		</div> -->
+			<div class="form-group">
+				<label class="col-sm-3 control-label">结束日期：</label>
+				<div class="col-lg-4 col-md-3">
+					<input size="16" type="text" readonly class="form_datetime form-control" name="endDate">
+				</div>
+			</div>
+			<div class="col-lg-1 col-sm-6">
+				<input id="btnCancel" class="btn btn-primary" type="button" value="查询" />
+			</div>
+		</div>
 	</div>
 </div>
 <div class="col-md-12">
@@ -41,9 +47,14 @@
 			<table class="table table-bordered table-condensed table-hover">
 				<thead>
 					<tr>
-						<th class="visible-lg">合同名称</th>
-						<th class="visible-lg">供应商</th>
-						<th class="visible-lg">合同状态</th>
+						<th class="visible-lg">订货单号</th>
+						<th class="visible-lg">到货单号</th>
+						<th class="visible-lg">供应商名称</th>
+						<th class="visible-lg">到货日期</th>
+						<th class="visible-lg">订货数量(总)</th>
+						<th class="visible-lg">到货数量(总)</th>
+						<th class="visible-lg">总价(总)</th>
+						<th class="visible-lg">状态</th>
 						<th class="visible-lg">操作</th>
 					</tr>
 				</thead>
@@ -57,30 +68,47 @@
 	$("[href_1]").click(function() {
 		$("#index_content").load($(this).attr("href_1"));
 	});
+	$(".form_datetime").datetimepicker({
+		language : 'zh-CN',
+		minView : "month", //选择日期后，不会再跳转去选择时分秒 
+		format : 'yyyy-mm-dd',
+		todayBtn : 1,
+		autoclose : 1,
+	});
 	$("#btnCancel").click(function() {
-		var contracttitle = $("[name='contracttitle']").val();
 		var supplier = $("[name='supplier']").val();
-		var status = $("[name='status']").val();
+		var arrivalstatus = $("[name='arrivalstatus']").val();
+		var beginDate = $("[name='beginDate']").val();
+		var endDate = $("[name='endDate']").val();
 		$.ajax({
 			url : "http://" + IP_config + "/account/accountArrivalController/findList",
 			type : "post",
 			async : false,
 			data : {
-				"contracttitle" : contracttitle,
 				"supplier" : supplier,
-				"status" : status
+				"arrivalstatus" : arrivalstatus,
+				"beginDate" : beginDate,
+				"endDate" : endDate,
 			},
 			success : function(data) {
 				if (data.success) {
 					$("#secondPageTbody").empty();
 					for ( var index in data.obj) {
 						var content = "<tr>"
-						content += "<td>" + data.obj[index].contractTitle + "</td>"
+						content += "<td>" + data.obj[index].ordernum + "</td>"
+						content += "<td>" + data.obj[index].arrivalnum + "</td>"
 						content += "<td>" + data.obj[index].supplier + "</td>"
-						if (data.obj[index].status == 0) {
-							content += "<td>未完成</td>"
-						} else {
-							content += "<td>已完成</td>"
+						content += "<td>" + data.obj[index].arrivalDate + "</td>"
+						content += "<td>" + data.obj[index].sumquantity + "</td>"
+						content += "<td>" + data.obj[index].sumnum+ "</td>"
+						content += "<td>" + data.obj[index].summoney + "</td>"
+						if (data.obj[index].arrivalstatus == 0) {
+							content += "<td>未到货</td>"
+						} else if(data.obj[index].arrivalstatus == 1)  {
+							content += "<td>未送检</td>"
+						}
+						else{
+							content += "<td>已送检</td>"
 						}
 						content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
 						content += "</tr>"
@@ -99,12 +127,20 @@
 				if (data.success) {
 					for ( var index in data.obj) {
 						var content = "<tr>"
-						content += "<td>" + data.obj[index].contractTitle + "</td>"
+						content += "<td>" + data.obj[index].ordernum + "</td>"
+						content += "<td>" + data.obj[index].arrivalnum + "</td>"
 						content += "<td>" + data.obj[index].supplier + "</td>"
-						if (data.obj[index].status == 0) {
-							content += "<td>未完成</td>"
-						} else {
-							content += "<td>已完成</td>"
+						content += "<td>" + data.obj[index].arrivalDate + "</td>"
+						content += "<td>" + data.obj[index].sumquantity + "</td>"
+						content += "<td>" + data.obj[index].sumnum+ "</td>"
+						content += "<td>" + data.obj[index].summoney + "</td>"
+						if (data.obj[index].arrivalstatus == 0) {
+							content += "<td>未到货</td>"
+						} else if(data.obj[index].arrivalstatus == 1)  {
+							content += "<td>未送检</td>"
+						}
+						else{
+							content += "<td>已送检</td>"
 						}
 						content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
 						content += "</tr>"

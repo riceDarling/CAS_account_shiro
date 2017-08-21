@@ -33,14 +33,19 @@
 		SELECT 
 			<include refid="accountPurchaseColumns"/>
 		FROM account_purchase a
-		<include refid="accountPurchaseJoins"/>
-		<where>
+		WHERE 
 			a.del_flag = 0
-			<if test="title != null and title != ''">
-				AND a.title LIKE 
-					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			<if test="title!=null and title!=''">
+			AND a.title LIKE concat('%',#{title},'%')
 			</if>
-		</where>
+			<if test="procInsId!=null &amp;&amp; procInsId!=''">
+				<if test='procInsId=="0"'>
+					AND a.proc_ins_id!='end'	
+				</if>
+				<if test='procInsId=="1"'>
+					AND a.proc_ins_id='end'
+				</if>
+			</if>
 		<choose>
 			<when test="page !=null ">
 			</when>
@@ -113,5 +118,7 @@
 			del_flag = 1
 		WHERE id = #{id}
 	</update>
-	
+	<select id="findAllorderNum" resultType="com.account.entity.AccountPurchase">
+	SELECT a.id as id,a.orderNum as ordernum,a.title as title FROM account_purchase a
+	</select>
 </mapper>

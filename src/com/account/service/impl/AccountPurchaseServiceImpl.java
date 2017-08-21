@@ -254,4 +254,9 @@ public class AccountPurchaseServiceImpl implements AccountPurchaseService {
 		accountPurchaseDao.delete(accountPurchaseid);
 	}
 
+	@Override
+	public List<AccountPurchase> findAllorderNum() {
+		return accountPurchaseDao.findAllorderNum();
+	}
+
 }

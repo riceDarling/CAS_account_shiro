@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.account.entity.AccountInquiryDetail;
 import com.account.entity.AccountPurchase;
-import com.account.entity.AccountPurchaseSupplier;
-import com.account.entity.AccountRequisition;
 import com.account.service.AccountInquiryDetailService;
 import com.account.service.AccountPurchaseService;
 import com.account.service.AccountRequisitionActService;
@@ -27,8 +25,6 @@ import com.alibaba.fastjson.JSON;
 /**
  * 订货单Controller
  * 
- * @author admin
- * @version 2017-07-26
  */
 @Controller
 @RequestMapping("/accountPurchase")
@@ -142,7 +138,22 @@ public class AccountPurchaseController {
 		}
 		return rm;
 	}
-
+	/**
+	 * 查询所有订货单号及标题
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "findAllorderNum")
+	public ResponseModel<List<AccountPurchase>> findAllorderNum() {
+		ResponseModel<List<AccountPurchase>> rm = new ResponseModel<List<AccountPurchase>>();
+		try {
+			List<AccountPurchase> accountPurchase = accountPurchaseService.findAllorderNum();
+			rm.isSuccessMsg(accountPurchase, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
 	@ResponseBody
 	@RequestMapping(value = "delete")
 	public ResponseModel<String> delete(String accountPurchaseid) {
