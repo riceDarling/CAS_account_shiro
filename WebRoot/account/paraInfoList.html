@@ -62,7 +62,6 @@
 		});
 	}
 	$("#sub_search").click(function(){
-		$("#example").dataTable().fnDestroy();
 		dataTable();
 	});
 	function dataTable(){
@@ -117,8 +116,9 @@
 				async:false,
 				success:function(data){
 					data = data.obj;
-					  var content = "<tr>";
+					  var content = "";
 					 for (var index in data.list) {
+							content += "<tr>";
 				            content += "<td>" + data.list[index].pName + "</td>";
 				            content += "<td>" + data.list[index].name + "</td>";
 				            content += "<td><a href_2='paraInfoForm.html' name='"+data.list[index].id+"' class='btn btn-warning' ><i class='fa fa-edit'></i></a><a del_id="+data.list[index].id+" name='del_material' class='btn btn-success'><i class='fa fa-trash-o'></i></a></td>";
@@ -128,27 +128,31 @@
 				}
 		    });
 	}
-	$("[href_2]").click(function(){
+	
+	 $("#secondPageTbody").on("click","[href_2]",function(){
 		 $.cookie("paraInfo_edit",$(this).attr("name"));
 		 //alert($.cookie("warehouse_edit"));
 		 $("#index_content").empty();
 		  $("#index_content").load($(this).attr("href_2"));
+
 	 });
 	
-	$("a[name='del_material']").click(function(){
-		var id = $(this).attr("del_id");
-		
-		$.ajax({
-			url:"http://"+IP_config+"/account/paraInfo/delete",
-			type:"post",
-			data:{
-				"id" : id
-			},
-			success:function(data){
-				layer.alert(data.msg);
-				$("#index_content").load("paraInfoList.html");
-			}
-		});
-		
-	});
+	 
+	 $("#secondPageTbody").on("click","a[name='del_material']",function(){
+			var id = $(this).attr("del_id");
+			
+			$.ajax({
+				url:"http://"+IP_config+"/account/paraInfo/delete",
+				type:"post",
+				data:{
+					"id" : id
+				},
+				success:function(data){
+					layer.alert(data.msg);
+					$("#index_content").load("paraInfoList.html");
+				}
+			});
+
+	 });
+	
 </script>

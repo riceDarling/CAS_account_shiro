@@ -48,7 +48,7 @@
 					<div class="row">
 						<div class="col-lg-12 col-sm-6 col-sm-offset-10">
 							<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /> 
-							<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)" />
+							<input id="btnCancel" class="btn" type="button" value="返 回"  />
 						</div>
 					</div>
 				</div>
@@ -62,6 +62,9 @@
 	    format: 'yyyy-mm-dd',
 	    todayBtn:  1,
 	    autoclose: 1,
+	});
+	$("#btnCancel").click(function() {
+		$("#index_content").load("accountSupplierInputList.html");
 	});
 	var supplierInput_editId = $.cookie("supplierInput_edit");
 		$("[href_1]").click(function() {

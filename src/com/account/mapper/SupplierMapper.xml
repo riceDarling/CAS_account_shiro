@@ -279,8 +279,7 @@
 	<if test="eTime != null and eTime != ''">
       AND DATE_FORMAT(a.create_date, '%Y-%m-%d') &lt;= #{eTime} 
     </if>
-    LIMIT
-		#{begin},#{end}
+    ORDER BY a.create_date DESC
   </select>
   
   <select id="findListCount" parameterType="com.account.utils.pagebean.SupplierPage" resultType="int">

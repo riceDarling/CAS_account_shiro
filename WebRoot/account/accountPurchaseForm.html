@@ -38,7 +38,7 @@
 	</div>
 </div>
 <div class="form-group">
-	<label class="col-lg-1 col-md-3 control-label" style="margin-top: 7px;">审核人：</label>
+	<label class="col-lg-1 col-md-3 control-label" style="margin-top: 7px;">审核人(下一节点办理人)：</label>
 		<div class="col-lg-3 col-md-3">
 			<select  tabindex="1" name="checker" id="accountPurchaseForm_checker" class="form-control">
 				 <option value=""></option>
@@ -53,6 +53,7 @@
 	</div>
 </div>
 <script>
+var userid = $.cookie("login_userid");
 	$("[href_1]").click(function() {
 		$("#index_content").load($(this).attr("href_1"));
 	});
@@ -71,7 +72,11 @@
 				var html="<option value=''></option>";
 				for (i in data.obj) {
 					var admin = data.obj[i];
-					html+='<option value="'+admin.id+'">'+admin.username+'</option>';
+					if(userid==admin.id){
+						
+					}else{
+						html+='<option value="'+admin.id+'">'+admin.username+'</option>';
+					}
 				}
 				$("#accountPurchaseForm_checker").html(html);
 			}else{

@@ -95,8 +95,7 @@
 	<if test="pId != null and pId != ''">
       AND a.p_id = #{pId}
     </if>
-    LIMIT
-		#{begin},#{end}
+   
   </select>
   <select id="findListCount" parameterType="com.account.utils.pagebean.ParaInfoPage" resultType="int">
     SELECT 
