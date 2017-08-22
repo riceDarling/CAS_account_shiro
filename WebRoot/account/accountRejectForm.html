@@ -14,9 +14,9 @@
 				</div>
 				<div class="panel-body ">
 					<label class="col-lg-1 col-md-2 control-label"
-						style="width: 14% !important;">送检单编号：</label>
+						style="width: 14% !important;">到货单编号：</label>
 					<div class="col-lg-2 col-md-2">
-						<select name="status" class="form-control" id="">
+						<select name="status" class="form-control" id="inspection_select">
 							<option value="">请选择</option>
 
 						</select>
@@ -25,7 +25,7 @@
 						style="width: 14% !important;">供应商名称：</label>
 					<div class="col-lg-2 col-md-2">
 						<input name="supplier" type="text" htmlEscape="false"
-							class="form-control" id="" readonly />
+							class="form-control" id="supplier" readonly  suppliernum=""/>
 					</div>
 					<label class="col-lg-1 col-md-2 control-label"
 						style="width: 14% !important;">退货单名称：</label>
@@ -45,7 +45,7 @@
 									<th>备注</th>
 								</tr>
 							</thead>
-							<tbody id="">
+							<tbody id="accountRejectTbody">
 
 							</tbody>
 						</table>
@@ -55,8 +55,122 @@
 		</div>
 	</div>
 </div>
+<div class="panel-footer">
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-11">
+			<input id="btnCancel" class="btn btn-primary" type="button" value="保存" />
+		</div>
+	</div>
+</div>
 <script>
 	$("[href_1]").click(function() {
 		$("#index_content").load($(this).attr("href_1"));
+	});
+	
+	$.ajax("../accountInspectionController/getArrivalNum", {
+		dataType: "json",
+		contentType:"application/json;charset=UTF-8",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "GET",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//提交成功
+				//layer.alert(data.msg);
+				var html="<option value=''>请选择</option>";
+				for (i in data.obj) {
+					var obj = data.obj[i];
+					html+='<option value="'+obj.arrivalNum+'" supplier="'+obj.supplier+'" supplierNum="'+obj.supplierNum+'" orderNum="'+obj.orderNum+'" requisition_id="'+obj.id+'">'+obj.arrivalNum+'</option>';
+				}
+				$("#inspection_select").html(html);
+			}else{
+				//提交失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	
+	$("#inspection_select").change(function(){
+		var requisition_id=$("#inspection_select").children("option:selected").attr("requisition_id");
+		var supplier=$("#inspection_select").children("option:selected").attr("supplier");
+		//alert(requisition_id);
+		//alert(supplier);
+		$("#supplier").val(supplier);
+		$.ajax("../accountInspectionController/getArrivalDetail", {
+			dataType: "json",
+			contentType:"application/json;charset=UTF-8",
+			xhrFields: {
+				withCredentials: true
+			},
+			data:{
+				"pid":requisition_id
+			},
+			type: "GET",
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					//提交成功
+					//layer.alert(data.msg);
+					var html='';
+					for(i in data.obj){
+						var obj=data.obj[i];
+						html+='<tr><td>'+obj.materialname+'</td><td>'+obj.size+'</td><td>';
+						html+='	<input type="text" class="form-control" name="quantity" id=""></td><td>';
+						html+='<input type="text" class="form-control" name="remarks" id=""></td></tr>';
+					}
+					$("#accountRejectTbody").html(html);
+				}else{
+					//提交失败提示
+					layer.alert(data.msg);
+				}
+			}
+		});
+	});
+	
+	$("#btnCancel").click(function(){
+		var data_json = {};
+		//到货单号
+		//var arrivalnum=$("#inspection_select").children("option:selected").attr("arrivalnum");
+		var arrivalnum=$("#inspection_select").val();
+		var supplier=$("#inspection_select").children("option:selected").attr("supplier");
+		//var suppliernum=$("#inspection_select").children("option:selected").attr("suppliernum");
+		var title=$("#title").val();
+		data_json["arrivalnum"]=arrivalnum;
+		data_json["suppliernum"]=supplier;
+		data_json["title"]=title;
+		
+		var listjson = new Array();
+		$("#accountRejectTbody tr").each(function(){
+				var json={};
+				//json["materialcode"]=$(this).children("td").eq(0).attr("materialcode");
+				json["materialname"]=$(this).children("td").eq(0).text();
+				json["size"]=$(this).children("td").eq(1).text();
+				json["quantity"]=$(this).children("td").eq(2).find("input").val();
+				json["remarks"]=$(this).children("td").eq(3).find("input").val();
+				listjson.push(json);
+		});
+		data_json["detailList"]=listjson;
+		$.ajax("../accountReject/save", {
+			dataType: "json",
+			contentType:"application/json;charset=UTF-8",
+			data:JSON.stringify(data_json),
+			xhrFields: {
+				withCredentials: true
+			},
+			type: "POST",
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					//提交成功
+					layer.alert(data.msg);
+					$("#index_content").load("accountRejectList.html");
+				}else{
+					//提交失败提示
+					layer.alert(data.msg);
+				}
+			}
+		});
 	});
 </script>

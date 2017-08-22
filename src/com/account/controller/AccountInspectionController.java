@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.account.entity.AccountInspection;
+import com.account.entity.AccountInspectionDetail;
 import com.account.service.AccountInspectionService;
 import com.account.utils.ResponseModel;
 
@@ -55,6 +56,45 @@ public class AccountInspectionController {
 		}
 		return rm;
 	}
+	/**
+	 * 查询送检主表详细信息
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getById")
+	public ResponseModel<AccountInspection> getById(HttpServletRequest req) {
+		ResponseModel<AccountInspection> rm = new ResponseModel<AccountInspection>();
+		try {
+			String id = req.getParameter("id");
+			AccountInspection accountInspection = accountInspectionService.getById(id);
+			rm.isSuccessMsg(accountInspection, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
+
+	/**
+	 * 查询送检子表物资信息
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getByInspectionId")
+	public ResponseModel<List<AccountInspectionDetail>> getByInspectionId(HttpServletRequest req) {
+		ResponseModel<List<AccountInspectionDetail>> rm = new ResponseModel<List<AccountInspectionDetail>>();
+		try {
+			String id = req.getParameter("id");
+			List<AccountInspectionDetail> accountInspectionDetail = accountInspectionService.getByInspectionId(id);
+			rm.isSuccessMsg(accountInspectionDetail, "成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
 
 	@ResponseBody
 	@RequestMapping(value = "delete")
@@ -66,6 +106,32 @@ public class AccountInspectionController {
 			rm.isSuccessMsg("", "删除成功");
 		} catch (Exception e) {
 			rm.isErrorMsg("失败");
+		}
+		return rm;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "getArrivalNum")
+	public ResponseModel<List<Map<String, Object>>> getArrivalNum(HttpServletRequest req) {
+		ResponseModel<List<Map<String, Object>>> rm = new ResponseModel<List<Map<String, Object>>>();
+		try {
+			List<Map<String, Object>> li=accountInspectionService.getArrivalNum();
+			rm.isSuccessMsg(li, "获取送检单成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("获取送检单失败");
+		}
+		return rm;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "getArrivalDetail")
+	public ResponseModel<List<AccountInspectionDetail>> getArrivalDetail(String pid) {
+		ResponseModel<List<AccountInspectionDetail>> rm = new ResponseModel<List<AccountInspectionDetail>>();
+		try {
+			List<AccountInspectionDetail> li=accountInspectionService.getArrivalDetail(pid);
+			rm.isSuccessMsg(li, "获取送检单详细信息成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("获取送检单详细信息失败");
 		}
 		return rm;
 	}

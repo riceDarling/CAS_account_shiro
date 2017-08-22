@@ -15,9 +15,11 @@ public interface AccountInspectionDao {
 
 	void delete(String id);
 
-	void update(Map<String, Object> map);
+	void update(AccountInspection accountInspection);
 	void upSatus(String id);
 
 	List<AccountInspection> findList(Map<String, Object> map);
+	
+	List<Map<String,Object>> getArrivalNum();
 
 }

@@ -16,7 +16,7 @@
 					<label class="col-lg-1 col-md-2 control-label">供应商名称：</label>
 					<div class="col-lg-2 col-md-2">
 						<input name="supplier" type="text" htmlEscape="false"
-							class="form-control" id="" readonly />
+							class="form-control" id="suppliernum" readonly />
 					</div>
 					<label class="col-lg-1 col-md-2 control-label">退货单名称：</label>
 					<div class="col-lg-2 col-md-2">
@@ -35,7 +35,7 @@
 									<th>备注</th>
 								</tr>
 							</thead>
-							<tbody id="">
+							<tbody id="accountRejectTbody">
 
 							</tbody>
 						</table>
@@ -48,8 +48,120 @@
 
 
 </div>
+
+<div class="panel-footer">
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-11">
+			<input id="accountRejectSubmit" class="btn btn-primary" type="button" value="保存" />
+			<input id="accountRejectDanger" class="btn btn-primary" type="button" value="删除" />
+		</div>
+	</div>
+</div>
 <script>
 	$("[href_1]").click(function() {
 		$("#index_content").load($(this).attr("href_1"));
+	});
+	var accountRejectId=$.cookie("rejectEdited_id");
+	$.ajax("../accountReject/get", {
+		dataType: "json",
+		contentType:"application/json;charset=UTF-8",
+		xhrFields: {
+			withCredentials: true
+		},
+		data:{
+			"accountRejectId":accountRejectId
+		},
+		type: "GET",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//提交成功
+				//layer.alert(data.msg);
+				
+				$("#suppliernum").val(data.obj.suppliernum);
+				$("#title").val(data.obj.title);
+				var html='';
+				for(i in data.obj.detailList){
+					var obj=data.obj.detailList[i];
+					html+='<tr detail_id="'+obj.id+'"><td>'+obj.materialname+'</td><td>'+obj.size+'</td><td>';
+					html+='	<input type="text" class="form-control" name="quantity" id="" value="'+obj.quantity+'"></td><td>';
+					html+='<input type="text" class="form-control" name="remarks" id="" value="'+obj.remarks+'"></td></tr>';
+				}
+				$("#accountRejectTbody").html(html);
+			}else{
+				//提交失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	
+	
+	$("#accountRejectSubmit").click(function(){
+		var data_json = {};
+		//到货单号
+		//var arrivalnum=$("#inspection_select").children("option:selected").attr("arrivalnum");
+		//var suppliernum=$("#inspection_select").children("option:selected").attr("suppliernum");
+		var title=$("#title").val();
+		data_json["title"]=title;
+		data_json["id"]=accountRejectId;
+		
+		var listjson = new Array();
+		$("#accountRejectTbody tr").each(function(){
+				var json={};
+				//json["materialcode"]=$(this).children("td").eq(0).attr("materialcode");
+				json["id"]=$(this).attr("detail_id");
+				json["materialname"]=$(this).children("td").eq(0).text();
+				json["size"]=$(this).children("td").eq(1).text();
+				json["quantity"]=$(this).children("td").eq(2).find("input").val();
+				json["remarks"]=$(this).children("td").eq(3).find("input").val();
+				listjson.push(json);
+		});
+		data_json["detailList"]=listjson;
+		$.ajax("../accountReject/save", {
+			dataType: "json",
+			contentType:"application/json;charset=UTF-8",
+			data:JSON.stringify(data_json),
+			xhrFields: {
+				withCredentials: true
+			},
+			type: "POST",
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					//提交成功
+					layer.alert(data.msg);
+					$("#index_content").load("accountRejectList.html");
+				}else{
+					//提交失败提示
+					layer.alert(data.msg);
+				}
+			}
+		});
+	});
+	
+	$("#accountRejectDanger").click(function(){
+		var data_json = {};
+		$.ajax("../accountReject/delete", {
+			dataType: "json",
+			contentType:"application/json;charset=UTF-8",
+			data:{
+				"accountRejectId":accountRejectId
+			},
+			xhrFields: {
+				withCredentials: true
+			},
+			type: "GET",
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					//提交成功
+					layer.alert(data.msg);
+					$("#index_content").load("accountRejectList.html");
+				}else{
+					//提交失败提示
+					layer.alert(data.msg);
+				}
+			}
+		});
 	});
 </script>

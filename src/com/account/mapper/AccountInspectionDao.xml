@@ -37,7 +37,7 @@
 			and a.supplier like CONCAT(CONCAT('%',#{supplier}),'%')
 		</if>
 		<if test="status != null and status != ''">
-			and a.status = #{arrivalstatus}
+			and a.status = #{status}
 		</if>
 		<if test="beginDate != null and beginDate != ''">
 			AND a.inspectiondate &gt;= #{beginDate}
@@ -99,4 +99,11 @@
 		del_flag = '1'
 		WHERE id = #{id}
 	</update>
+	
+	<select id="getArrivalNum" resultType="map">
+	SELECT a.id,a.orderNum,a.arrivalNum,a.supplierNum,c.supplier FROM account_inspection a 
+	LEFT JOIN account_arrival b ON a.arrivalNum=b.arrivalnum
+	LEFT JOIN account_supplier c ON a.supplierNum=c.supplierNum
+	</select>
+	
 </mapper>

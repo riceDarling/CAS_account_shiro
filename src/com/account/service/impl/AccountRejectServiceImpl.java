@@ -48,6 +48,7 @@ public class AccountRejectServiceImpl implements AccountRejectService {
 		List<AccountRejectDetail> detailList = accountReject.getDetailList();
 		for (AccountRejectDetail detail : detailList) {
 			if(detail.getId()==null){
+				detail.setParentId(accountReject.getId());
 				detail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
 				detail.setCreateBy(loginAdmin.getId().toString());
 				detail.setCreateDate(new Date());
@@ -71,6 +72,12 @@ public class AccountRejectServiceImpl implements AccountRejectService {
 		List<AccountRejectDetail> detailList = accountRejectDetailDao.getByPid(accountRejectId);
 		entity.setDetailList(detailList);
 		return entity;
+	}
+
+	@Override
+	public void delete(String accountRejectId) {
+		accountRejectDao.delete(accountRejectId);
+		
 	}
 
 }

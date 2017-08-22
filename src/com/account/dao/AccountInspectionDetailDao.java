@@ -17,7 +17,7 @@ public interface AccountInspectionDetailDao {
 
 	List<AccountInspectionDetail> findList(Map<String, Object> map);
 
-	AccountInspectionDetail getById(String id);
+	List<AccountInspectionDetail> getByInspectionId(String id);
 
 
 }

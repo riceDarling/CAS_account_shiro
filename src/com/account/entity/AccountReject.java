@@ -13,7 +13,7 @@ public class AccountReject extends BaseModel {
 
 	private String title;
 
-	private String suppliernum;
+	private String suppliernum;//供应商名称
 
 	private String arrivalnum;
 

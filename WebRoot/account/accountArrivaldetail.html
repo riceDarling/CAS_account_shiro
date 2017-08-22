@@ -33,7 +33,7 @@
 			<div class="control-group" hidden="true">
 					<label class="control-label">到货状态：</label>
 					<div class="controls">
-						<input name="status" id="status" htmlEscape="false" style="width:30%;"  maxlength="32" class="form-control" />
+						<input name="arrivalstatus" id="arrivalstatus" htmlEscape="false" style="width:30%;"  maxlength="32" class="form-control" />
 					</div>
 				</div>
 			<div class="control-group">
@@ -155,6 +155,7 @@
 					accountArrival.supplier = $("#supplier").val();
 					accountArrival.suppliernum= $("#suppliernum").val();
 					accountArrival.arrivalDate= $("#arrivalDate").val();
+					accountArrival.arrivalstatus= $("#arrivalstatus").val();
 					accountArrival.remarks = $("#remarks").val();
 					var len = $("#contentTable>tbody>tr").length;
 					var aiArr = new Array();

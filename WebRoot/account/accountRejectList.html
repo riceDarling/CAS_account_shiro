@@ -12,13 +12,13 @@
 				<label class="col-lg-1 col-md-2 control-label"
 					style="width: 14% !important;">退货单标题：</label>
 				<div class="col-lg-2 col-md-2">
-					<input class="form-control" name="title" id="reject_title" />
+					<input class="form-control" name="" id="reject_title" />
 
 				</div>
 				<label class="col-lg-1 col-md-2 control-label"
 					style="width: 14% !important;">供应商名称：</label>
 				<div class="col-lg-2 col-md-2">
-					<input class="form-control" name="title" id="reject_supplier" />
+					<input class="form-control" name="" id="reject_supplier" />
 				</div>
 				<div class="col-lg-1 col-md-2">
 					<input class="btn btn-info " id="sub_search" type="submit"
@@ -80,6 +80,7 @@
 					$("[href_2]").click(function(){
 						var reject_id=$(this).attr("reject_id");
 						var state=$(this).attr("state");
+						$.cookie("rejectEdited_id",reject_id);
 						 $("#index_content").load($(this).attr("href_2"));
 					});
 				}else{
@@ -89,4 +90,14 @@
 			}
 		});
 	};
+	
+	$("#sub_search").click(function(){
+		var title=$("#reject_title").val();
+		var suppliernum=$("#reject_supplier").val();
+		var json={
+			"title":title,
+			"suppliernum":suppliernum
+		};
+		GetList(json);
+	});
 </script>

@@ -1,5 +1,6 @@
 package com.account.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,19 +25,37 @@ public class AccountInspectionServiceImpl implements AccountInspectionService {
 
 	@Override
 	public void save(AccountInspection accountInspection) {
-		accountInspection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-		accountInspectionDao.save(accountInspection);
 		int size = accountInspection.getAccountInspectionDetail().size();
 		AccountInspectionDetail accountInspectionDetail = new AccountInspectionDetail();
-		for (int i = 0; i < size; i++) {
-			accountInspectionDetail = accountInspection.getAccountInspectionDetail().get(i);
-			if (!accountInspectionDetail.getStatus().equals("0")&&accountInspectionDetail.getStatus().length()>0) {
-				accountInspectionDao.upSatus(accountInspection.getId());
+		if (accountInspection.getId() != null && accountInspection.getId().trim().length() > 0) {
+			accountInspectionDao.update(accountInspection);
+			accountInspectionDetailDao.delete(accountInspection.getId());
+			for (int i = 0; i < size; i++) {
+				accountInspectionDetail = accountInspection.getAccountInspectionDetail().get(i);
+				if (!accountInspectionDetail.getStatus().equals("0")&&accountInspectionDetail.getStatus().length()>0) {
+					accountInspectionDao.upSatus(accountInspection.getId());
+				}
+				accountInspectionDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+				accountInspectionDetail.setParent_Id(accountInspection.getId());
+				accountInspectionDetailDao.add(accountInspectionDetail);
 			}
-			accountInspectionDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-			accountInspectionDetail.setParent_Id(accountInspection.getId());
-			accountInspectionDetailDao.add(accountInspectionDetail);
+		} else {
+			accountInspection.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+			accountInspectionDao.save(accountInspection);
+			for (int i = 0; i < size; i++) {
+				accountInspectionDetail = accountInspection.getAccountInspectionDetail().get(i);
+				if (!accountInspectionDetail.getStatus().equals("0")&&accountInspectionDetail.getStatus().length()>0) {
+					accountInspectionDao.upSatus(accountInspection.getId());
+				}
+				accountInspectionDetail.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+				accountInspectionDetail.setParent_Id(accountInspection.getId());
+				accountInspectionDetailDao.add(accountInspectionDetail);
+			}
+
 		}
+		
+	
+	
 
 	}
 
@@ -46,8 +65,8 @@ public class AccountInspectionServiceImpl implements AccountInspectionService {
 	}
 
 	@Override
-	public void update(Map<String, Object> map) {
-		accountInspectionDao.update(map);
+	public void update(AccountInspection accountInspection) {
+		accountInspectionDao.update(accountInspection);
 	}
 
 
@@ -61,4 +80,21 @@ public class AccountInspectionServiceImpl implements AccountInspectionService {
 		return accountInspectionDao.findList(map);
 	}
 
+	@Override
+	public List<Map<String, Object>> getArrivalNum() {
+		return accountInspectionDao.getArrivalNum();
+	}
+
+	@Override
+	public List<AccountInspectionDetail> getArrivalDetail(String pid) {
+		Map<String,Object> map=new HashMap<String, Object>();
+		map.put("parent_Id", pid);
+		map.put("status", "1");
+		return accountInspectionDetailDao.findList(map);
+	}
+
+	@Override
+	public List<AccountInspectionDetail> getByInspectionId(String id) {
+		return accountInspectionDetailDao.getByInspectionId(id);
+	}
 }

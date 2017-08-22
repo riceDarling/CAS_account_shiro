@@ -186,6 +186,39 @@
 			}
 			ordernum += ordernumRandom;
 			$("#ordernum").val(ordernum);
+			if ($.cookie("accountReceipt_id") != "null") {
+				$.ajax({
+					url : "http://" + IP_config + "/account/accountReceiptController/getById",
+					type : "post",
+					dataType : "json",
+					data : {
+						"id" : $.cookie("accountReceipt_id")
+					},
+					success : function(data) {
+						$("#payId").val($.cookie("accountReceipt_id"));
+						$.cookie("accountReceipt_id", null);
+						if (data.success && data.obj != null && data.obj != "") {
+							$("#supplier").append("<option value='"+data.obj.supplier+"'>" + data.obj.supplier + "</option>");
+							$("#billingdate").val(data.obj.billingdate);
+							$("#materialname").append("<option value='"+data.obj.materialname+"'>" + data.obj.materialname + "</option>");
+							$("#size").val(data.obj.size);
+							$("#pricefee").val(data.obj.pricefee);
+							$("#pricenotfee").val(data.obj.pricenotfee);
+							$("#quantity").val(data.obj.quantity);
+							$("#moneyfee").val(data.obj.moneyfee);
+							$("#moneynotfee").val(data.obj.moneynotfee);
+							$("#taxrte").val(data.obj.taxrte);
+							$("#tax").val(data.obj.tax);
+							$("#receiptnum").val(data.obj.receiptnum);
+							$("#category").append("<option value='"+data.obj.category+"'>" + data.obj.category + "</option>");
+							$("#arrivalnum").append("<option value='"+data.obj.arrivalnum+"'>" + data.obj.arrivalnum + "</option>");
+							$("#maker").val(data.obj.maker);
+							$("#auditor").val(data.obj.auditor);
+							$("#remarks").val(data.obj.remarks);
+						}
+					}
+				});
+			}
 			//获取供应商
 			$.ajax({
 				url : "http://" + IP_config + "/account/supplier/findList",
@@ -197,9 +230,11 @@
 				success : function(data) {
 					var html = "<option value=''>请选择</option>";
 					for (i in data.obj.list) {
-						html += "<option value=" + data.obj.list[i].supplier + ">" + data.obj.list[i].supplier + "</option>";
+						if ($("#supplier>option").val() != data.obj.list[i].supplier) {
+							html += "<option value=" + data.obj.list[i].supplier + ">" + data.obj.list[i].supplier + "</option>";
+						}
 					}
-					$("#supplier").html(html);
+					$("#supplier").append(html);
 
 				}
 			});
@@ -214,26 +249,30 @@
 				success : function(data) {
 					var html = "<option value=''>请选择</option>";
 					for (i in data.obj.list) {
-						html += "<option value=" + data.obj.list[i].materialName + ">" + data.obj.list[i].materialName + "</option>";
+						if ($("#materialname>option").val() != data.obj.list[i].materialName) {
+							html += "<option value=" + data.obj.list[i].materialName + ">" + data.obj.list[i].materialName + "</option>";
+						}
 					}
-					$("#materialname").html(html);
+					$("#materialname").append(html);
 
 				}
 			});
 			//获取到货单号
 			$.ajax({
-				url : "http://" + IP_config + "/account/accountArrivalController/findAllList",
+				url : "http://" + IP_config + "/account/accountArrivalController/findAllorderNum",
 				type : "post",
 				dataType : "json",
 				xhrFields : {
 					withCredentials : true
 				},
 				success : function(data) {
-					var html = "<option value=''></option>";
+					var html = "<option value=''>请选择</option>";
 					for (i in data.obj) {
-						html += "<option value=" + data.obj[i].ordernum + ">" + data.obj[i].ordernum + "</option>";
+						if ($("#arrivalnum>option").val() != data.obj[i].arrivalnum) {
+							html += "<option value=" + data.obj[i].arrivalnum + ">" + data.obj[i].arrivalnum + "</option>";
+						}
 					}
-					$("#arrivalnum").html(html);
+					$("#arrivalnum").append(html);
 
 				}
 			});
@@ -253,48 +292,17 @@
 						//获取成功
 						var html = "<option value=''>请选择</option>";
 						for (i in data.obj) {
-							html += "<option value='" + data.obj[i].name + "'>" + data.obj[i].name + "</option>";
+							if ($("#category>option").val() != data.obj[i].name) {
+								html += "<option value='" + data.obj[i].name + "'>" + data.obj[i].name + "</option>";
+							}
 						}
-						$("#category").html(html);
+						$("#category").append(html);
 					} else {
 						//获取失败提示
 						layer.alert(data.msg);
 					}
 				}
 			});
-			if ($.cookie("accountReceipt_id") != "null") {
-				$.ajax({
-					url : "http://" + IP_config + "/account/accountReceiptController/getById",
-					type : "post",
-					dataType : "json",
-					data : {
-						"id" : $.cookie("accountReceipt_id")
-					},
-					success : function(data) {
-						$("#payId").val($.cookie("accountReceipt_id"));
-						$.cookie("accountReceipt_id", null);
-						if (data.success && data.obj != null && data.obj != "") {
-							$("#supplier").val(data.obj.supplier);
-							$("#billingdate").val(data.obj.billingdate);
-							$("#materialname").val(data.obj.materialname);
-							$("#size").val(data.obj.size);
-							$("#pricefee").val(data.obj.pricefee);
-							$("#pricenotfee").val(data.obj.pricenotfee);
-							$("#quantity").val(data.obj.quantity);
-							$("#moneyfee").val(data.obj.moneyfee);
-							$("#moneynotfee").val(data.obj.moneynotfee);
-							$("#taxrte").val(data.obj.taxrte);
-							$("#tax").val(data.obj.tax);
-							$("#receiptnum").val(data.obj.receiptnum);
-							$("#category").val(data.obj.category);
-							$("#arrivalnum").val(data.obj.arrivalnum);
-							$("#maker").val(data.obj.maker);
-							$("#auditor").val(data.obj.auditor);
-							$("#remarks").val(data.obj.remarks);
-						}
-					}
-				});
-			}
 		});
 
 		//提交

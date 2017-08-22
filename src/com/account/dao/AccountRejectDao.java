@@ -18,4 +18,6 @@ public interface AccountRejectDao {
     int updateByPrimaryKey(AccountReject record);
     
     List<AccountReject> list(AccountReject entity);
+    
+   int delete(String id);
 }

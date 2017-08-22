@@ -69,4 +69,20 @@ public class AccountRejectController {
 
 		return rm;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "delete")
+	public ResponseModel<String> delete(String accountRejectId) {
+		ResponseModel<String> rm = new ResponseModel<String>();
+		try {
+			//删除退货单
+			accountRejectService.delete(accountRejectId);
+			rm.isSuccessMsg("", "删除成功");
+		} catch (Exception e) {
+			rm.isErrorMsg("删除失败");
+
+		}
+
+		return rm;
+	}
 }

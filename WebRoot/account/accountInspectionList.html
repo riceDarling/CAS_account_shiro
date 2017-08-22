@@ -94,7 +94,7 @@
 						} else {
 							content += "<td>已完成</td>"
 						}
-						content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+						content += "<td><button  value='"+data.obj[index].supplier+"' name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
 						content += "</tr>"
 					}
 					$("#secondPageTbody").html(content);
@@ -119,7 +119,7 @@
 							} else {
 								content += "<td>已完成</td>"
 							}
-							content += "<td><button name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+							content += "<td><button value='"+data.obj[index].supplier+"' name='"+data.obj[index].id+"' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='"+data.obj[index].id+"' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
 							content += "</tr>"
 						}
 					$("#secondPageTbody").html(content);
@@ -130,7 +130,9 @@
 
 	$("#secondPageTbody").on("click", ".selectCon", function() {
 		var id = $(this).attr("name");
-		$.cookie("accountInspectionNextList", id);
+		var supplier = $(this).val();
+		$.cookie("accountInspectionNextList_id", id);
+		$.cookie("accountInspectionNextList_supplier", supplier);
 		$("#index_content").load("accountInspectionNextList.html");
 	});
 	$("#secondPageTbody").on("click", ".selectCon2", function() {

@@ -58,12 +58,12 @@
 			</div>
 			<div class="control-group">
 				<label class="control-label" >送检原料：</label>
-				<table class="table table-bordered table-condensed table-hover" id="contentTable" style="width:70%;">
+				<table class="table table-bordered table-condensed table-hover" id="contentTable" >
 					<thead>
 						<tr>
 							<th>物资名称</th>
 							<th>规格型号</th>
-							<th>到货数量</th>
+						<!-- 	<th>到货数量</th> -->
 							<th>成分含量</th>
 							<th>粒度</th>
 							<th>外观</th>
@@ -131,38 +131,10 @@
 					var html = "<option value=''>请选择</option>";
 					for (i in data.obj) {
 						html += "<option value='"+data.obj[i].arrivalnum+"' class='"+data.obj[i].id+"'>" + data.obj[i].title + "</option>";
-
 					}
 					$("#orderNumtitle").html(html);
-
 				}
 			});
-			//计量单位
-			$.ajax({
-				url : "http://" + IP_config + "/account/paraInfo/getParaInfoList",
-				dataType : "json",
-				xhrFields : {
-					withCredentials : true
-				},
-				data : {
-					"pId" : 7
-				},
-				type : "POST",
-				success : function(data) {
-					if (data.success) {
-						//获取成功
-						var html = "<option value=''>请选择</option>";
-						for (i in data.obj) {
-							html += "<option value='"+data.obj[i].id +"'>" + data.obj[i].name + "</option>";
-						}
-						$("#inspectionmode").html(html);
-					} else {
-						//获取失败提示
-						layer.alert(data.msg);
-					}
-				}
-			});
-
 		});
 		//选择到货单号获取详细数据
 		$("#btnSubmit").click(function() {
@@ -191,7 +163,7 @@
 						success : function(data) {
 							var html = "";
 							for (i in data.obj) {
-								html += "<tr><td  value='"+data.obj[i].materialcode+"'>" + data.obj[i].materialname + "</td><td>" + data.obj[i].size + "</td><td>" + data.obj[i].quantity + "</td><td><input type='text'/></td><td><input type='text'/></td><td><input type='text'/></td>" + "<td> <select name='status' id='status'><option value='1'>不合格</option><option value='2'>合格</option><option value='3'>免检</option></select></td>" + "<td><select name='inspectionmode' id='inspectionmode'></select></td></tr>";
+								html += "<tr><td  value='"+data.obj[i].materialcode+"'>" + data.obj[i].materialname + "</td><td>" + data.obj[i].size + "</td><td><input type='text'/></td><td><input type='text'/></td><td><input type='text'/></td>" + "<td> <select name='status' id='status'><option value='1'>不合格</option><option value='2'>合格</option><option value='3'>免检</option></select></td>" + "<td><select name='inspectionmode' id='inspectionmode'></select></td></tr>";
 							}
 							$("#contentTable>tbody").html(html);
 						}
@@ -240,11 +212,11 @@
 						var aiDetail = {};
 						var materialname = $("#contentTable>tbody tr:eq(" + i + ") td:eq(0)").text();
 						var size = $("#contentTable>tbody tr:eq(" + i + ") td:eq(1)").text();
-						var ingredient = $("#contentTable>tbody tr:eq(" + i + ") td:eq(3) input").val();
-						var granularity = $("#contentTable>tbody tr:eq(" + i + ") td:eq(4) input").val();
-						var appearance = $("#contentTable>tbody tr:eq(" + i + ") td:eq(5) input").val();
-						var status = $("#contentTable>tbody tr:eq(" + i + ") td:eq(6) option:selected").val();
-						var inspectionmode = $("#contentTable>tbody tr:eq(" + i + ") td:eq(7) option:selected").val();
+						var ingredient = $("#contentTable>tbody tr:eq(" + i + ") td:eq(2) input").val();
+						var granularity = $("#contentTable>tbody tr:eq(" + i + ") td:eq(3) input").val();
+						var appearance = $("#contentTable>tbody tr:eq(" + i + ") td:eq(4) input").val();
+						var status = $("#contentTable>tbody tr:eq(" + i + ") td:eq(5) option:selected").val();
+						var inspectionmode = $("#contentTable>tbody tr:eq(" + i + ") td:eq(6) option:selected").val();
 						aiDetail.materialname = materialname;
 						aiDetail.size = size;
 						aiDetail.ingredient = ingredient;

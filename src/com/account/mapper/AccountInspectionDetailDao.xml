@@ -20,12 +20,12 @@
 		LEFT JOIN account_inspection b ON b.id = a.parent_id
 	</sql>
     
-	<select id="getById" parameterType="java.lang.String" resultType="com.account.entity.AccountInspectionDetail">
+	<select id="getByInspectionId" parameterType="java.lang.String" resultType="com.account.entity.AccountInspectionDetail">
 		SELECT 
 			<include refid="accountInspectionDetailColumns"/>
 		FROM account_inspection_detail a
 		<include refid="accountInspectionDetailJoins"/>
-		WHERE a.id = #{id}
+		WHERE a.parent_id = #{id}
 	</select>
 	
 	<select id="findList" parameterType="java.util.Map" resultType="com.account.entity.AccountInspectionDetail">
@@ -35,7 +35,7 @@
 		<include refid="accountInspectionDetailJoins"/>
 		where
 			a.del_flag = '0'
-			<if test="parent != null and parent_Id != null and parent_Id != ''">
+			<if test="parent_Id != null and parent_Id != ''">
 				AND a.parent_id = #{parent_Id}
 			</if>
 			<if test="materialname != null and materialname != ''">
@@ -44,6 +44,10 @@
 			<if test="inspectionmode != null and inspectionmode != ''">
 				AND a.inspectionmode = #{inspectionmode}
 			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			
 	</select>
 	
 	<insert id="add" parameterType="com.account.entity.AccountInspectionDetail">
@@ -90,8 +94,7 @@
 	
 	
 	<update id="delete" parameterType="java.lang.String">
-		UPDATE account_inspection_detail SET 
-			del_flag = '1' 
-			WHERE id = #{id}
+	DELETE from account_inspection_detail
+		WHERE parent_id = #{id}
 	</update>
 </mapper>

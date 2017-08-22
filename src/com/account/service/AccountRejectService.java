@@ -12,4 +12,6 @@ public interface AccountRejectService {
 
 	AccountReject get(String accountRejectId);
 
+	void delete(String accountRejectId);
+
 }
