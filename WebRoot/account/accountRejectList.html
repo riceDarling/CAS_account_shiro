@@ -1,0 +1,92 @@
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-pencil-square"></i>退货单列表 <i
+						class="fa fa-pencil-square"></i><a href_1="accountRejectForm.html">
+						退货单添加</a>
+				</h3>
+			</div>
+			<div class="panel-body">
+				<label class="col-lg-1 col-md-2 control-label"
+					style="width: 14% !important;">退货单标题：</label>
+				<div class="col-lg-2 col-md-2">
+					<input class="form-control" name="title" id="reject_title" />
+
+				</div>
+				<label class="col-lg-1 col-md-2 control-label"
+					style="width: 14% !important;">供应商名称：</label>
+				<div class="col-lg-2 col-md-2">
+					<input class="form-control" name="title" id="reject_supplier" />
+				</div>
+				<div class="col-lg-1 col-md-2">
+					<input class="btn btn-info " id="sub_search" type="submit"
+						value="查询">
+				</div>
+			</div>
+			<div class="panel-body">
+				<div class="panel">
+					<div class="panel-body">
+						<table class="table table-bordered table-condensed table-hover"
+							id="accountRejectList_example">
+							<thead>
+								<tr>
+									<th class="visible-lg">退货单标题</th>
+									<th class="visible-lg">供应商名称</th>
+									<th class="visible-lg">创建时间</th>
+									<th class="visible-lg">操作</th>
+								</tr>
+							</thead>
+							<tbody id="accountRejectTbody">
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$("[href_1]").click(function() {
+		$("#index_content").load($(this).attr("href_1"));
+	});
+	
+	$(function(){
+		GetList();
+	});
+	function GetList(ajax_data){
+		$.ajax("../accountReject/list", {
+			dataType: "json",
+			xhrFields: {
+				withCredentials: true
+			},
+			data:ajax_data,
+			type: "GET",
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					var html='';
+					if(data.obj.length>0){
+						for(i in data.obj){
+							var obj=data.obj[i];
+							html+='<tr><td>'+obj.title+'</td><td>'+obj.suppliernum+'</td><td>'+formatDateTime(obj.createDate)+'</td><td>';
+							html+='<a href_2="accountRejectEdited.html" reject_id="'+obj.id+'">查看</a></td></tr>';
+						}
+					}
+					$("#accountRejectTbody").html(html);
+					$("[href_2]").click(function(){
+						var reject_id=$(this).attr("reject_id");
+						var state=$(this).attr("state");
+						 $("#index_content").load($(this).attr("href_2"));
+					});
+				}else{
+					//获取失败提示
+					layer.alert(data.msg);
+				}	
+			}
+		});
+	};
+</script>

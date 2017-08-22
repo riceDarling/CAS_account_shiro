@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.account.dao.MaterialSupplierMapper">
+  <resultMap id="BaseResultMap" type="com.account.entity.MaterialSupplier">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="supplierId" jdbcType="VARCHAR" property="supplierid" />
+    <result column="material" jdbcType="VARCHAR" property="material" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, supplierId, material
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from account_material_supplier
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from account_material_supplier
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.account.entity.MaterialSupplier">
+    insert into account_material_supplier (id, supplierId, material
+      )
+    values (#{id,jdbcType=INTEGER}, #{supplierid,jdbcType=VARCHAR}, #{material,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.account.entity.MaterialSupplier">
+    insert into account_material_supplier
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="supplierid != null">
+        supplierId,
+      </if>
+      <if test="material != null">
+        material,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="supplierid != null">
+        #{supplierid,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null">
+        #{material,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.account.entity.MaterialSupplier">
+    update account_material_supplier
+    <set>
+      <if test="supplierid != null">
+        supplierId = #{supplierid,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null">
+        material = #{material,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.account.entity.MaterialSupplier">
+    update account_material_supplier
+    set supplierId = #{supplierid,jdbcType=VARCHAR},
+      material = #{material,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+   <select id="selectMaterialSupplierByMaterialNum" parameterType="string" resultType="com.account.entity.MaterialSupplier">
+   SELECT a.*,b.supplier  FROM account_material_supplier a LEFT JOIN account_supplier b ON a.supplierId=b.supplierNum
+    where a.material = #{materialNum}
+  </select>
+  
+   <delete id="deleteByMaterialNum" parameterType="string">
+    delete from account_material_supplier
+    where material = #{materialNum}
+  </delete>
+  
+   <select id="selectMapByMaterialNum" parameterType="string" resultType="map">
+ 	SELECT b.supplierNum,b.supplier,c.materialNum,c.materialName,c.size
+	FROM account_material_supplier a 
+	LEFT JOIN account_supplier b ON a.supplierId=b.supplierNum
+	LEFT JOIN account_material c ON a.material=c.materialNum
+     WHERE a.material= #{materialNum}
+  </select>
+   
+</mapper>

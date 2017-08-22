@@ -1,0 +1,151 @@
+<div class="col-md-12">
+<div class="panel panel-cascade">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="fa fa-pencil-square"></i>申购单列表
+			<i class="fa fa-pencil-square"></i> <a href_1="requisitionForm.html">申购单添加</a>
+		</h3>
+</div>
+		<div class="panel-body">
+				<div class="form-group" >
+					<label class="col-lg-1 col-md-6 control-label" style="width: 14% !important;">申购单标题：</label>
+					<div class="col-lg-2 col-md-3">
+						<input class="form-control" name="title" id="requisition_title"/>
+					</div>
+					<label class="col-lg-1 col-md-6 control-label" style="width: 10% !important;">状态：</label>
+					<div class="col-lg-2 col-md-3">
+						<select name="status" class="form-control" id="requisition_state">
+							<option value="">请选择</option>
+							<option value="0">未完成</option>
+							<option value="1">已完成</option>
+						</select>
+					</div>
+					<div class="col-lg-1 col-md-2">
+						<input class="btn btn-info " id="sub_search" type="submit" value="查询"/>
+					</div>
+				</div>
+			</div>
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover" id="requisitionList_example">
+				<thead>
+					<tr>
+						<th class="visible-lg">申购单标题</th>
+						<th class="visible-lg">创建时间</th>
+						<th class="visible-lg">状态</th>
+						<th class="visible-lg">操作</th>
+					</tr>
+				</thead>
+				<tbody id="requisition">
+				
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+
+$("[href_1]").click(function(){
+	$("#index_content").load($(this).attr("href_1"));
+});	
+var userid = $.cookie("login_userid");
+
+$(function(){
+	GetList();
+});
+function GetList(ajax_data){
+	$.ajax("../accountRequisition/list", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		data:ajax_data,
+		type: "POST",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				
+				var html='';
+				if(data.obj.page.list.length>0){		
+					for(i in data.obj.page.list){
+						var obj=data.obj.page.list[i];
+						 html+='<tr><td>'+obj.title+'</td><td>'+formatDateTime(obj.createDate)+'</td>';
+						if(obj.procInsId!="end"){
+							html+='<td>进行中</td>'
+						}else{
+							html+='<td>完成</td>'
+						}
+						if(obj.act_checker==userid&&obj.procInsId!="end"){
+							html+='<td><a href_2="requisitionAudit.html" requisitionAudit_id="'+obj.id+'" act_checker="'+obj.act_checker+'" createBy="'+obj.createBy+'" state="'+obj.procInsId+'">办理</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+						}else{
+							html+='<td><a href_2="requisitionAudit.html" requisitionAudit_id="'+obj.id+'" act_checker="'+obj.act_checker+'" createBy="'+obj.createBy+'" state="'+obj.procInsId+'">查看</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+						}
+						
+						//如果没有结束，显示撤销按钮
+						if(obj.procInsId!="end"){
+							html+='<a requisitionAudit_id="'+obj.id+'" class="revoke_view">撤回</a>';
+						}
+						html+='</td></tr>';
+						
+					}
+				}
+				$("#requisition").html(html);
+				
+				$("[href_2]").click(function(){
+					var requisitionAudit_id=$(this).attr("requisitionAudit_id");
+					var state=$(this).attr("state");
+					var createBy=$(this).attr("createBy");
+					var act_checker=$(this).attr("act_checker");
+					//登录人是创建人，但不是任务办理者
+					//如果当前登录人是创建人，跳转到修改页面，否则审核页面
+					if(userid==act_checker&&createBy==userid&&state!="end"){
+						$.cookie("requisitionEdited_id",requisitionAudit_id);
+						$("#index_content").load("requisitionEdited.html");
+					}else{
+						$.cookie("requisitionAudit_id",requisitionAudit_id);
+					    $("#index_content").load($(this).attr("href_2"));
+					}
+					
+				});
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+		
+		
+	});
+};
+//撤回操作
+$("#requisitionList_example").on("click",".revoke_view",function(){
+	var requisitionId=$(this).attr("requisitionAudit_id");
+	$.ajax("http://"+IP_config+"/account/act/revoke", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "GET",
+		data:{
+			"requisitionid":requisitionId
+		},
+		success: function(data) {
+			//console.log(data);
+			layer.alert(data.obj);
+			$("#index_content").load("requisitionList.html");
+		},
+	})
+	
+});
+
+$("#sub_search").click(function(){
+	var json_data={
+		"title":$("#requisition_title").val(),
+		"procInsId":$("#requisition_state").val()
+	};
+	GetList(json_data);
+	
+});
+
+</script>
+

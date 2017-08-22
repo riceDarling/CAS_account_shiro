@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.account.dao.AccountContractDetailDao">
+
+	<sql id="accountContractDetailColumns">
+		a.id AS "id",
+		a.parent_id AS "parent_Id",
+		a.materialcode AS
+		"materialcode",
+		a.materialname AS
+		"materialname",
+		a.size AS "size",
+		a.quantity AS "quantity",
+		a.unitprice
+		AS "unitprice",
+		a.money AS "money",
+		a.del_flag AS "delFlag"
+	</sql>
+
+	<sql id="accountContractDetailJoins">
+		LEFT JOIN account_contract b ON b.id = a.parent_id
+	</sql>
+
+	<select id="getByContractId" parameterType="java.lang.String"
+		resultType="com.account.entity.AccountContractDetail">
+		SELECT
+		<include refid="accountContractDetailColumns" />
+		FROM account_contract_detail a
+		<include refid="accountContractDetailJoins" />
+		where
+		a.del_flag = '0' and b.id=#{id}
+	</select>
+
+	<insert id="save" parameterType="com.account.entity.AccountContractDetail">
+		INSERT INTO
+		account_contract_detail(
+		id,
+		parent_id,
+		materialcode,
+		materialname,
+		size,
+		quantity,
+		unitprice,
+		money,
+		del_flag
+		) VALUES (
+		#{id},
+		#{parent_Id},
+		#{materialcode},
+		#{materialname},
+		#{size},
+		#{quantity},
+		#{unitprice},
+		#{money},
+		#{delFlag}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.account.entity.AccountContractDetail">
+		UPDATE account_contract_detail
+		SET
+		parent_id = #{parent_Id},
+		materialCode=#{materialcode},
+		materialname = #{materialname},
+		size = #{size},
+		quantity = #{quantity},
+		unitprice = #{unitprice},
+		money = #{money},
+		WHERE id =
+		#{id}
+	</update>
+
+
+
+	<update id="delete" parameterType="java.lang.String">
+		DELETE from account_contract_detail
+		WHERE parent_id = #{id}
+	</update>
+</mapper>

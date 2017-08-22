@@ -1,0 +1,240 @@
+<!-- Form elements -->
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-cascade">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+						<i class="fa fa-pencil-square"></i><a href_1="accountPurchaseList.html">订货单列表</a> <i class="fa fa-pencil-square"></i>订货单审核
+				</h3>
+			</div>
+			<div class="panel-body ">
+				<div class="ro">
+					<div class="col-mol-md-offset-2">
+						<form class="form-horizontal cascade-forms" method="post"
+							action="#" name="signup_form" id="signup_form"
+							novalidate="novalidate">
+							<div class="form-group">
+								<label class="col-lg-2 col-md-3 control-label">订货单标题：</label>
+								<div class="col-lg-4 col-md-3" id="requisitionAudit_title"></div>
+							</div>
+						
+							<div class="form-group"   style="display:none" id="checker_div">
+								<label class="col-lg-2 col-md-3 control-label" id="requisitionAudit_checker_label">审核人：</label>
+								<div class="col-lg-4 col-md-3" >
+									<select  tabindex="1" name="checker" id="requisitionAudit_checker" class="form-control">
+										 <option value=""></option>
+                   						
+									 </select>	
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-lg-6 col-md-6 control-label">订货单详细</label>
+							</div>
+
+						</form>
+
+						<div class="panel-body ">
+							<table class="table table-striped" id="requisitionAudit_table">
+								<thead>
+									<tr>
+										<th class="visible-lg">物资名称</th>
+										<th class="visible-lg">型号</th>
+										<th class="visible-lg">单价</th>
+										<th class="visible-lg">数量</th>
+										<th class="visible-lg">总价</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						
+							<div class="panel-body"  style="display:none" id="comment_div">
+								<label class="col-lg-2 col-md-3 control-label">意见</label>
+								<div class="col-lg-10 col-md-9">
+									<textarea class="form-control form-cascade-control" rows="3" id="requisitionAudit_comment"></textarea>
+								</div>
+							</div>
+						
+							<div class="panel-body">
+								 <a href="#"  style="display:none" class="btn btn-success btn-sm btn-animate-demo" id="requisitionAudit_next" onclick="audit_submit('yes')">同意</a>
+								 <a href="#"  style="display:none" class="btn btn-warning btn-sm btn-animate-demo" id="requisitionAudit_previous" onclick="audit_submit('no')">驳回</a>
+								 <a href="#"  style="display:none" class="btn btn-primary btn-sm btn-animate-demo" id="requisitionAudit_end" onclick="audit_submit('end')">完成</a>
+							</div>
+
+
+						<div class="panel-body ">
+							<table class="table table-striped" id="requisitionAudit_act_table">
+								<thead>
+									<tr>
+										<th>申请人</th>
+										<th>审核人</th>
+										<th>开始时间</th>
+										<th>结束时间</th>
+										<th>结论</th>
+										<th>意见</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<script>
+$("[href_1]").click(function() {
+	$("#index_content").load($(this).attr("href_1"));
+});
+	var accountPurchaseAudit_id = $.cookie("accountPurchaseAudit_id");
+	
+	$.ajax("../accountPurchase/formView", {
+		dataType : "json",
+		data : {
+			"accountPurchaseid" : accountPurchaseAudit_id
+		},
+		xhrFields : {
+			withCredentials : true
+		},
+		type : "POST",
+		success : function(data) {
+			//console.log(data);
+			if (data.success) {
+				//获取成功
+				//layer.alert(data.msg);
+				if (data.obj.purchase != null) {
+					var ap= data.obj.purchase;
+					$("#requisitionAudit_title").text(ap.title);
+				}
+				if (data.obj.purchase.accountPurchaseDetailList.length > 0) {
+					var html = "";
+					for (i in data.obj.purchase.accountPurchaseDetailList) {
+						var detail = data.obj.purchase.accountPurchaseDetailList[i];
+						html += '<tr><td>'
+								+ detail.materialname + '</td>' + '<td>'
+								+ detail.size + '</td>' + '<td>'
+								+ detail.unitprice + '</td>' + '<td>'
+								+ detail.quantity + '</td>' + '<td>'
+								+ detail.totlemoney + '</td></tr>';
+					}
+					$("#requisitionAudit_table tbody").html(html);
+				}
+				
+				if (data.obj.actlist.length > 0) {
+					var html = "";
+					for (i in data.obj.actlist) {
+						var act = data.obj.actlist[i];
+						html += '<tr><td>'
+								+ act.requisitionName + '</td>' + '<td>'
+								+ act.checkerName + '</td>' + '<td>'
+								+ formatDateTime(act.start_time) + '</td>' + '<td>';
+								if(act.end_time!=null){
+									html+= formatDateTime(act.end_time) + '</td>' + '<td>';
+								}else{
+									html+='</td>' + '<td>';
+								}
+								if(act.conclusion==1){
+									html+='同意</td>' + '<td>';
+								}else if(act.conclusion==0){
+									html+='不同意</td>' + '<td>';
+								}else{
+									html+='</td>' + '<td>';
+								}
+								if(act.remarks!=null){
+									html+= act.remarks;
+								}else{
+									html+='</td>' + '</tr>';	
+								}
+					}
+					//取流程最新的记录
+					var act=data.obj.actlist[data.obj.actlist.length-1];
+					//如果当前登录人是办理者，显示操作按钮
+					var userid = $.cookie("login_userid");
+					if(act.state==0){
+						if(act.checker_name==userid){
+							$("#checker_div").show();
+							$("#comment_div").show();
+							$("#requisitionAudit_next").show();
+							$("#requisitionAudit_previous").show();
+							if(act.step==2){
+								$("#requisitionAudit_next").hide();
+								$("#requisitionAudit_end").show();
+								$("#checker_div").hide();
+							}
+							
+						}
+					}
+					$("#requisitionAudit_act_table tbody").html(html);
+				}
+
+			} else {
+				//获取信息提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	
+	$.ajax("../admin/getAdminList", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "POST",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				var html="<option value=''></option>";
+				for (i in data.obj) {
+					var admin = data.obj[i];
+					html+='<option value="'+admin.id+'">'+admin.username+'</option>';
+				}
+				$("#requisitionAudit_checker").html(html);
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	
+
+	function audit_submit(conclusion){
+		//alert(conclusion);
+		//alert($("#requisitionAudit_checker").val());
+		
+		$.ajax("../accountPurchase/saveAudit", {
+			dataType: "json",
+			data:{
+				"id":accountPurchaseAudit_id,
+				"conclusion":conclusion,
+				"checker":$("#requisitionAudit_checker").val(),
+				"comment":$("#requisitionAudit_comment").val()
+			},
+			xhrFields: {
+				withCredentials: true
+			},
+			type: "POST",
+			success: function(data) {
+				//console.log(data);
+				if(data.success){
+					//获取成功
+					layer.alert(data.msg);
+					$("#index_content").load("accountPurchaseList.html");
+				}else{
+					//获取失败提示
+					layer.alert(data.msg);
+				}
+			}
+		});
+	};
+</script>

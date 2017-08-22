@@ -1,0 +1,197 @@
+ <script src="lib/js/purchaseForm.js"></script>
+<div class="col-md-12">
+	<div class="panel panel-cascade">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="fa fa-pencil-square"></i><a href_1="accountPurchaseList.html">订货单列表</a> <i class="fa fa-pencil-square"></i>订货单修改
+			</h3>
+		</div>
+		<div class="panel-body">
+				<label class="col-lg-1 col-md-2 control-label">订货单名称：</label>
+				<div class="col-lg-2 col-md-2">
+					<input name="supplier" type="text" htmlEscape="false" class="form-control" id="title" purchase_id=""/>
+				</div>
+		</div>
+		<div class="panel-body">
+			<table class="table table-bordered table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="visible-lg">物资名称</th>
+						<th class="visible-lg">型号</th>
+						<th class="visible-lg">单价</th>
+						<th class="visible-lg">数量</th>
+						<th class="visible-lg">总价</th>
+					</tr>
+				</thead>
+				<tbody id="secondPageTbody">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+
+<div class="form-group">
+	<label class="col-lg-2 col-md-3 control-label">审核人：</label>
+		<div class="col-lg-4 col-md-3">
+			<select  tabindex="1" name="checker" id="accountPurchaseForm_checker" class="form-control">
+				 <option value=""></option>
+                   						
+			 </select>	
+		</div>
+</div>
+<div class="panel-footer">
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-11">
+			<input id="accountPurchaseSubmit" class="btn btn-primary" type="button" value="提交" />
+			<input id="accountPurchaseDanger" class="btn btn-primary" type="button" value="删除" />
+		</div>
+	</div>
+</div>
+
+					<div class="panel-body ">
+							<table class="table table-striped" id="requisitionAudit_act_table">
+								<thead>
+									<tr>
+										<th>申请人</th>
+										<th>审核人</th>
+										<th>开始时间</th>
+										<th>结束时间</th>
+										<th>结论</th>
+										<th>意见</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						
+<script>
+	$("[href_1]").click(function() {
+		$("#index_content").load($(this).attr("href_1"));
+	});
+	
+	$.ajax("../admin/getAdminList", {
+		dataType: "json",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "GET",
+		success: function(data) {
+			//console.log(data);
+			if(data.success){
+				//获取成功
+				//layer.alert(data.msg);
+				var html="<option value=''></option>";
+				for (i in data.obj) {
+					var admin = data.obj[i];
+					html+='<option value="'+admin.id+'">'+admin.username+'</option>';
+				}
+				$("#accountPurchaseForm_checker").html(html);
+			}else{
+				//获取失败提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+
+	
+	$("#secondPageTbody").on("change",".money",function(){
+		var	quantity=$(this).val();
+		var unitprice=$(this).parent().parent().children("td").eq(2).text();
+		var totlemoney=quantity*unitprice;
+		if(!isNaN(totlemoney)){
+			$(this).parent().parent().children("td").eq(4).find("input").val(totlemoney.toFixed(2));
+		}
+	});
+	
+	var accountPurchaseAudit_id = $.cookie("accountPurchaseAudit_id");
+	$.ajax("../accountPurchase/formView", {
+		dataType : "json",
+		data : {
+			"accountPurchaseid" : accountPurchaseAudit_id
+		},
+		xhrFields : {
+			withCredentials : true
+		},
+		type : "POST",
+		success : function(data) {
+			//console.log(data);
+			if (data.success) {
+				//获取成功
+				//layer.alert(data.msg);
+				if (data.obj.purchase != null) {
+					var ap= data.obj.purchase;
+					$("#title").attr("purchase_id",ap.id);
+					$("#title").val(ap.title);
+				}
+				if (data.obj.purchase.accountPurchaseDetailList.length > 0) {
+					var html = "";
+					for (i in data.obj.purchase.accountPurchaseDetailList) {
+						var detail = data.obj.purchase.accountPurchaseDetailList[i];
+						html += '<tr><td materialcode="'+detail.materialcode+'">'
+								+ detail.materialname + '</td>' + '<td>'
+								+ detail.size + '</td>' + '<td>'
+								+ detail.unitprice + '</td>' + '<td>';
+								html+='<input type="text"  value="'+detail.quantity+'" class="input-small required form-control money" name="quantity" >'+'</td><td>';
+								html+='<input type="text" value="'+detail.totlemoney+'" class="input-small  required form-control" name="totlemoney" readonly>'+'</td></tr>';
+					}
+					$("#secondPageTbody").html(html);
+				}
+				
+				if (data.obj.actlist.length > 0) {
+					var html = "";
+					for (i in data.obj.actlist) {
+						var act = data.obj.actlist[i];
+						html += '<tr><td>'
+								+ act.requisitionName + '</td>' + '<td>'
+								+ act.checkerName + '</td>' + '<td>'
+								+ formatDateTime(act.start_time) + '</td>' + '<td>';
+								if(act.end_time!=null){
+									html+= formatDateTime(act.end_time) + '</td>' + '<td>';
+								}else{
+									html+='</td>' + '<td>';
+								}
+								if(act.conclusion==1){
+									html+='同意</td>' + '<td>';
+								}else if(act.conclusion==0){
+									html+='不同意</td>' + '<td>';
+								}else{
+									html+='</td>' + '<td>';
+								}
+								if(act.remarks!=null){
+									html+= act.remarks;
+								}else{
+									html+='</td>' + '</tr>';	
+								}
+					}
+					//取流程最新的记录
+					var act=data.obj.actlist[data.obj.actlist.length-1];
+					//如果当前登录人是办理者，显示操作按钮
+					var userid = $.cookie("login_userid");
+					if(act.state==0){
+						if(act.checker_name==userid){
+							$("#checker_div").show();
+							$("#comment_div").show();
+							$("#requisitionAudit_next").show();
+							$("#requisitionAudit_previous").show();
+							if(act.step==2){
+								$("#requisitionAudit_next").hide();
+								$("#requisitionAudit_end").show();
+								$("#checker_div").hide();
+							}
+							
+						}
+					}
+					$("#requisitionAudit_act_table tbody").html(html);
+				}
+
+			} else {
+				//获取信息提示
+				layer.alert(data.msg);
+			}
+		}
+	});
+	
+</script>
