@@ -82,7 +82,7 @@
 			url: "http://" + IP_config + "/account/accountRequisition/getAccountPurchaseTitle",
 			type: "post",
 			success: function(data) {
-				var html = "<option>请选择</option>";
+				var html = "<option value=''>请选择</option>";
 				for(i in data.obj) {
 					html += "<option value=" + data.obj[i].title + ">" + data.obj[i].title + "</option>";
 				}
@@ -138,23 +138,23 @@
 				if(data.success) {
 					$("#secondPageTbody").empty();
 					var content = "<tr>"
-					for(var index in data.obj) {
-						content += "<td>" + data.obj[index].title + "</td>"
-						content += "<td>" + data.obj[index].supplier + "</td>"
-						content += "<td>" + data.obj[index].contracttitle + "</td>"
-						content += "<td>" + data.obj[index].contractnum + "</td>"
-						content += "<td>" + data.obj[index].papercontract + "</td>"
-						content += "<td>" + data.obj[index].money + "</td>"
-						content += "<td>" + data.obj[index].createdate + "</td>"
-						//content += "<td type='file' value='"+ data.obj[index].file +"'>"+ data.obj[index].file +"</td>"
-						if(data.obj[index].status == 0) {
-							content += "<td>未完成</td>"
-						} else {
-							content += "<td>已完成</td>"
+						for(var index in data.obj) {
+							content += "<td>" + data.obj[index].title + "</td>"
+							content += "<td>" + data.obj[index].supplier + "</td>"
+							content += "<td>" + data.obj[index].contracttitle + "</td>"
+							content += "<td>" + data.obj[index].contractnum + "</td>"
+							content += "<td>" + data.obj[index].papercontract + "</td>"
+							content += "<td>" + data.obj[index].summoney + "</td>"
+							content += "<td>" + data.obj[index].createdate + "</td>"
+							//	content += "<td type='file' value='"+ data.obj[index].file +"'>"+ data.obj[index].file +"</td>"
+							if(data.obj[index].status == 0) {
+								content += "<td>未完成</td>"
+							} else {
+								content += "<td>已完成</td>"
+							}
+							content += "<td><button name='" + data.obj[index].id + "' supplier='" + data.obj[index].supplier + "' value='" + data.obj[index].title + "' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='" + data.obj[index].id + "' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
+							content += "</tr>"
 						}
-						content += "<td><button name='" + data.obj[index].id + "' value='" + data.obj[index].title + "' supplier='" + data.obj[index].supplier + "' class='btn btn-warning selectCon' ><i class='fa fa-edit'></i></button><button  name='" + data.obj[index].id + "' class='btn btn-success selectCon2'><i class='fa fa-trash-o'></i></button></td>"
-						content += "</tr>"
-					}
 					$("#secondPageTbody").html(content)
 				}
 			}

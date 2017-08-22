@@ -14,32 +14,39 @@
 		<div class="control-group">
 			<label class="control-label">到货单号：</label>
 			<div class="controls">
-			<input type="text"  name="id" hidden="true" id="payId" style="width:30%;"  />
-				<input name="arrivalnum" readonly="true" htmlEscape="false" maxlength="32" id="arrivalnum" class="form-control" /> 
+			<input type="text"  name="id" hidden="true" id="payId" style="width:30%  !important;"  />
+				<input name="arrivalnum" readonly="true" htmlEscape="false" style="width:30%  !important;"  maxlength="32" id="arrivalnum" class="form-control" /> 
 			</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label">订货单号：</label>
 				<div class="controls">
-					<input name="ordernum" id="ordernum" readonly="true" htmlEscape="false" maxlength="32" class="form-control" />
+					<input name="ordernum" id="ordernum" readonly="true" htmlEscape="false" style="width:30%  !important;"  maxlength="32" class="form-control" />
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label">供应商名称：</label>
 				<div class="controls">
-					<input type="text" hidden="true" id="suppliernum" /> <input type="text" readonly="true" id="supplier" class="form-control"  /></span>
+					<input type="text" hidden="true" id="suppliernum" style="width:30%  !important;"  /> 
+					<input type="text" readonly="true" id="supplier" style="width:30%  !important;"  class="form-control"  /></span>
 				</div>
 			</div>
 			<div class="control-group" hidden="true">
 					<label class="control-label">到货状态：</label>
 					<div class="controls">
-						<input name="arrivalstatus" id="arrivalstatus" htmlEscape="false" style="width:30%;"  maxlength="32" class="form-control" />
+						<input name="arrivalstatus" id="arrivalstatus" style="width:30%  !important;"  htmlEscape="false" style="width:30%;"  maxlength="32" class="form-control" />
 					</div>
 				</div>
 			<div class="control-group">
 				<label class="control-label">到货日期：</label>
 				<div class="controls">
-					<input size="16" type="text"   class="form_datetime form-control" name="arrivalDate" id="arrivalDate">
+					<input size="16" type="text"  readonly class="form_datetime form-control" style="width:30%  !important;"  name="arrivalDate" id="arrivalDate">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">备注信息：</label>
+				<div class="controls">
+					<textarea name="remarks" id="remarks" htmlEscape="false" style="width:30%  !important;"  rows="4" maxlength="255" class="form-control" />
 				</div>
 			</div>
 			<div class="control-group">
@@ -59,17 +66,12 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="control-group">
-				<label class="control-label">备注信息：</label>
-				<div class="controls">
-					<textarea name="remarks" id="remarks" htmlEscape="false" rows="4" maxlength="255" class="form-control" />
-				</div>
-			</div>
 		</div>
 		<div class="panel-body">
 			<form class="form-horizontal row-border">
 				<div class="control-group">
-					<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /><input id="btnCancel" class="btn" type="button" value="返 回" />
+					<input id="submitbtn" class="btn btn-primary" style="margin-right:5px;" type="button" value="保 存" />
+					<input id="btnCancel" class="btn" type="button" value="返 回" />
 				</div>
 			</form>
 		</div>

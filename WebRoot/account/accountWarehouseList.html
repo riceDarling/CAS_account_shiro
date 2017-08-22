@@ -117,8 +117,8 @@ $(".form_datetime").datetimepicker({
 				data:wPage,
 				success:function(data){
 					data = data.obj;
+					  var content = "<tr>";
 					 for (var index in data.list) {
-				            var content = "<tr>";
 				            content += "<td>" + data.list[index].housename + "</td>";
 				            content += "<td>" + data.list[index].size + "</td>";
 				            content += "<td>" + data.list[index].address + "</td>";
@@ -126,8 +126,8 @@ $(".form_datetime").datetimepicker({
 				            content += "<td>" + data.list[index].remarks + "</td>";
 				            content += "<td><a href_2='accountWarehouseForm.html' name='"+data.list[index].id+"' class='btn btn-warning' ><i class='fa fa-edit'></i></a><a del_id="+data.list[index].id+" name='del_material' class='btn btn-success'><i class='fa fa-trash-o'></i></a></td>";
 				            content += "</tr>";
-				            $("#secondPageTbody").append(content);
 				        }
+					 $("#secondPageTbody").html(content);
 				}
 		    });
 	}

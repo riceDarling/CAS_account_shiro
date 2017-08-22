@@ -111,7 +111,7 @@
 				<div class="row" style="margin-top:10px;">
 					<div class="col-lg-12 col-sm-6 col-sm-offset-10">
 						<input id="submitbtn" class="btn btn-primary" type="button" value="保 存" /> 
-						<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)" />
+						<input id="btnCancel" class="btn" type="button" value="返 回"  />
 					</div>
 				</div>
 			</div>
@@ -144,7 +144,9 @@
 			ordernum += ordernumRandom;
 			$("#supplierNum").val(ordernum);
 		});
-		
+		$("#btnCancel").click(function() {
+			$("#index_content").load("paraInfoList.html");
+		});
 		//提交
 		$("#submitbtn").click(function() {
 			var data = $("#supplier_form").serialize();

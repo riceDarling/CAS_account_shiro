@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.account.entity.AccountRequisition;
 import com.account.entity.Material;
 import com.account.service.MaterialService;
 import com.account.utils.PageBean;

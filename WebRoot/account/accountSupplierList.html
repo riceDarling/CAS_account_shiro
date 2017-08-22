@@ -14,11 +14,11 @@
 					</div>
 					<label class="col-lg-1 col-md-1 control-label" style="width: 10% !important;">开始日期：</label>
 					<div class="col-lg-2 col-md-3">
-						<input class="form-control form_datetime" name="sTime" id="sTime" />
+						<input class="form-control form_datetime" name="sTime" id="sTime" readonly/>
 					</div>
 					<label class="col-lg-1 col-md-1 control-label" style="width: 10% !important;">结束日期：</label>
 					<div class="col-lg-2 col-md-3">
-						<input class="form-control form_datetime" name="eTime" id="eTime"/>
+						<input class="form-control form_datetime" name="eTime" id="eTime" readonly/>
 					</div>
 					<div class="col-lg-1 col-md-2">
 						<input class="btn btn-info" id="sub_search" type="submit" value="查询"/>
@@ -59,7 +59,7 @@
 		$("#index_content").load($(this).attr("href_1"));
 	});
 	$("#sub_search").click(function(){
-		$("#example").dataTable().fnDestroy();
+		//$("#example").dataTable().fnDestroy();
 		dataTable();
 	});
 	dataTable();
@@ -76,8 +76,9 @@
 				data:sPage,
 				success:function(data){
 					data = data.obj;
+					 var content='';
 					 for (var index in data.list) {
-				            var content = "<tr>";
+							 content += "<tr>";
 				            content += "<td>" + data.list[index].supplierNum + "</td>";
 				            content += "<td>" + data.list[index].supplier + "</td>";
 				            content += "<td>" + data.list[index].address + "</td>";
@@ -87,18 +88,17 @@
 				            content += "<td>" + data.list[index].remarks + "</td>";
 				            content += "<td><a href_2='accountSupplierForm.html' name='"+data.list[index].id+"' class='btn btn-warning' ><i class='fa fa-edit'></i></a><a del_id="+data.list[index].id+" name='del_material' class='btn btn-success'><i class='fa fa-trash-o'></i></a></td>";
 				            content += "</tr>";
-				            $("#secondPageTbody").append(content);
 				        }
+					 $("#secondPageTbody").html(content);
 				}
 		    })
 	}
-	$("[href_2]").click(function(){
+	$("#secondPageTbody").on("click","[href_2]",function(){
 		 $.cookie("supplier_edit",$(this).attr("name"));
 		 $("#index_content").empty();
 		  $("#index_content").load($(this).attr("href_2"));
-	 });
-	
-	$("a[name='del_material']").click(function(){
+	});
+	$("#secondPageTbody").on("click","a[name='del_material']",function(){
 		var id = $(this).attr("del_id");
 		
 		$.ajax({
@@ -112,7 +112,8 @@
 				$("#index_content").load("accountSupplierList.html");
 			}
 		});
-		
 	});
+
+	
 </script>
 </html>
